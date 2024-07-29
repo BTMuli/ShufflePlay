@@ -110,8 +110,8 @@ Map<String, dynamic> _$UigfModelNapItemDataToJson(
     };
 
 const _$UigfNapPoolTypeEnumMap = {
-  UigfNapPoolType.normal: 'normal',
-  UigfNapPoolType.upC: 'up-c',
-  UigfNapPoolType.upW: 'up-w',
-  UigfNapPoolType.bond: 'bond',
+  UigfNapPoolType.normal: '1',
+  UigfNapPoolType.upC: '2',
+  UigfNapPoolType.upW: '3',
+  UigfNapPoolType.bond: '5',
 };

@@ -1,8 +1,14 @@
+// Dart imports:
+import 'dart:convert';
+
 // Package imports:
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:uuid/uuid.dart';
 
 // Project imports:
+import '../../models/database/app/app_config_model.dart';
 import '../../tools/log_tool.dart';
+import '../../utils/gen_random_str.dart';
 import '../sp_sqlite.dart';
 
 /// 应用配置
@@ -135,5 +141,33 @@ class SpsAppConfig {
   /// 写/更新主题色配置
   Future<void> writeAccentColor(AccentColor value) async {
     await _instance.write('accentColor', value.value.toString());
+  }
+
+  /// 生成默认设备信息
+  AppConfigModelDevice genDefaultDevice() {
+    return AppConfigModelDevice(
+      deviceId: const Uuid().v4(),
+      deviceFp: "0" * 13,
+      deviceName: genRandomStr(12, type: RandomStringType.upper),
+      model: genRandomStr(6, type: RandomStringType.upper),
+      seedId: const Uuid().v4(),
+      seedTime: (DateTime.now().millisecondsSinceEpoch ~/ 1000).toString(),
+    );
+  }
+
+  /// 读取设备信息
+  Future<AppConfigModelDevice> readDevice() async {
+    var res = await _instance.read('device');
+    if (res == null || res.isEmpty) {
+      var device = genDefaultDevice();
+      await _instance.writeDevice(device);
+      return device;
+    }
+    return AppConfigModelDevice.fromJson(jsonDecode(res));
+  }
+
+  /// 写/更新设备信息
+  Future<void> writeDevice(AppConfigModelDevice value) async {
+    await _instance.write('device', jsonEncode(value));
   }
 }

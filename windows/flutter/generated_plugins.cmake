@@ -7,6 +7,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   flutter_acrylic
   screen_retriever
   system_theme
+  webview_windows
   window_manager
 )
 
