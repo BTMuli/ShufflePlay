@@ -9,7 +9,7 @@ import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
 // Project imports:
-import '../widgets/app/app_infobar.dart';
+import '../ui/sp_infobar.dart';
 import 'log_tool.dart';
 
 /// 文件工具
@@ -86,7 +86,7 @@ class SPFileTool {
     } catch (e) {
       var errInfo = ['删除文件失败', '文件：$path', '错误：$e'];
       if (context != null && context.mounted) {
-        SpInfobar.error(context, errInfo.join('\n'));
+        await SpInfobar.error(context, errInfo.join('\n'));
       }
       SPLogTool.error(errInfo);
       return false;

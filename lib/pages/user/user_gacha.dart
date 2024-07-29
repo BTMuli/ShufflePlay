@@ -1,15 +1,13 @@
 // Dart imports:
 import 'dart:convert';
 
-// Flutter imports:
-import 'package:flutter/material.dart';
-
 // Package imports:
 import 'package:file_selector/file_selector.dart';
+import 'package:fluent_ui/fluent_ui.dart';
 import 'package:json_schema/json_schema.dart';
 
 // Project imports:
-import '../../widgets/app/app_infobar.dart';
+import '../../ui/sp_infobar.dart';
 
 class UserGachaPage extends StatefulWidget {
   const UserGachaPage({super.key});
@@ -33,12 +31,10 @@ class _UserGachaPageState extends State<UserGachaPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('User Gacha'),
-      ),
-      body: Center(
-        child: MaterialButton(
+    return ScaffoldPage(
+      header: const PageHeader(title: Text('调频记录')),
+      content: Center(
+        child: Button(
           child: const Text('Import UIGFv4 JSON'),
           onPressed: () async {
             const XTypeGroup fileType = XTypeGroup(
@@ -51,14 +47,15 @@ class _UserGachaPageState extends State<UserGachaPage> {
               var fileJson = jsonDecode(await file.readAsString());
               var result = schema.validate(fileJson);
               if (result.isValid) {
-                if (context.mounted) SpInfobar.success(context, 'Valid JSON');
-                debugPrint('Valid JSON');
+                if (context.mounted) {
+                  await SpInfobar.success(context, 'Valid JSON');
+                }
                 return;
               }
               for (var error in result.errors) {
-                if (context.mounted) SpInfobar.error(context, error.message);
-                // 截取前 20 个字符
-                debugPrint(error.message.substring(0, 50));
+                if (context.mounted) {
+                  await SpInfobar.error(context, error.message);
+                }
               }
             }
           },
