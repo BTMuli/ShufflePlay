@@ -25,9 +25,10 @@ class SPApp extends ConsumerWidget {
         break;
     }
     return FluentThemeData(
-        brightness: brightness,
-        accentColor: appStore.accentColor,
-        fontFamily: 'ZZZFont');
+      brightness: brightness,
+      accentColor: appStore.accentColor,
+      fontFamily: 'SarasaGothic',
+    );
   }
 
   @override

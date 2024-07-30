@@ -3,6 +3,9 @@ import 'package:json_annotation/json_annotation.dart';
 
 /// UIGF 数据结构中的枚举类
 
+/// 支持的UIGF版本
+const uigfVersion = 'v4.0';
+
 /// 数据对应的语言
 @JsonEnum(valueField: 'value')
 enum UigfLanguage {
@@ -75,4 +78,19 @@ enum UigfNapPoolType {
   final String value;
 
   const UigfNapPoolType(this.value);
+}
+
+extension UigfNapPoolTypeExtension on UigfNapPoolType {
+  String get label {
+    switch (this) {
+      case UigfNapPoolType.normal:
+        return '常驻';
+      case UigfNapPoolType.upC:
+        return '角色UP';
+      case UigfNapPoolType.upW:
+        return '武器UP';
+      case UigfNapPoolType.bond:
+        return '邦布';
+    }
+  }
 }

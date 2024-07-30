@@ -43,6 +43,7 @@ dependencies:
   flutter_acrylic: ^1.1.4
   flutter_riverpod: ^2.5.1
   flutter_screenutil: ^5.9.3
+  jiffy: ^6.3.1
   json_annotation: ^4.9.0
   json_schema: ^5.2.0
   logger: ^2.4.0
@@ -100,21 +101,12 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
-    - family: ZZZFont
+    - family: SarasaGothic
       fonts:
-        - asset: assets/fonts/de-de.ttf
-        - asset: assets/fonts/en-us.ttf
-        - asset: assets/fonts/es-es.ttf
-        - asset: assets/fonts/fr-fr.ttf
-        - asset: assets/fonts/id-id.ttf
-        - asset: assets/fonts/ja-jp.otf
-        - asset: assets/fonts/ko-kr.otf
-        - asset: assets/fonts/pt-pt.ttf
-        - asset: assets/fonts/ru-ru.ttf
-        - asset: assets/fonts/th-th.ttf
-        - asset: assets/fonts/vi-vn.ttf
-        - asset: assets/fonts/zh-cn.ttf
-        - asset: assets/fonts/zh-tw.ttf
+        - asset: assets/fonts/SarasaGothicSC-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/SarasaGothicSC-Regular.ttf
+          weight: 400
 
 # lint-staged
 lint_staged:
