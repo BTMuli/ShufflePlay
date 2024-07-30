@@ -14,7 +14,7 @@ class AppConfigModelDevice {
 
   /// 设备指纹
   @JsonKey(name: 'device_fp')
-  final String deviceFp;
+  late String deviceFp;
 
   /// 设备名称
   @JsonKey(name: 'device_name')

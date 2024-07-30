@@ -1,4 +1,5 @@
 // Package imports:
+import 'package:dio/dio.dart';
 import 'package:encrypt/encrypt.dart';
 
 // Project imports:
@@ -17,6 +18,7 @@ CgGs52bFoYMtyi+xEQIDAQAB
 
 /// 获取短信验证码
 Future<BBSResp> getPhoneCaptcha(
+  SprClient client,
   String phone,
   String aigis,
   AppConfigModelDevice device,
@@ -36,7 +38,6 @@ Future<BBSResp> getPhoneCaptcha(
     "content-type": "application/json",
     "referer": "https://user.miyoushe.com/",
   };
-  var client = SprClient.withHeader(header);
   dynamic publicKey = RSAKeyParser().parse(bbsRsaPubKey);
   var encrypter = Encrypter(RSA(publicKey: publicKey));
   var resp = await client.dio.post(
@@ -45,6 +46,7 @@ Future<BBSResp> getPhoneCaptcha(
       "area_code": encrypter.encrypt("+86").base64.toUpperCase(),
       "mobile": encrypter.encrypt(phone).base64.toUpperCase(),
     },
+    options: Options(headers: header, contentType: 'application/json'),
   );
   if (resp.data['retcode'] != 0) {
     var aigis = resp.headers.value('x-rpc-aigis');

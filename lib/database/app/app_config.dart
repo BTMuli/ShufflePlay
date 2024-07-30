@@ -151,7 +151,7 @@ class SpsAppConfig {
       deviceName: genRandomStr(12, type: RandomStringType.upper),
       model: genRandomStr(6, type: RandomStringType.upper),
       seedId: const Uuid().v4(),
-      seedTime: (DateTime.now().millisecondsSinceEpoch ~/ 1000).toString(),
+      seedTime: DateTime.now().millisecondsSinceEpoch.toString(),
     );
   }
 
