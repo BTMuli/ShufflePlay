@@ -16,7 +16,7 @@ class UigfModelFull {
 
   /// zzz祈愿数据
   @JsonKey(name: 'nap')
-  UigfModelNap nap;
+  List<UigfModelNap> nap;
 
   /// constructor
   UigfModelFull({
@@ -67,29 +67,9 @@ class UigfModelInfo {
   Map<String, dynamic> toJson() => _$UigfModelInfoToJson(this);
 }
 
-/// zzz祈愿数据
-@JsonSerializable(explicitToJson: true)
-class UigfModelNap {
-  /// 列表数据
-  @JsonKey(name: 'items')
-  List<UigfModelNapItem> items;
-
-  /// constructor
-  UigfModelNap({
-    required this.items,
-  });
-
-  /// from json
-  factory UigfModelNap.fromJson(Map<String, dynamic> json) =>
-      _$UigfModelNapFromJson(json);
-
-  /// to json
-  Map<String, dynamic> toJson() => _$UigfModelNapToJson(this);
-}
-
 /// zzz祈愿数据条目
 @JsonSerializable(explicitToJson: true)
-class UigfModelNapItem {
+class UigfModelNap {
   /// uid，数字或字符串
   @JsonKey(name: 'uid')
   dynamic uid;
@@ -104,10 +84,10 @@ class UigfModelNapItem {
 
   /// 数据
   @JsonKey(name: 'list')
-  List<UigfModelNapItemData> list;
+  List<UigfModelNapItem> list;
 
   /// constructor
-  UigfModelNapItem({
+  UigfModelNap({
     required this.uid,
     required this.timezone,
     this.lang,
@@ -115,16 +95,16 @@ class UigfModelNapItem {
   });
 
   /// from json
-  factory UigfModelNapItem.fromJson(Map<String, dynamic> json) =>
-      _$UigfModelNapItemFromJson(json);
+  factory UigfModelNap.fromJson(Map<String, dynamic> json) =>
+      _$UigfModelNapFromJson(json);
 
   /// to json
-  Map<String, dynamic> toJson() => _$UigfModelNapItemToJson(this);
+  Map<String, dynamic> toJson() => _$UigfModelNapToJson(this);
 }
 
 /// zzz祈愿数据条目数据
 @JsonSerializable()
-class UigfModelNapItemData {
+class UigfModelNapItem {
   /// 卡池id
   @JsonKey(name: 'gacha_id')
   String? gachaId;
@@ -162,7 +142,7 @@ class UigfModelNapItemData {
   String id;
 
   /// constructor
-  UigfModelNapItemData({
+  UigfModelNapItem({
     this.gachaId,
     required this.gachaType,
     required this.itemId,
@@ -175,9 +155,9 @@ class UigfModelNapItemData {
   });
 
   /// from json
-  factory UigfModelNapItemData.fromJson(Map<String, dynamic> json) =>
-      _$UigfModelNapItemDataFromJson(json);
+  factory UigfModelNapItem.fromJson(Map<String, dynamic> json) =>
+      _$UigfModelNapItemFromJson(json);
 
   /// to json
-  Map<String, dynamic> toJson() => _$UigfModelNapItemDataToJson(this);
+  Map<String, dynamic> toJson() => _$UigfModelNapItemToJson(this);
 }

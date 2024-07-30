@@ -9,13 +9,15 @@ part of 'uigf_model.dart';
 UigfModelFull _$UigfModelFullFromJson(Map<String, dynamic> json) =>
     UigfModelFull(
       info: UigfModelInfo.fromJson(json['info'] as Map<String, dynamic>),
-      nap: UigfModelNap.fromJson(json['nap'] as Map<String, dynamic>),
+      nap: (json['nap'] as List<dynamic>)
+          .map((e) => UigfModelNap.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$UigfModelFullToJson(UigfModelFull instance) =>
     <String, dynamic>{
       'info': instance.info.toJson(),
-      'nap': instance.nap.toJson(),
+      'nap': instance.nap.map((e) => e.toJson()).toList(),
     };
 
 UigfModelInfo _$UigfModelInfoFromJson(Map<String, dynamic> json) =>
@@ -35,27 +37,15 @@ Map<String, dynamic> _$UigfModelInfoToJson(UigfModelInfo instance) =>
     };
 
 UigfModelNap _$UigfModelNapFromJson(Map<String, dynamic> json) => UigfModelNap(
-      items: (json['items'] as List<dynamic>)
+      uid: json['uid'],
+      timezone: (json['timezone'] as num).toInt(),
+      lang: $enumDecodeNullable(_$UigfLanguageEnumMap, json['lang']),
+      list: (json['list'] as List<dynamic>)
           .map((e) => UigfModelNapItem.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
 Map<String, dynamic> _$UigfModelNapToJson(UigfModelNap instance) =>
-    <String, dynamic>{
-      'items': instance.items.map((e) => e.toJson()).toList(),
-    };
-
-UigfModelNapItem _$UigfModelNapItemFromJson(Map<String, dynamic> json) =>
-    UigfModelNapItem(
-      uid: json['uid'],
-      timezone: (json['timezone'] as num).toInt(),
-      lang: $enumDecodeNullable(_$UigfLanguageEnumMap, json['lang']),
-      list: (json['list'] as List<dynamic>)
-          .map((e) => UigfModelNapItemData.fromJson(e as Map<String, dynamic>))
-          .toList(),
-    );
-
-Map<String, dynamic> _$UigfModelNapItemToJson(UigfModelNapItem instance) =>
     <String, dynamic>{
       'uid': instance.uid,
       'timezone': instance.timezone,
@@ -81,9 +71,8 @@ const _$UigfLanguageEnumMap = {
   UigfLanguage.zhHant: 'zh-tw',
 };
 
-UigfModelNapItemData _$UigfModelNapItemDataFromJson(
-        Map<String, dynamic> json) =>
-    UigfModelNapItemData(
+UigfModelNapItem _$UigfModelNapItemFromJson(Map<String, dynamic> json) =>
+    UigfModelNapItem(
       gachaId: json['gacha_id'] as String?,
       gachaType: $enumDecode(_$UigfNapPoolTypeEnumMap, json['gacha_type']),
       itemId: json['item_id'] as String,
@@ -95,8 +84,7 @@ UigfModelNapItemData _$UigfModelNapItemDataFromJson(
       id: json['id'] as String,
     );
 
-Map<String, dynamic> _$UigfModelNapItemDataToJson(
-        UigfModelNapItemData instance) =>
+Map<String, dynamic> _$UigfModelNapItemToJson(UigfModelNapItem instance) =>
     <String, dynamic>{
       'gacha_id': instance.gachaId,
       'gacha_type': _$UigfNapPoolTypeEnumMap[instance.gachaType]!,
