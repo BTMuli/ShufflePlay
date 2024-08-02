@@ -5,6 +5,7 @@ import 'package:system_theme/system_theme.dart';
 
 // Project imports:
 import '../../database/app/app_config.dart';
+import '../../models/database/app/app_config_model.dart';
 
 /// 应用状态提供者
 final appConfigStoreProvider = ChangeNotifierProvider<SpAppConfigStore>((ref) {
@@ -22,13 +23,20 @@ class SpAppConfigStore extends ChangeNotifier {
   /// 主题色
   AccentColor _accentColor = Colors.blue.toAccentColor();
 
+  /// 设备指纹
+  AppConfigModelDevice? _device;
+
   /// 获取主题
   ThemeMode get themeMode => _themeMode;
+
+  /// 获取设备信息
+  AppConfigModelDevice? get device => _device;
 
   /// 构造函数
   SpAppConfigStore() {
     initThemeConfig();
     initAccentColorConfig();
+    initAppDevice();
   }
 
   /// 初始化主题
@@ -40,6 +48,12 @@ class SpAppConfigStore extends ChangeNotifier {
   /// 初始化主题色
   Future<void> initAccentColorConfig() async {
     _accentColor = await sqlite.readAccentColor();
+    notifyListeners();
+  }
+
+  /// 初始化设备信息
+  Future<void> initAppDevice() async {
+    _device = await sqlite.readDevice();
     notifyListeners();
   }
 
@@ -63,6 +77,13 @@ class SpAppConfigStore extends ChangeNotifier {
   Future<void> setAccentColor(AccentColor value) async {
     _accentColor = value;
     await sqlite.writeAccentColor(value);
+    notifyListeners();
+  }
+
+  /// 设置设备信息
+  Future<void> setDevice(AppConfigModelDevice value) async {
+    _device = value;
+    await sqlite.writeDevice(value);
     notifyListeners();
   }
 }

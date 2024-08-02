@@ -60,14 +60,19 @@ class _UserGachaViewWidgetState extends State<UserGachaViewWidget> {
       );
     }
     return SingleChildScrollView(
-      child: Column(
-        children: gachaList.map((e) {
+      child: ListView.builder(
+        shrinkWrap: true,
+        itemCount: gachaList.length,
+        itemBuilder: (context, index) {
+          var item = gachaList[index];
           return ListTile(
-            title: Text(e.name != null ? '${e.name}(${e.itemId})' : e.itemId),
-            subtitle: Text(e.time),
-            trailing: Text(e.gachaType.label),
+            title: Text(item.name != null
+                ? '${item.name}(${item.itemId})'
+                : item.itemId),
+            subtitle: Text(item.time),
+            trailing: Text(item.gachaType.label),
           );
-        }).toList(),
+        },
       ),
     );
   }
