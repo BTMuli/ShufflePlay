@@ -33,7 +33,7 @@ class SpsUserBbs {
   }
 
   /// 读取所有用户信息
-  Future<List<UserBBSModel>> readAll() async {
+  Future<List<UserBBSModel>> readAllUsers() async {
     await _instance.preCheck();
     var result = await _instance.sqlite.db.query(_instance._tableName);
     return result.map(UserBBSModel.fromSqlJson).toList();

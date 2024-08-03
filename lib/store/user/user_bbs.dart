@@ -25,6 +25,9 @@ class SpUserBbsStore extends ChangeNotifier {
   /// 当前用户
   UserBBSModel? _user;
 
+  /// 所有用户
+  List<UserBBSModel> _users = [];
+
   /// 获取uid列表
   List<String> get uids => _uids;
 
@@ -33,6 +36,9 @@ class SpUserBbsStore extends ChangeNotifier {
 
   /// 获取当前用户
   UserBBSModel? get user => _user;
+
+  /// 获取所有用户
+  List<UserBBSModel> get users => _users;
 
   /// 构造函数
   SpUserBbsStore() {
@@ -43,8 +49,9 @@ class SpUserBbsStore extends ChangeNotifier {
   Future<void> initUser() async {
     _uids = await sqlite.readAllUids();
     if (_uids.isNotEmpty) {
+      _users = await sqlite.readAllUsers();
       _uid = _uids.first;
-      _user = await sqlite.readUser(_uid!);
+      _user = _users.first;
     }
     notifyListeners();
   }
@@ -60,9 +67,10 @@ class SpUserBbsStore extends ChangeNotifier {
   Future<void> deleteUser(String uid) async {
     await sqlite.deleteUser(uid);
     _uids.remove(uid);
+    _users.removeWhere((element) => element.uid == uid);
     if (_uids.isNotEmpty) {
       _uid = _uids.first;
-      _user = await sqlite.readUser(_uid!);
+      _user = _users.first;
     } else {
       _uid = null;
       _user = null;
@@ -74,6 +82,7 @@ class SpUserBbsStore extends ChangeNotifier {
   Future<void> addUser(UserBBSModel user) async {
     await sqlite.writeUser(user);
     _uids.add(user.uid);
+    _users.add(user);
     _uid = user.uid;
     _user = user;
     notifyListeners();
@@ -82,6 +91,9 @@ class SpUserBbsStore extends ChangeNotifier {
   /// 更新用户
   Future<void> updateUser(UserBBSModel user) async {
     await sqlite.writeUser(user);
+    var userFind = _users.firstWhere((element) => element.uid == user.uid);
+    var index = _users.indexOf(userFind);
+    _users[index] = user;
     _user = user;
     notifyListeners();
   }
