@@ -17,6 +17,7 @@ import '../../request/bbs/bbs_api_device.dart';
 import '../../store/app/app_config.dart';
 import '../../ui/sp_infobar.dart';
 import '../../utils/get_app_theme.dart';
+import '../../widgets/app/app_config_user.dart';
 import '../../widgets/bbs/bbs_infobar.dart';
 
 class AppConfigPage extends ConsumerStatefulWidget {
@@ -269,6 +270,11 @@ class _AppConfigPageState extends ConsumerState<AppConfigPage>
           SizedBox(height: 10.h),
           buildDeviceInfo(deviceInfo!)
         ],
+        SizedBox(height: 10.h),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.w),
+          child: const AppConfigUserWidget(),
+        )
       ]),
     );
   }

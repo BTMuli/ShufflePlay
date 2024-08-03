@@ -4,12 +4,12 @@ import '../../tools/log_tool.dart';
 import '../sp_sqlite.dart';
 
 /// 用户数据表
-class SpsUserBBS {
-  SpsUserBBS._();
+class SpsUserBbs {
+  SpsUserBbs._();
 
-  static final SpsUserBBS _instance = SpsUserBBS._();
+  static final SpsUserBbs _instance = SpsUserBbs._();
 
-  factory SpsUserBBS() => _instance;
+  factory SpsUserBbs() => _instance;
 
   final SPSqlite sqlite = SPSqlite();
 
@@ -37,6 +37,17 @@ class SpsUserBBS {
     await _instance.preCheck();
     var result = await _instance.sqlite.db.query(_instance._tableName);
     return result.map(UserBBSModel.fromSqlJson).toList();
+  }
+
+  /// 读取所有uid
+  Future<List<String>> readAllUids() async {
+    await _instance.preCheck();
+    var result = await _instance.sqlite.db.query(
+      _instance._tableName,
+      columns: ['uid'],
+      distinct: true,
+    );
+    return result.map((e) => e['uid'].toString()).toList();
   }
 
   /// 读取指定uid的用户信息
@@ -74,5 +85,15 @@ class SpsUserBBS {
         whereArgs: [user.uid],
       );
     }
+  }
+
+  /// 删除用户信息
+  Future<void> deleteUser(String uid) async {
+    await _instance.preCheck();
+    await _instance.sqlite.db.delete(
+      _instance._tableName,
+      where: 'uid = ?',
+      whereArgs: [uid],
+    );
   }
 }
