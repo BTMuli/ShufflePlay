@@ -46,4 +46,3 @@ app.*.map.json
 .env
 nuget.exe
 ShufflePlay.msix
-sqlite3.dll

@@ -52,7 +52,6 @@ add_subdirectory(${FLUTTER_MANAGED_DIR})
 # Application build; see runner/CMakeLists.txt.
 add_subdirectory("runner")
 
-
 # Generated plugin build rules, which manage building the plugins and adding
 # them to the application.
 include(flutter/generated_plugins.cmake)
@@ -106,3 +105,20 @@ install(DIRECTORY "${PROJECT_BUILD_DIR}/${FLUTTER_ASSET_DIR_NAME}"
 install(FILES "${AOT_LIBRARY}" DESTINATION "${INSTALL_BUNDLE_DATA_DIR}"
   CONFIGURATIONS Profile;Release
   COMPONENT Runtime)
+
+# Sqlite
+include(FetchContent)
+
+FetchContent_Declare(sqlite3
+        URL "https://www.sqlite.org/2023/sqlite-dll-win64-x64-3420000.zip"
+        URL_HASH SHA3_256=2425efa95556793a20761dfdab0d3b56a52e61716e8bb65e6a0a3590d41c97c0
+        DOWNLOAD_EXTRACT_TIMESTAMP true
+)
+find_file(SQLITE3 sqlite3)
+if(NOT SQLITE3)
+  message("sqlite3.dll not found, trying to download or use cached version.")
+  FetchContent_MakeAvailable(sqlite3)
+  set(SQLITE3 ${sqlite3_SOURCE_DIR}/sqlite3.dll)
+endif()
+
+install(FILES "${SQLITE3}" DESTINATION "${INSTALL_BUNDLE_LIB_DIR}" COMPONENT Runtime)
