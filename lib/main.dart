@@ -22,6 +22,15 @@ void main() async {
   await SPLogTool().init();
   await SPSqlite().init();
 
+  WindowOptions windowOptions = const WindowOptions(
+    title: 'ShufflePlay',
+    size: Size(1280, 720),
+    center: true,
+  );
+  await windowManager.waitUntilReadyToShow(windowOptions, () async {
+    await windowManager.show();
+  });
+
   runApp(const ProviderScope(child: SPApp()));
   await Window.setEffect(effect: WindowEffect.acrylic);
 }

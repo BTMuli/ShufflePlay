@@ -1,3 +1,6 @@
+// Package imports:
+import 'package:jiffy/jiffy.dart';
+
 // Project imports:
 import '../../models/database/user/user_bbs_model.dart';
 import '../../tools/log_tool.dart';
@@ -72,6 +75,7 @@ class SpsUserBbs {
       where: 'uid = ?',
       whereArgs: [user.uid],
     );
+    user.updatedAt = Jiffy.now().second;
     if (result.isEmpty) {
       await _instance.sqlite.db.insert(
         _instance._tableName,

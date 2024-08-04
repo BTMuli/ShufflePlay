@@ -4,8 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 // Project imports:
+import '../../models/bbs/token/bbs_token_model.dart';
 import '../../models/database/user/user_bbs_model.dart';
+import '../../request/bbs/bbs_api_token.dart';
 import '../../store/user/user_bbs.dart';
+import '../../ui/sp_dialog.dart';
+import '../../ui/sp_infobar.dart';
 
 class AppConfigUserWidget extends ConsumerStatefulWidget {
   const AppConfigUserWidget({super.key});
@@ -35,42 +39,110 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
 
   /// 添加用户-通过cookie
   Future<void> addUserByCookie() async {
-    String input = '';
-    await showDialog(
-      barrierDismissible: true,
-      dismissWithEsc: true,
-      context: context,
-      builder: (BuildContext context) {
-        return ContentDialog(
-          title: const Text('添加用户'),
-          content: SizedBox(
-            height: 50.h,
-            child: TextBox(
-              placeholder: '请输入cookie',
-              onChanged: (String value) {
-                input = value;
-              },
-            ),
-          ),
-          actions: <Widget>[
-            Button(
-              onPressed: () async {
-                // ref.read(uerBbsStoreProvider).addUserByCookie(input);
-                Navigator.of(context).pop();
-              },
-              child: const Text('确定'),
-            ),
-            Button(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('取消'),
-            ),
-          ],
-        );
-      },
+    var cookieInput = await SpDialog.input(
+      context,
+      '添加用户',
+      'Cookie',
+      copy: true,
+      label: 'stoken=xxx;stuid=xxx;mid=xxx;',
     );
-    debugPrint('input: $input');
+    if (cookieInput == null || cookieInput.isEmpty) {
+      if (mounted) await SpInfobar.warn(context, '未输入cookie');
+      return;
+    }
+    UserBBSModelCookie? cookie;
+    try {
+      cookie = UserBBSModelCookie.fromString(cookieInput);
+    } catch (e) {
+      if (mounted) await SpInfobar.warn(context, 'cookie格式错误，或缺失必要字段');
+      return;
+    }
+    if (cookie.stoken.isEmpty || cookie.stuid.isEmpty || cookie.mid.isEmpty) {
+      if (mounted) await SpInfobar.warn(context, 'cookie格式错误，或缺失必要字段');
+      return;
+    }
+    cookie = await refreshCookie(cookie);
+    var user = UserBBSModel(uid: cookie.stuid, cookie: cookie);
+    await ref.read(uerBbsStoreProvider).addUser(user);
+  }
+
+  /// 刷新用户cookie
+  Future<UserBBSModelCookie> refreshCookie(UserBBSModelCookie cookie) async {
+    if (cookie.stoken.isEmpty || cookie.stuid.isEmpty || cookie.mid.isEmpty) {
+      if (mounted) await SpInfobar.warn(context, 'cookie格式错误，或缺失必要字段');
+      return cookie;
+    }
+    var bbsTokenApi = SprBbsApiToken();
+    var ltokenResp = await bbsTokenApi.getLToken(cookie);
+    if (ltokenResp.retcode != 0 || ltokenResp is! BbsTokenModelLbSResp) {
+      if (mounted) {
+        await SpInfobar.warn(context, '获取ltoken失败：${ltokenResp.message}');
+      }
+      return cookie;
+    } else {
+      var ltokenData = ltokenResp.data as BbsTokenModelLbSData;
+      cookie.ltoken = ltokenData.ltoken;
+    }
+    var cookieTokenResp = await bbsTokenApi.getCookieToken(cookie);
+    if (cookieTokenResp.retcode != 0 ||
+        cookieTokenResp is! BbsTokenModelCbSResp) {
+      if (mounted) {
+        await SpInfobar.warn(
+          context,
+          '获取cookieToken失败：${cookieTokenResp.message}',
+        );
+      }
+      return cookie;
+    } else {
+      var cookieTokenData = cookieTokenResp.data as BbsTokenModelCbSData;
+      cookie.cookieToken = cookieTokenData.cookieToken;
+    }
+    return cookie;
+  }
+
+  /// 刷新用户信息
+  Future<void> refreshUser(UserBBSModel user) async {
+    var cookie = user.cookie;
+    if (cookie == null) {
+      if (mounted) await SpInfobar.warn(context, '用户cookie为空');
+      return;
+    }
+    cookie = await refreshCookie(cookie);
+  }
+
+  /// 构建用户尾部
+  Widget buildUserTrailing(UserBBSModel user) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        IconButton(
+          icon: const Icon(FluentIcons.refresh),
+          onPressed: () async {
+            var check = await SpDialog.confirm(
+              context,
+              '刷新用户信息',
+              '确认刷新用户信息？',
+            );
+            if (check == null || !check) return;
+            await refreshUser(user);
+          },
+        ),
+        SizedBox(width: 8.w),
+        IconButton(
+          icon: const Icon(FluentIcons.delete),
+          onPressed: () async {
+            var check = await SpDialog.confirm(
+              context,
+              '删除用户',
+              '确认删除用户？',
+            );
+            if (check == null || !check) return;
+            await ref.read(uerBbsStoreProvider).deleteUser(user.uid);
+          },
+        ),
+      ],
+    );
   }
 
   @override
@@ -88,12 +160,7 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
               leading: const Icon(FluentIcons.user_sync),
               title: Text(user.brief?.username ?? '未知用户'),
               subtitle: Text(user.uid),
-              trailing: IconButton(
-                icon: const Icon(FluentIcons.delete),
-                onPressed: () {
-                  // ref.read(uerBbsStoreProvider).deleteUser(user.uid);
-                },
-              ),
+              trailing: buildUserTrailing(user),
             ),
           ListTile(
             leading: const Icon(FluentIcons.add),
@@ -104,7 +171,7 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
             trailing: Tooltip(
               message: '短信验证码登录',
               child: IconButton(
-                icon: const Icon(FluentIcons.mobile_angled),
+                icon: const Icon(FluentIcons.comment_active),
                 onPressed: () {
                   // ref.read(uerBbsStoreProvider).addUserByCookie(input);
                 },

@@ -26,6 +26,8 @@ enum RandomStringType {
 String genRandomStr(
   int length, {
   RandomStringType type = RandomStringType.all,
+  int min = 0,
+  int max = 0,
 }) {
   var random = Random();
   var buffer = StringBuffer();
@@ -41,7 +43,11 @@ String genRandomStr(
         buffer.write(String.fromCharCode(random.nextInt(26) + 97));
         break;
       case RandomStringType.number:
-        buffer.write(String.fromCharCode(random.nextInt(10) + 48));
+        if (min != 0 && max != 0) {
+          buffer.write(random.nextInt(max - min) + min);
+        } else {
+          buffer.write(String.fromCharCode(random.nextInt(10) + 48));
+        }
         break;
       case RandomStringType.letter:
         buffer.write(String.fromCharCode(random.nextInt(26) + 65));

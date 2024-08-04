@@ -7,7 +7,7 @@ part of 'user_bbs_model.dart';
 // **************************************************************************
 
 UserBBSModel _$UserBBSModelFromJson(Map<String, dynamic> json) => UserBBSModel(
-      id: (json['id'] as num).toInt(),
+      id: (json['id'] as num?)?.toInt(),
       uid: json['uid'] as String,
       cookie: json['cookie'] == null
           ? null
@@ -31,10 +31,10 @@ Map<String, dynamic> _$UserBBSModelToJson(UserBBSModel instance) =>
 
 UserBBSModelCookie _$UserBBSModelCookieFromJson(Map<String, dynamic> json) =>
     UserBBSModelCookie(
-      accountId: json['account_id'] as String,
-      cookieToken: json['cookie_token'] as String,
-      ltoken: json['ltoken'] as String,
-      ltuid: json['ltuid'] as String,
+      accountId: json['account_id'] as String?,
+      cookieToken: json['cookie_token'] as String?,
+      ltoken: json['ltoken'] as String?,
+      ltuid: json['ltuid'] as String?,
       mid: json['mid'] as String,
       stoken: json['stoken'] as String,
       stuid: json['stuid'] as String,

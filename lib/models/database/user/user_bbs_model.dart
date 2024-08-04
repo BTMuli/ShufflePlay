@@ -13,7 +13,7 @@ part 'user_bbs_model.g.dart';
 class UserBBSModel {
   /// 自增ID
   @JsonKey(name: 'id')
-  final int id;
+  final int? id;
 
   /// 用户ID
   @JsonKey(name: 'uid')
@@ -35,11 +35,11 @@ class UserBBSModel {
 
   /// 构造函数
   UserBBSModel({
-    required this.id,
+    this.id,
     required this.uid,
     required this.cookie,
-    required this.phone,
-    required this.brief,
+    this.phone,
+    this.brief,
     this.updatedAt = 0,
   });
 
@@ -82,19 +82,19 @@ class UserBBSModel {
 class UserBBSModelCookie {
   /// account_id
   @JsonKey(name: 'account_id')
-  final String accountId;
+  final String? accountId;
 
   /// cookie_token
   @JsonKey(name: 'cookie_token')
-  final String cookieToken;
+  late String? cookieToken;
 
   /// ltoken
   @JsonKey(name: 'ltoken')
-  final String ltoken;
+  late String? ltoken;
 
   /// ltuid
   @JsonKey(name: 'ltuid')
-  final String ltuid;
+  final String? ltuid;
 
   /// mid
   @JsonKey(name: 'mid')
@@ -110,10 +110,10 @@ class UserBBSModelCookie {
 
   /// 构造函数
   UserBBSModelCookie({
-    required this.accountId,
-    required this.cookieToken,
-    required this.ltoken,
-    required this.ltuid,
+    this.accountId,
+    this.cookieToken,
+    this.ltoken,
+    this.ltuid,
     required this.mid,
     required this.stoken,
     required this.stuid,
@@ -123,8 +123,48 @@ class UserBBSModelCookie {
   factory UserBBSModelCookie.fromJson(Map<String, dynamic> json) =>
       _$UserBBSModelCookieFromJson(json);
 
+  /// from string
+  factory UserBBSModelCookie.fromString(String str) {
+    var cookies = str.split(';');
+    var cookieMap = <String, String>{};
+    for (var cookie in cookies) {
+      if (cookie.isEmpty) continue;
+      var index = cookie.indexOf('=');
+      if (index == -1) {
+        throw Exception('cookie格式错误');
+      }
+      var key = cookie.substring(0, index).trim();
+      var value = cookie.substring(index + 1).trim();
+      cookieMap[key] = value;
+    }
+    if (cookieMap['mid'] == null ||
+        cookieMap['mid']!.isEmpty ||
+        cookieMap['stoken'] == null ||
+        cookieMap['stoken']!.isEmpty ||
+        cookieMap['stuid'] == null ||
+        cookieMap['stuid']!.isEmpty) {
+      throw Exception('缺失必要字段');
+    }
+    cookieMap['account_id'] = cookieMap['account_id'] ?? cookieMap['stuid']!;
+    cookieMap['ltuid'] = cookieMap['ltuid'] ?? cookieMap['stuid']!;
+    return UserBBSModelCookie.fromJson(cookieMap);
+  }
+
   /// JSON 反序列化
   Map<String, dynamic> toJson() => _$UserBBSModelCookieToJson(this);
+
+  @override
+  String toString() {
+    var cookie = '';
+    if (accountId != null) cookie += 'account_id=$accountId;';
+    if (cookieToken != null) cookie += 'cookie_token=$cookieToken;';
+    if (ltoken != null) cookie += 'ltoken=$ltoken;';
+    if (ltuid != null) cookie += 'ltuid=$ltuid;';
+    cookie += 'mid=$mid;';
+    cookie += 'stoken=$stoken;';
+    cookie += 'stuid=$stuid;';
+    return cookie;
+  }
 }
 
 /// 用户简略信息
