@@ -8,8 +8,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:json_schema/json_schema.dart';
 
 // Project imports:
+import '../../database/nap/nap_item_map.dart';
 import '../../database/user/user_gacha.dart';
 import '../../models/plugins/UIGF/uigf_model.dart';
+import '../../request/plugins/hakushi_client.dart';
 import '../../ui/sp_infobar.dart';
 import '../../widgets/user/user_gacha_view.dart';
 
@@ -24,14 +26,20 @@ class _UserGachaPageState extends State<UserGachaPage> {
   /// UIGFv4 JSON Schema
   late JsonSchema schema;
 
-  /// 用户祈愿数据库
-  final sqlite = SpsUserGacha();
-
   /// uid列表
   List<String> uidList = [];
 
   /// 当前uid
   String? curUid;
+
+  /// NapItemMap 数据库
+  final sqliteMap = SpsNapItemMap();
+
+  /// Hakushi客户端
+  final hakushiApi = SprPluginHakushi();
+
+  /// 用户祈愿数据库
+  final sqliteUser = SpsUserGacha();
 
   @override
   void initState() {
@@ -44,7 +52,7 @@ class _UserGachaPageState extends State<UserGachaPage> {
   }
 
   Future<void> refreshData() async {
-    uidList = await sqlite.getAllUid();
+    uidList = await sqliteUser.getAllUid();
     if (uidList.isNotEmpty) {
       curUid = uidList.first;
     }
@@ -73,7 +81,7 @@ class _UserGachaPageState extends State<UserGachaPage> {
       await SpInfobar.success(context, 'JSON文件验证通过，即将导入');
     }
     var data = UigfModelFull.fromJson(fileJson);
-    await sqlite.importUigf(data);
+    await sqliteUser.importUigf(data);
     await refreshData();
   }
 
@@ -98,6 +106,15 @@ class _UserGachaPageState extends State<UserGachaPage> {
           child: const Text('导出'),
         ),
         SizedBox(width: 10.w),
+        IconButton(
+          icon: const Icon(FluentIcons.database_refresh),
+          onPressed: () async {
+            await sqliteMap.preCheck();
+            await hakushiApi.freshCharacter();
+            await hakushiApi.freshWeapon();
+            await hakushiApi.freshBangboo();
+          },
+        ),
       ],
     );
   }

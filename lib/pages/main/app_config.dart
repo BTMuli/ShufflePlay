@@ -74,7 +74,6 @@ class _AppConfigPageState extends ConsumerState<AppConfigPage>
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Expander(
-        initiallyExpanded: true,
         leading: const Icon(material.Icons.laptop_windows),
         header: Text(diw.productName),
         content: Column(
@@ -266,15 +265,15 @@ class _AppConfigPageState extends ConsumerState<AppConfigPage>
     return ScaffoldPage(
       content: ListView(children: [
         if (packageInfo != null) buildAppInfo(packageInfo!, context),
-        if (deviceInfo != null) ...[
-          SizedBox(height: 10.h),
-          buildDeviceInfo(deviceInfo!)
-        ],
         SizedBox(height: 10.h),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           child: const AppConfigUserWidget(),
-        )
+        ),
+        if (deviceInfo != null) ...[
+          SizedBox(height: 10.h),
+          buildDeviceInfo(deviceInfo!)
+        ],
       ]),
     );
   }

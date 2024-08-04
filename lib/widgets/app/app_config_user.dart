@@ -152,15 +152,16 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
       leading: uids.isEmpty
           ? const Icon(FluentIcons.user_warning)
           : const Icon(FluentIcons.group),
-      header: uids.isEmpty ? const Text('未登录') : const Text('用户信息'),
+      header: uids.isEmpty ? const Text('未登录') : Text('用户信息-当前登录：$uid'),
       content: Column(
         children: <Widget>[
           for (final UserBBSModel user in users)
-            ListTile(
+            ListTile.selectable(
               leading: const Icon(FluentIcons.user_sync),
               title: Text(user.brief?.username ?? '未知用户'),
               subtitle: Text(user.uid),
               trailing: buildUserTrailing(user),
+              selected: user.uid == uid,
             ),
           ListTile(
             leading: const Icon(FluentIcons.add),
