@@ -1,11 +1,17 @@
+// Flutter imports:
+import 'package:flutter/foundation.dart';
+
 // Package imports:
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 // Project imports:
+import '../../models/bbs/info/bbs_info_user_model.dart';
 import '../../models/bbs/token/bbs_token_model.dart';
 import '../../models/database/user/user_bbs_model.dart';
+import '../../request/bbs/bbs_api_info.dart';
 import '../../request/bbs/bbs_api_token.dart';
 import '../../store/user/user_bbs.dart';
 import '../../ui/sp_dialog.dart';
@@ -37,6 +43,25 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
     super.initState();
   }
 
+  /// 获取用户信息
+  Future<UserBBSModelBrief?> getUserBrief(UserBBSModelCookie cookie) async {
+    var bbsInfoApi = SprBbsApiInfo();
+    var resp = await bbsInfoApi.getUserInfo(cookie);
+    if (resp.retcode != 0 || resp is! BbsInfoUserModelResp) {
+      if (mounted) {
+        await SpInfobar.warn(context, '获取用户信息失败：${resp.message}');
+      }
+      return null;
+    }
+    var data = resp.data as BbsInfoUserModelDataFull;
+    return UserBBSModelBrief(
+      uid: data.userInfo.uid,
+      username: data.userInfo.nickname,
+      avatar: data.userInfo.avatarUrl,
+      sign: data.userInfo.introduce,
+    );
+  }
+
   /// 添加用户-通过cookie
   Future<void> addUserByCookie() async {
     var cookieInput = await SpDialog.input(
@@ -62,7 +87,8 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
       return;
     }
     cookie = await refreshCookie(cookie);
-    var user = UserBBSModel(uid: cookie.stuid, cookie: cookie);
+    UserBBSModelBrief? brief = await getUserBrief(cookie);
+    var user = UserBBSModel(uid: cookie.stuid, cookie: cookie, brief: brief);
     await ref.read(uerBbsStoreProvider).addUser(user);
   }
 
@@ -108,6 +134,9 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
       return;
     }
     cookie = await refreshCookie(cookie);
+    UserBBSModelBrief? brief = await getUserBrief(cookie);
+    var newUser = UserBBSModel(uid: user.uid, cookie: cookie, brief: brief);
+    await ref.read(uerBbsStoreProvider).updateUser(newUser);
   }
 
   /// 构建用户尾部
@@ -152,14 +181,30 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
       leading: uids.isEmpty
           ? const Icon(FluentIcons.user_warning)
           : const Icon(FluentIcons.group),
-      header: uids.isEmpty ? const Text('未登录') : Text('用户信息-当前登录：$uid'),
+      header: user?.brief?.username.isNotEmpty ?? false
+          ? Text('${user?.brief?.username}（${user?.uid}）')
+          : Text(user?.uid ?? '未登录'),
       content: Column(
         children: <Widget>[
           for (final UserBBSModel user in users)
             ListTile.selectable(
-              leading: const Icon(FluentIcons.user_sync),
-              title: Text(user.brief?.username ?? '未知用户'),
-              subtitle: Text(user.uid),
+              leading: user.brief?.avatar != null
+                  ? SizedBox(
+                      width: 32.sp,
+                      height: 32.sp,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(16.sp),
+                        child: CachedNetworkImage(
+                          imageUrl: user.brief!.avatar,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    )
+                  : const Icon(FluentIcons.user_sync),
+              title: Text(user.brief?.username.isNotEmpty ?? false
+                  ? '${user.brief?.username}（${user.uid}）'
+                  : user.uid),
+              subtitle: Text(user.brief?.sign ?? '暂无签名'),
               trailing: buildUserTrailing(user),
               selected: user.uid == uid,
             ),
@@ -169,15 +214,15 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
             onPressed: () async {
               await addUserByCookie();
             },
-            trailing: Tooltip(
-              message: '短信验证码登录',
-              child: IconButton(
-                icon: const Icon(FluentIcons.comment_active),
-                onPressed: () {
-                  // ref.read(uerBbsStoreProvider).addUserByCookie(input);
-                },
-              ),
-            ),
+            trailing: kDebugMode
+                ? Tooltip(
+                    message: '短信验证码登录',
+                    child: IconButton(
+                      icon: const Icon(FluentIcons.comment_active),
+                      onPressed: () {},
+                    ),
+                  )
+                : null,
           )
         ],
       ),

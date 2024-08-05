@@ -13,7 +13,7 @@ part 'user_bbs_model.g.dart';
 class UserBBSModel {
   /// 自增ID
   @JsonKey(name: 'id')
-  final int? id;
+  late int? id;
 
   /// 用户ID
   @JsonKey(name: 'uid')
@@ -56,7 +56,7 @@ class UserBBSModel {
       uid: json['uid'],
       cookie: UserBBSModelCookie.fromJson(cookie),
       phone: json['phone'],
-      brief: UserBBSModelBrief.fromJson(brief),
+      brief: brief == null ? null : UserBBSModelBrief.fromJson(brief),
       updatedAt: json['updated_at'],
     );
   }

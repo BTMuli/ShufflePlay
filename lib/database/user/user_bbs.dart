@@ -82,6 +82,7 @@ class SpsUserBbs {
         user.toSqlJson(),
       );
     } else {
+      user.id = result.first['id'] as int?;
       await _instance.sqlite.db.update(
         _instance._tableName,
         user.toSqlJson(),
