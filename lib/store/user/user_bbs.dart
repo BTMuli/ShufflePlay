@@ -9,7 +9,7 @@ import '../../models/database/user/user_bbs_model.dart';
 import '../../models/database/user/user_nap_model.dart';
 
 /// 用户信息状态提供者
-final uerBbsStoreProvider = ChangeNotifierProvider<SpUserBbsStore>((ref) {
+final userBbsStoreProvider = ChangeNotifierProvider<SpUserBbsStore>((ref) {
   return SpUserBbsStore();
 });
 

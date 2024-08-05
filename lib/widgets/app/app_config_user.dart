@@ -31,16 +31,16 @@ class AppConfigUserWidget extends ConsumerStatefulWidget {
 
 class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
   /// uid
-  List<String> get uids => ref.watch(uerBbsStoreProvider).uids;
+  List<String> get uids => ref.watch(userBbsStoreProvider).uids;
 
   /// 当前用户uid
-  String? get uid => ref.watch(uerBbsStoreProvider).uid;
+  String? get uid => ref.watch(userBbsStoreProvider).uid;
 
   /// 当前用户
-  UserBBSModel? get user => ref.watch(uerBbsStoreProvider).user;
+  UserBBSModel? get user => ref.watch(userBbsStoreProvider).user;
 
   /// 所有用户
-  List<UserBBSModel> get users => ref.watch(uerBbsStoreProvider).users;
+  List<UserBBSModel> get users => ref.watch(userBbsStoreProvider).users;
 
   /// nap数据库
   final sqliteNap = SpsUserNap();
@@ -96,7 +96,7 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
     cookie = await refreshCookie(cookie);
     UserBBSModelBrief? brief = await getUserBrief(cookie);
     var user = UserBBSModel(uid: cookie.stuid, cookie: cookie, brief: brief);
-    await ref.read(uerBbsStoreProvider).addUser(user);
+    await ref.read(userBbsStoreProvider).addUser(user);
   }
 
   /// 刷新用户cookie
@@ -171,7 +171,7 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
     cookie = await refreshCookie(cookie);
     UserBBSModelBrief? brief = await getUserBrief(cookie);
     var newUser = UserBBSModel(uid: user.uid, cookie: cookie, brief: brief);
-    await ref.read(uerBbsStoreProvider).updateUser(newUser);
+    await ref.read(userBbsStoreProvider).updateUser(newUser);
     await refreshGameAccounts(newUser);
   }
 
@@ -203,7 +203,7 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
               '确认删除用户？',
             );
             if (check == null || !check) return;
-            await ref.read(uerBbsStoreProvider).deleteUser(user.uid);
+            await ref.read(userBbsStoreProvider).deleteUser(user.uid);
           },
         ),
       ],
