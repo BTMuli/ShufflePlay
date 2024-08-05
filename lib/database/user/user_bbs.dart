@@ -5,6 +5,7 @@ import 'package:jiffy/jiffy.dart';
 import '../../models/database/user/user_bbs_model.dart';
 import '../../tools/log_tool.dart';
 import '../sp_sqlite.dart';
+import 'user_nap.dart';
 
 /// 用户数据表
 class SpsUserBbs {
@@ -15,6 +16,8 @@ class SpsUserBbs {
   factory SpsUserBbs() => _instance;
 
   final SPSqlite sqlite = SPSqlite();
+
+  final SpsUserNap sqliteNap = SpsUserNap();
 
   final String _tableName = 'UserBBS';
 
@@ -100,5 +103,6 @@ class SpsUserBbs {
       where: 'uid = ?',
       whereArgs: [uid],
     );
+    await _instance.sqliteNap.deleteUser(uid);
   }
 }

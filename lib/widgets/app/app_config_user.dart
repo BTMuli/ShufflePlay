@@ -8,11 +8,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 // Project imports:
+import '../../database/user/user_nap.dart';
 import '../../models/bbs/info/bbs_info_user_model.dart';
 import '../../models/bbs/token/bbs_token_model.dart';
 import '../../models/database/user/user_bbs_model.dart';
+import '../../models/database/user/user_nap_model.dart';
+import '../../models/nap/account/nap_account_model.dart';
 import '../../request/bbs/bbs_api_info.dart';
 import '../../request/bbs/bbs_api_token.dart';
+import '../../request/nap/nap_api_account.dart';
 import '../../store/user/user_bbs.dart';
 import '../../ui/sp_dialog.dart';
 import '../../ui/sp_infobar.dart';
@@ -37,6 +41,9 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
 
   /// 所有用户
   List<UserBBSModel> get users => ref.watch(uerBbsStoreProvider).users;
+
+  /// nap数据库
+  final sqliteNap = SpsUserNap();
 
   @override
   void initState() {
@@ -126,6 +133,34 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
     return cookie;
   }
 
+  /// 刷新用户账户信息
+  Future<void> refreshGameAccounts(UserBBSModel user) async {
+    var api = SprNapApiAccount();
+    var resp = await api.getGameAccounts(user.cookie!);
+    if (resp.retcode != 0 || resp is! NapAccountModelResp) {
+      if (mounted) {
+        await SpInfobar.warn(context, '获取用户账户信息失败：${resp.message}');
+      }
+      return;
+    }
+    var data = resp.data as NapAccountModelData;
+    var accounts = data.list;
+    for (var account in accounts) {
+      var userNap = UserNapModel(
+        uid: user.uid,
+        gameBiz: account.gameBiz,
+        gameUid: account.gameUid,
+        isChosen: account.isChosen,
+        isOfficial: account.isOfficial,
+        level: account.level,
+        nickname: account.nickname,
+        region: account.region,
+        regionName: account.regionName,
+      );
+      await sqliteNap.insertUser(userNap);
+    }
+  }
+
   /// 刷新用户信息
   Future<void> refreshUser(UserBBSModel user) async {
     var cookie = user.cookie;
@@ -137,6 +172,7 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
     UserBBSModelBrief? brief = await getUserBrief(cookie);
     var newUser = UserBBSModel(uid: user.uid, cookie: cookie, brief: brief);
     await ref.read(uerBbsStoreProvider).updateUser(newUser);
+    await refreshGameAccounts(newUser);
   }
 
   /// 构建用户尾部

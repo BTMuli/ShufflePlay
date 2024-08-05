@@ -4,7 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // Project imports:
 import '../../database/user/user_bbs.dart';
+import '../../database/user/user_nap.dart';
 import '../../models/database/user/user_bbs_model.dart';
+import '../../models/database/user/user_nap_model.dart';
 
 /// 用户信息状态提供者
 final uerBbsStoreProvider = ChangeNotifierProvider<SpUserBbsStore>((ref) {
@@ -15,6 +17,9 @@ final uerBbsStoreProvider = ChangeNotifierProvider<SpUserBbsStore>((ref) {
 class SpUserBbsStore extends ChangeNotifier {
   /// 用户信息数据库
   final SpsUserBbs sqlite = SpsUserBbs();
+
+  /// 用户游戏账号数据库
+  final SpsUserNap sqliteNap = SpsUserNap();
 
   /// uid列表
   List<String> _uids = [];
@@ -28,6 +33,12 @@ class SpUserBbsStore extends ChangeNotifier {
   /// 所有用户
   List<UserBBSModel> _users = [];
 
+  /// 当前用户的账户
+  UserNapModel? _account;
+
+  /// 当前用户的账户列表
+  List<UserNapModel> _accounts = [];
+
   /// 获取uid列表
   List<String> get uids => _uids;
 
@@ -40,9 +51,16 @@ class SpUserBbsStore extends ChangeNotifier {
   /// 获取所有用户
   List<UserBBSModel> get users => _users;
 
+  /// 当前用户对应的账户
+  UserNapModel? get account => _account;
+
+  /// 当前用户对应的账户列表
+  List<UserNapModel> get accounts => _accounts;
+
   /// 构造函数
   SpUserBbsStore() {
     initUser();
+    initAccount();
   }
 
   /// 初始化用户信息
@@ -56,10 +74,25 @@ class SpUserBbsStore extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// 初始化用户账户
+  Future<void> initAccount() async {
+    if (_uid != null) {
+      _accounts = await sqliteNap.readUser(_uid!);
+      if (_accounts.isNotEmpty) {
+        _account = _accounts.first;
+      }
+    }
+    notifyListeners();
+  }
+
   /// 切换用户
   Future<void> switchUser(String uid) async {
     _uid = uid;
     _user = await sqlite.readUser(_uid!);
+    _accounts = await sqliteNap.readUser(_uid!);
+    if (_accounts.isNotEmpty) {
+      _account = _accounts.first;
+    }
     notifyListeners();
   }
 
@@ -71,9 +104,15 @@ class SpUserBbsStore extends ChangeNotifier {
     if (_uids.isNotEmpty) {
       _uid = _uids.first;
       _user = _users.first;
+      _accounts = await sqliteNap.readUser(_uid!);
+      if (_accounts.isNotEmpty) {
+        _account = _accounts.first;
+      }
     } else {
       _uid = null;
       _user = null;
+      _account = null;
+      _accounts = [];
     }
     notifyListeners();
   }
@@ -85,6 +124,10 @@ class SpUserBbsStore extends ChangeNotifier {
     _users.add(user);
     _uid = user.uid;
     _user = user;
+    _accounts = await sqliteNap.readUser(_uid!);
+    if (_accounts.isNotEmpty) {
+      _account = _accounts.first;
+    }
     notifyListeners();
   }
 
@@ -95,6 +138,10 @@ class SpUserBbsStore extends ChangeNotifier {
     var index = _users.indexOf(userFind);
     _users[index] = user;
     _user = user;
+    _accounts = await sqliteNap.readUser(_uid!);
+    if (_accounts.isNotEmpty) {
+      _account = _accounts.first;
+    }
     notifyListeners();
   }
 }
