@@ -60,7 +60,6 @@ class SpUserBbsStore extends ChangeNotifier {
   /// 构造函数
   SpUserBbsStore() {
     initUser();
-    initAccount();
   }
 
   /// 初始化用户信息
@@ -72,10 +71,6 @@ class SpUserBbsStore extends ChangeNotifier {
       _user = _users.first;
     }
     notifyListeners();
-  }
-
-  /// 初始化用户账户
-  Future<void> initAccount() async {
     if (_uid != null) {
       _accounts = await sqliteNap.readUser(_uid!);
       if (_accounts.isNotEmpty) {
@@ -101,6 +96,7 @@ class SpUserBbsStore extends ChangeNotifier {
     await sqlite.deleteUser(uid);
     _uids.remove(uid);
     _users.removeWhere((element) => element.uid == uid);
+    notifyListeners();
     if (_uids.isNotEmpty) {
       _uid = _uids.first;
       _user = _users.first;

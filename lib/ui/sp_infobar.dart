@@ -1,6 +1,9 @@
 // Package imports:
 import 'package:fluent_ui/fluent_ui.dart';
 
+// Project imports:
+import '../models/bbs/bbs_base_model.dart';
+
 /// 对SnackBar的封装
 class SpInfobar {
   SpInfobar._();
@@ -20,6 +23,17 @@ class SpInfobar {
     return await displayInfoBar(context, builder: (context, close) {
       return InfoBar(title: Text(text), severity: severity);
     });
+  }
+
+  /// bbs
+  static Future<void> bbs(
+    BuildContext context,
+    BBSResp resp,
+  ) async {
+    var severity = InfoBarSeverity.success;
+    if (resp.retcode != 0) severity = InfoBarSeverity.error;
+    var str = '[${resp.retcode}] ${resp.message}';
+    return await show(context, str, severity);
   }
 
   /// info

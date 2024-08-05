@@ -39,9 +39,11 @@ class SprNapApiGacha {
       "authkey": authKey,
       "authkey_ver": "1",
       "sign_type": "2",
-      "gacha_type": gachaType.value,
+      "real_gacha_type": gachaType.value,
       "size": "20",
       "end_id": endId?.toString() ?? "",
+      "region": account.region,
+      "game_biz": account.gameBiz,
     };
     try {
       var resp = await client.dio.get(
