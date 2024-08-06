@@ -1,16 +1,16 @@
-# shuffle_play
+---
+Author: 目棃
+Description: 说明文档
+Date: 2024-08-06
+Update: 2024-08-06
+---
 
-One more zzz tool.
+> 本文档 [`Frontmatter`](https://github.com/BTMuli/MuCli#Frontmatter) 由 [MuCli](https://github.com/BTMuli/Mucli) 自动生成于 `2024-08-06 12:15:33`
+>
+> 更新于 `2024-08-06 12:15:33`
 
-## Getting Started
+# ShufflePlay
 
-This project is a starting point for a Flutter application.
+One more ZZZ tools.
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Work in progress...
