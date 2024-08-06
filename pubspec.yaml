@@ -93,6 +93,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/fonts/
+    - assets/images/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
@@ -123,7 +124,7 @@ msix_config:
   store: false
   protocol_activation: ShufflePlay
   display_name: ShufflePlay
-  #  logo_path: assets/images/logo.png
+  logo_path: assets/images/ShufflePlay.png
   install_certificate: false
   certificate_path: BTMuli.pfx
   publisher: CN=目棃, C=CN, E=bt-muli@outlook.com
