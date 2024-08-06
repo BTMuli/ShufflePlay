@@ -1,0 +1,67 @@
+name: Build Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build:
+    name: Build Windows
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    steps:
+
+      - name: 签出仓库
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: master
+
+      - name: 初始化 Flutter 环境
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          architecture: x64
+
+      - name: 检查环境
+        run: flutter doctor
+
+      - name: 拉取依赖
+        run: flutter pub get
+
+      - name: 打包并压缩
+        run: |
+          flutter build windows
+          Compress-Archive -Path ./build/windows/x64/runner/Release/* -DestinationPath ShufflePlay.zip
+
+      - name: 打包msix
+        run: dart run msix:create -p ${{ secrets.SIGN_SECRET }}
+
+      - name: 打包msix-Store
+        run: > 
+          dart run msix:create 
+          --store true 
+          -i "27581BTMuli.25716F7F62159"
+          -b "CN=5FE33156-C3CE-4E71-A036-81BAA99521CB" 
+          -n "ShufflePlay(Store)" 
+          -p ${{ secrets.SIGN_SECRET }}
+
+      - name: 上传文件
+        uses: actions/upload-artifact@v4
+        with:
+          name: output
+          path: |
+            ShufflePlay.zip
+            ShufflePlay.msix
+            ShufflePlay(Store).msix
+
+      - name: 发行Release
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          draft: true
+          files: |
+            ShufflePlay.zip
+            ShufflePlay.msix
+            ShufflePlay(Store).msix

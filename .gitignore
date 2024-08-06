@@ -46,3 +46,4 @@ app.*.map.json
 .env
 nuget.exe
 ShufflePlay.msix
+ShufflePlay(Store).msix
