@@ -21,11 +21,11 @@ String toUtcTime(
 }
 
 /// 将UTC时间字符串[time]转换成指定时区[timezone]的时间
-/// 目标格式默认为`YYYY-MM-DD HH:mm:ss`，如果指定了[pattern]则使用指定的格式
+/// 目标格式默认为`yyyy-MM-dd HH:mm:ss`，如果指定了[pattern]则使用指定的格式
 String fromUtcTime(
   int timezone,
   String time, {
-  String pattern = 'YYYY-MM-DD HH:mm:ss',
+  String pattern = 'yyyy-MM-dd HH:mm:ss',
   String? format,
 }) {
   var parseTimeStamp = Jiffy.parse(

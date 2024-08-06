@@ -154,21 +154,38 @@ class _UserGachaPageState extends State<UserGachaPage> {
     );
   }
 
+  /// 构建头部
+  Widget buildHeader() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 10.h),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SizedBox(width: 10.w),
+          const Icon(FluentIcons.auto_enhance_on),
+          SizedBox(width: 10.w),
+          Text('调频记录', style: TextStyle(fontSize: 20.sp)),
+          SizedBox(width: 10.w),
+          buildUidSelector(context),
+          const Spacer(),
+          buildTopBar(context),
+          SizedBox(width: 10.w),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ScaffoldPage(
-      header: PageHeader(
-        title: const Text('调频记录', style: TextStyle(fontFamily: 'SarasaGothic')),
-        commandBar: buildTopBar(context),
-      ),
+      header: buildHeader(),
       content: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            buildUidSelector(context),
-            SizedBox(height: 10.h),
             Expanded(child: UserGachaViewWidget(selectedUid: curUid)),
           ],
         ),

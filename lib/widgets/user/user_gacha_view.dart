@@ -5,6 +5,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import '../../database/user/user_gacha.dart';
 import '../../models/database/user/user_gacha_model.dart';
 import '../../models/plugins/UIGF/uigf_enum.dart';
+import '../../utils/trans_time.dart';
 
 class UserGachaViewWidget extends StatefulWidget {
   /// 选中的uid
@@ -59,6 +60,7 @@ class _UserGachaViewWidgetState extends State<UserGachaViewWidget> {
         child: Text('暂无数据'),
       );
     }
+    var timezone = DateTime.now().timeZoneOffset.inHours;
     return SingleChildScrollView(
       child: ListView.builder(
         shrinkWrap: true,
@@ -69,7 +71,7 @@ class _UserGachaViewWidgetState extends State<UserGachaViewWidget> {
             title: Text(item.name != null
                 ? '${item.name}(${item.itemId})'
                 : item.itemId),
-            subtitle: Text(item.time),
+            subtitle: Text(fromUtcTime(timezone, item.time).toString()),
             trailing: Text(item.gachaType.label),
           );
         },

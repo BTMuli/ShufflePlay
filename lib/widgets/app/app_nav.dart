@@ -2,6 +2,7 @@
 import 'package:flutter/foundation.dart';
 
 // Package imports:
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:window_manager/window_manager.dart';
@@ -11,6 +12,7 @@ import '../../pages/main/app_config.dart';
 import '../../pages/main/app_dev.dart';
 import '../../pages/user/user_gacha.dart';
 import '../../store/app/app_config.dart';
+import '../../store/user/user_bbs.dart';
 import '../../ui/sp_infobar.dart';
 import '../../utils/get_app_theme.dart';
 
@@ -30,7 +32,9 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget>
   ThemeMode get curThemeMode => ref.watch(appConfigStoreProvider).themeMode;
 
   /// flyout
-  final FlyoutController flyout = FlyoutController();
+  final FlyoutController flyoutTool = FlyoutController();
+
+  final FlyoutController flyoutUser = FlyoutController();
 
   /// 测试的时候置为false
   @override
@@ -40,7 +44,8 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget>
   /// dispose
   @override
   void dispose() {
-    flyout.dispose();
+    flyoutTool.dispose();
+    flyoutUser.dispose();
     super.dispose();
   }
 
@@ -63,7 +68,7 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget>
 
   /// 展示设置flyout
   void showOptionsFlyout() {
-    flyout.showFlyout(
+    flyoutTool.showFlyout(
       barrierDismissible: true,
       dismissOnPointerMoveAway: false,
       dismissWithEsc: true,
@@ -114,12 +119,76 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget>
     );
   }
 
+  /// 构建用户项
+  PaneItemAction buildUserPaneItem() {
+    var user = ref.watch(userBbsStoreProvider).user;
+    if (user == null) {
+      return PaneItemAction(
+        icon: const Icon(FluentIcons.reminder_person),
+        title: const Text('未登录'),
+        onTap: () async {
+          if (mounted) await SpInfobar.warn(context, '请先登录');
+        },
+      );
+    }
+    return PaneItemAction(
+      icon: FlyoutTarget(
+        controller: flyoutUser,
+        child: user.brief?.avatar != null
+            ? ClipRRect(
+                borderRadius: BorderRadius.circular(50),
+                child: CachedNetworkImage(
+                  imageUrl: user.brief!.avatar,
+                  width: 18,
+                  height: 18,
+                  fit: BoxFit.cover,
+                ),
+              )
+            : const Icon(FluentIcons.user_sync),
+      ),
+      title: Text(user.brief?.username ?? user.uid),
+      onTap: () {
+        var accounts = ref.read(userBbsStoreProvider).accounts;
+        var curAccount = ref.read(userBbsStoreProvider).account;
+        flyoutUser.showFlyout(
+          placementMode: FlyoutPlacementMode.bottomLeft,
+          builder: (context) => MenuFlyout(
+            items: [
+              for (var account in accounts)
+                MenuFlyoutItem(
+                  selected: account.uid == curAccount?.uid,
+                  text: Text('${account.nickname}-${account.gameUid} '
+                      '${account.regionName}'),
+                  trailing: account.uid == curAccount?.uid
+                      ? const Icon(FluentIcons.check_mark)
+                      : null,
+                  onPressed: () async {
+                    if (account.uid != curAccount?.uid) {
+                      ref.read(userBbsStoreProvider).setAccount(account);
+                      if (mounted) {
+                        await SpInfobar.success(context, '切换账户成功');
+                      }
+                      return;
+                    }
+                    if (mounted) {
+                      await SpInfobar.warn(context, '已经是当前账户');
+                    }
+                  },
+                ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   /// 获取底部导航
   List<PaneItem> getFooterItems() {
     return [
+      buildUserPaneItem(),
       PaneItemAction(
         icon: FlyoutTarget(
-          controller: flyout,
+          controller: flyoutTool,
           child: const Icon(FluentIcons.graph_symbol),
         ),
         title: const Text('更多设置'),

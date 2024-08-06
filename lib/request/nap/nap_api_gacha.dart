@@ -32,6 +32,7 @@ class SprNapApiGacha {
     String authKey, {
     UigfNapPoolType gachaType = UigfNapPoolType.normal,
     int? endId,
+    int page = 1,
   }) async {
     var params = {
       "lang": "zh-cn",
@@ -44,6 +45,7 @@ class SprNapApiGacha {
       "end_id": endId?.toString() ?? "",
       "region": account.region,
       "game_biz": account.gameBiz,
+      "page": page.toString(),
     };
     try {
       var resp = await client.dio.get(

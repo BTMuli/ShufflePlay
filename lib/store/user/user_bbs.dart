@@ -140,4 +140,9 @@ class SpUserBbsStore extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  void setAccount(UserNapModel account) {
+    _account = account;
+    notifyListeners();
+  }
 }
