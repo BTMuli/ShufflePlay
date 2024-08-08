@@ -2,16 +2,19 @@
 import 'dart:convert';
 
 // Package imports:
-import 'package:file_selector/file_selector.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:json_schema/json_schema.dart';
+import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
 
 // Project imports:
 import '../../database/nap/nap_item_map.dart';
 import '../../database/user/user_gacha.dart';
 import '../../models/plugins/UIGF/uigf_model.dart';
 import '../../request/plugins/hakushi_client.dart';
+import '../../tools/file_tool.dart';
+import '../../ui/sp_dialog.dart';
 import '../../ui/sp_infobar.dart';
 import '../../widgets/user/user_gacha_view.dart';
 
@@ -41,6 +44,9 @@ class _UserGachaPageState extends State<UserGachaPage> {
   /// 用户祈愿数据库
   final sqliteUser = SpsUserGacha();
 
+  /// 文件工具
+  final fileTool = SPFileTool();
+
   @override
   void initState() {
     super.initState();
@@ -62,13 +68,17 @@ class _UserGachaPageState extends State<UserGachaPage> {
   }
 
   Future<void> importUigf4Json(BuildContext context) async {
-    const XTypeGroup fileType = XTypeGroup(label: 'json', extensions: ['json']);
-    XFile? file = await openFile(acceptedTypeGroups: <XTypeGroup>[fileType]);
-    if (file == null) {
+    var filePath = await fileTool.selectFile(context: context);
+    if (filePath == null) {
       if (context.mounted) await SpInfobar.warn(context, '未选择文件');
       return;
     }
-    var fileJson = jsonDecode(await file.readAsString());
+    var file = await fileTool.readFile(filePath);
+    if (file == null) {
+      if (context.mounted) await SpInfobar.error(context, '文件读取失败');
+      return;
+    }
+    var fileJson = jsonDecode(file);
     var result = schema.validate(fileJson);
     if (!result.isValid) {
       var error = result.errors.first;
@@ -77,15 +87,35 @@ class _UserGachaPageState extends State<UserGachaPage> {
       }
       return;
     }
-    if (context.mounted) {
-      await SpInfobar.success(context, 'JSON文件验证通过，即将导入');
-    }
     var data = UigfModelFull.fromJson(fileJson);
     await sqliteUser.importUigf(data);
     await refreshData();
+    if (context.mounted) {
+      await SpInfobar.success(context, '导入成功');
+    }
   }
 
-  Future<void> exportUigf4Json(BuildContext context) async {}
+  Future<void> exportUigf4Json(BuildContext context) async {
+    var check = await SpDialog.confirm(context, '是否导出当前UID数据？', 'UID: $curUid');
+    if (check == null || !check) return;
+    var data = await sqliteUser.exportUigf(uids: [curUid!]);
+    var downloadPath = await getDownloadsDirectory();
+    if (!context.mounted || downloadPath == null) {
+      if (context.mounted) await SpInfobar.error(context, '导出失败');
+      return;
+    }
+    var dirPath = await fileTool.selectDir(context: context);
+    if (dirPath == null) {
+      if (context.mounted) await SpInfobar.warn(context, '未选择目录');
+      return;
+    }
+    var fileName = 'uigf_${DateTime.now().millisecondsSinceEpoch}.json';
+    var filePath = path.join(dirPath, fileName);
+    await fileTool.writeFile(filePath, jsonEncode(data));
+    if (context.mounted) {
+      await SpInfobar.success(context, '导出成功');
+    }
+  }
 
   Widget buildTopBar(BuildContext context) {
     return Row(

@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 // Package imports:
+import 'package:file_selector/file_selector.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
@@ -43,6 +44,29 @@ class SPFileTool {
     return File(path).create(recursive: true);
   }
 
+  /// 选择文件
+  Future<String?> selectFile({
+    required BuildContext context,
+    String? initialDirectory,
+    String? confirmButtonText,
+    String label = 'json',
+    String extension = 'json',
+  }) async {
+    XTypeGroup fileType = XTypeGroup(
+      label: label,
+      extensions: [extension],
+    );
+    XFile? file = await openFile(
+      acceptedTypeGroups: [fileType],
+      initialDirectory: initialDirectory,
+      confirmButtonText: confirmButtonText,
+    );
+    if (file == null) {
+      return null;
+    }
+    return file.path;
+  }
+
   /// 读取文件
   Future<String?> readFile(String path) async {
     if (await _instance.isFileExist(path)) {
@@ -65,6 +89,18 @@ class SPFileTool {
   /// 创建目录
   Future<Directory> createDir(String defaultPath) {
     return Directory(defaultPath).create(recursive: true);
+  }
+
+  /// 选择目录
+  Future<String?> selectDir({
+    required BuildContext context,
+    String? initialDirectory,
+    String? confirmButtonText,
+  }) async {
+    return getDirectoryPath(
+      initialDirectory: initialDirectory,
+      confirmButtonText: confirmButtonText,
+    );
   }
 
   /// 获取目录下的文件名（不包括子目录）

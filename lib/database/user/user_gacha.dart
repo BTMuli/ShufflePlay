@@ -96,6 +96,7 @@ class SpsUserGacha {
       uid: uid,
       timezone: timezone,
       list: napList,
+      lang: UigfLanguage.zhHans,
     );
   }
 
@@ -141,7 +142,7 @@ class SpsUserGacha {
     var packageInfo = await PackageInfo.fromPlatform();
     return UigfModelInfo(
       timestamp: DateTime.now().millisecondsSinceEpoch ~/ 1000,
-      app: packageInfo.appName,
+      app: "ShufflePlay",
       appVersion: packageInfo.version,
       version: uigfVersion,
     );
