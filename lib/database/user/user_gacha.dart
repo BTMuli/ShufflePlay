@@ -4,6 +4,7 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 // Project imports:
 import '../../models/database/user/user_gacha_model.dart';
+import '../../models/nap/gacha/nap_gacha_model.dart';
 import '../../models/plugins/UIGF/uigf_enum.dart';
 import '../../models/plugins/UIGF/uigf_model.dart';
 import '../../utils/trans_time.dart';
@@ -162,5 +163,33 @@ class SpsUserGacha {
       uigfData.nap.add(userGacha);
     }
     return uigfData;
+  }
+
+  /// 导入祈愿记录-单项
+  Future<void> importGacha(UserGachaModel item, {bool check = false}) async {
+    if (check) await _instance.preCheck();
+    await _instance.sqlite.db.insert(
+      _instance._tableName,
+      item.toSqlJson(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<void> importNapGacha(String gameUid, List<NapGachaModel> list) async {
+    for (var item in list) {
+      var userGacha = UserGachaModel(
+        uid: gameUid,
+        gachaId: item.gachaId,
+        gachaType: item.gachaType,
+        itemId: item.itemId,
+        count: item.count,
+        time: item.time,
+        name: item.name,
+        itemType: item.itemType,
+        rankType: item.rankType,
+        id: item.id,
+      );
+      await importGacha(userGacha);
+    }
   }
 }

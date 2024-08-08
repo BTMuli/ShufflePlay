@@ -31,7 +31,7 @@ class SprNapApiGacha {
     UserBBSModelCookie ck,
     String authKey, {
     UigfNapPoolType gachaType = UigfNapPoolType.normal,
-    int? endId,
+    String? endId,
     int page = 1,
   }) async {
     var params = {

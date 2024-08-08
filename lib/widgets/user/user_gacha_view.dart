@@ -9,9 +9,9 @@ import '../../utils/trans_time.dart';
 
 class UserGachaViewWidget extends StatefulWidget {
   /// 选中的uid
-  final String? selectedUid;
+  final String selectedUid;
 
-  const UserGachaViewWidget({super.key, this.selectedUid});
+  const UserGachaViewWidget({super.key, required this.selectedUid});
 
   @override
   State<UserGachaViewWidget> createState() => _UserGachaViewWidgetState();
@@ -30,9 +30,7 @@ class _UserGachaViewWidgetState extends State<UserGachaViewWidget> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.selectedUid != widget.selectedUid) {
       Future.microtask(() async {
-        if (widget.selectedUid != null) {
-          gachaList = await sqlite.readUser(widget.selectedUid!);
-        }
+        gachaList = await sqlite.readUser(widget.selectedUid);
         if (mounted) {
           setState(() {});
         }
@@ -44,9 +42,7 @@ class _UserGachaViewWidgetState extends State<UserGachaViewWidget> {
   void initState() {
     super.initState();
     Future.microtask(() async {
-      if (widget.selectedUid != null) {
-        gachaList = await sqlite.readUser(widget.selectedUid!);
-      }
+      gachaList = await sqlite.readUser(widget.selectedUid);
       if (mounted) {
         setState(() {});
       }

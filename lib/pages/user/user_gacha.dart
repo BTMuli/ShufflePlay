@@ -3,6 +3,7 @@ import 'dart:convert';
 
 // Package imports:
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:json_schema/json_schema.dart';
 import 'package:path/path.dart' as path;
@@ -11,21 +12,29 @@ import 'package:path_provider/path_provider.dart';
 // Project imports:
 import '../../database/nap/nap_item_map.dart';
 import '../../database/user/user_gacha.dart';
+import '../../models/database/user/user_bbs_model.dart';
+import '../../models/database/user/user_nap_model.dart';
+import '../../models/nap/gacha/nap_gacha_model.dart';
+import '../../models/nap/token/nap_authkey_model.dart';
+import '../../models/plugins/UIGF/uigf_enum.dart';
 import '../../models/plugins/UIGF/uigf_model.dart';
+import '../../request/nap/nap_api_account.dart';
+import '../../request/nap/nap_api_gacha.dart';
 import '../../request/plugins/hakushi_client.dart';
+import '../../store/user/user_bbs.dart';
 import '../../tools/file_tool.dart';
 import '../../ui/sp_dialog.dart';
 import '../../ui/sp_infobar.dart';
 import '../../widgets/user/user_gacha_view.dart';
 
-class UserGachaPage extends StatefulWidget {
+class UserGachaPage extends ConsumerStatefulWidget {
   const UserGachaPage({super.key});
 
   @override
-  State<UserGachaPage> createState() => _UserGachaPageState();
+  ConsumerState<UserGachaPage> createState() => _UserGachaPageState();
 }
 
-class _UserGachaPageState extends State<UserGachaPage> {
+class _UserGachaPageState extends ConsumerState<UserGachaPage> {
   /// UIGFv4 JSON Schema
   late JsonSchema schema;
 
@@ -61,6 +70,8 @@ class _UserGachaPageState extends State<UserGachaPage> {
     uidList = await sqliteUser.getAllUid();
     if (uidList.isNotEmpty) {
       curUid = uidList.first;
+    } else {
+      curUid = null;
     }
     if (mounted) {
       setState(() {});
@@ -117,6 +128,58 @@ class _UserGachaPageState extends State<UserGachaPage> {
     }
   }
 
+  Future<void> refreshUserGacha(
+    BuildContext context,
+    UserBBSModel user,
+    UserNapModel account,
+  ) async {
+    var apiGacha = SprNapApiGacha();
+    var apiToken = SprNapApiAccount();
+    var authKeyResp = await apiToken.genAuthKey(user.cookie!, account);
+    if (authKeyResp.retcode != 0) {
+      if (context.mounted) await SpInfobar.bbs(context, authKeyResp);
+      return;
+    }
+    var authKeyData = authKeyResp.data as NapAuthkeyModelData;
+    var authKey = authKeyData.authkey;
+    var poolTypeList = [
+      UigfNapPoolType.normal,
+      UigfNapPoolType.bond,
+      UigfNapPoolType.upC,
+      UigfNapPoolType.upW,
+    ];
+    for (var poolType in poolTypeList) {
+      var page = 1;
+      String? endId;
+      while (true) {
+        var gachaResp = await apiGacha.getGachaLogs(
+          account,
+          user.cookie!,
+          authKey,
+          gachaType: poolType,
+          page: page,
+          endId: endId,
+        );
+        if (gachaResp.retcode != 0) {
+          if (context.mounted) await SpInfobar.bbs(context, gachaResp);
+          return;
+        }
+        var gachaData = gachaResp.data as NapGachaModelData;
+        if (gachaData.list.isEmpty || gachaData.list.length < 20) {
+          break;
+        }
+        await sqliteUser.importNapGacha(account.gameUid, gachaData.list);
+        endId = gachaData.list.last.id;
+        page++;
+        await Future.delayed(const Duration(seconds: 1));
+      }
+    }
+    if (context.mounted) {
+      await SpInfobar.success(context, '刷新成功');
+    }
+    await refreshData();
+  }
+
   Widget buildTopBar(BuildContext context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -131,9 +194,60 @@ class _UserGachaPageState extends State<UserGachaPage> {
         SizedBox(width: 10.w),
         Button(
           onPressed: () async {
+            if (curUid == null) {
+              await SpInfobar.warn(context, '未选择UID');
+              return;
+            }
             await exportUigf4Json(context);
           },
           child: const Text('导出'),
+        ),
+        SizedBox(width: 10.w),
+        Button(
+          child: const Text('刷新'),
+          onPressed: () async {
+            var curUser = ref.read(userBbsStoreProvider).user;
+            if (curUser == null) {
+              if (context.mounted) {
+                await SpInfobar.warn(context, '未登录');
+              }
+              return;
+            }
+            var curAccount = ref.read(userBbsStoreProvider).account;
+            if (curAccount == null) {
+              if (context.mounted) {
+                await SpInfobar.warn(context, '未登录');
+              }
+              return;
+            }
+            var check = await SpDialog.confirm(
+              context,
+              '是否刷新用户调频数据？',
+              '${curAccount.nickname} '
+                  'UID: ${curAccount.gameUid} [${curAccount.regionName}]',
+            );
+            if (check == null || !check) return;
+            if (!context.mounted) return;
+            await refreshUserGacha(context, curUser, curAccount);
+          },
+        ),
+        SizedBox(width: 10.w),
+        Button(
+          child: const Text('删除'),
+          onPressed: () async {
+            if (curUid == null) {
+              await SpInfobar.warn(context, '未选择UID');
+              return;
+            }
+            var check =
+                await SpDialog.confirm(context, '是否删除当前UID数据？', 'UID: $curUid');
+            if (check == null || !check) return;
+            await sqliteUser.deleteUser(curUid!);
+            await refreshData();
+            if (context.mounted) {
+              await SpInfobar.success(context, '删除成功');
+            }
+          },
         ),
         SizedBox(width: 10.w),
         IconButton(
@@ -143,6 +257,9 @@ class _UserGachaPageState extends State<UserGachaPage> {
             await hakushiApi.freshCharacter();
             await hakushiApi.freshWeapon();
             await hakushiApi.freshBangboo();
+            if (context.mounted) {
+              await SpInfobar.success(context, '刷新成功');
+            }
           },
         ),
       ],
@@ -150,9 +267,7 @@ class _UserGachaPageState extends State<UserGachaPage> {
   }
 
   Widget buildUidSelector(BuildContext context) {
-    if (uidList.isEmpty) {
-      return const Text('暂无数据');
-    }
+    if (uidList.isEmpty) return const SizedBox();
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.start,
@@ -212,13 +327,15 @@ class _UserGachaPageState extends State<UserGachaPage> {
       header: buildHeader(),
       content: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Expanded(child: UserGachaViewWidget(selectedUid: curUid)),
-          ],
-        ),
+        child: curUid == null
+            ? const Center(child: Text('暂无数据'))
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(child: UserGachaViewWidget(selectedUid: curUid!)),
+                ],
+              ),
       ),
     );
   }
