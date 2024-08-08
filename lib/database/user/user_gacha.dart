@@ -176,6 +176,7 @@ class SpsUserGacha {
   }
 
   Future<void> importNapGacha(String gameUid, List<NapGachaModel> list) async {
+    var localTimezone = DateTime.now().timeZoneOffset.inHours;
     for (var item in list) {
       var userGacha = UserGachaModel(
         uid: gameUid,
@@ -183,7 +184,7 @@ class SpsUserGacha {
         gachaType: item.gachaType,
         itemId: item.itemId,
         count: item.count,
-        time: item.time,
+        time: toUtcTime(localTimezone, item.time),
         name: item.name,
         itemType: item.itemType,
         rankType: item.rankType,

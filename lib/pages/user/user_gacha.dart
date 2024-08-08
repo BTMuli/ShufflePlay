@@ -25,6 +25,7 @@ import '../../store/user/user_bbs.dart';
 import '../../tools/file_tool.dart';
 import '../../ui/sp_dialog.dart';
 import '../../ui/sp_infobar.dart';
+import '../../ui/sp_progress.dart';
 import '../../widgets/user/user_gacha_view.dart';
 
 class UserGachaPage extends ConsumerStatefulWidget {
@@ -55,6 +56,9 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage> {
 
   /// 文件工具
   final fileTool = SPFileTool();
+
+  /// 进度条
+  SpProgress progress = SpProgress();
 
   @override
   void initState() {
@@ -133,13 +137,24 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage> {
     UserBBSModel user,
     UserNapModel account,
   ) async {
+    if (context.mounted) {
+      progress = SpProgressWidget.show(
+        context,
+        title: '获取调频数据',
+        text: '请稍后...',
+        onTaskbar: true,
+      );
+    }
     var apiGacha = SprNapApiGacha();
     var apiToken = SprNapApiAccount();
+    progress.update(text: '正在获取AuthKey...');
     var authKeyResp = await apiToken.genAuthKey(user.cookie!, account);
     if (authKeyResp.retcode != 0) {
+      progress.end();
       if (context.mounted) await SpInfobar.bbs(context, authKeyResp);
       return;
     }
+    progress.update(text: '获取AuthKey成功，正在获取调频数据...');
     var authKeyData = authKeyResp.data as NapAuthkeyModelData;
     var authKey = authKeyData.authkey;
     var poolTypeList = [
@@ -149,6 +164,7 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage> {
       UigfNapPoolType.upW,
     ];
     for (var poolType in poolTypeList) {
+      progress.update(text: '开始获取${poolType.label}池数据...');
       var page = 1;
       String? endId;
       while (true) {
@@ -161,22 +177,24 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage> {
           endId: endId,
         );
         if (gachaResp.retcode != 0) {
+          progress.end();
           if (context.mounted) await SpInfobar.bbs(context, gachaResp);
           return;
         }
         var gachaData = gachaResp.data as NapGachaModelData;
+        progress.update(text: '正在导入${poolType.label}池数据，第$page页...');
+        await sqliteUser.importNapGacha(account.gameUid, gachaData.list);
         if (gachaData.list.isEmpty || gachaData.list.length < 20) {
+          progress.update(text: '获取${poolType.label}池数据完成');
           break;
         }
-        await sqliteUser.importNapGacha(account.gameUid, gachaData.list);
         endId = gachaData.list.last.id;
         page++;
         await Future.delayed(const Duration(seconds: 1));
       }
     }
-    if (context.mounted) {
-      await SpInfobar.success(context, '刷新成功');
-    }
+    progress.end();
+    if (context.mounted) await SpInfobar.success(context, '刷新成功');
     await refreshData();
   }
 
