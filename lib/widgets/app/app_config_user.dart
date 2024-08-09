@@ -174,10 +174,13 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
       return;
     }
     cookie = await refreshCookie(cookie);
+    if (mounted) await SpInfobar.success(context, '刷新cookie成功');
     UserBBSModelBrief? brief = await getUserBrief(cookie);
+    if (mounted) await SpInfobar.success(context, '刷新用户信息成功');
     var newUser = UserBBSModel(uid: user.uid, cookie: cookie, brief: brief);
     await ref.read(userBbsStoreProvider).updateUser(newUser);
     await refreshGameAccounts(newUser);
+    if (mounted) await SpInfobar.success(context, '刷新用户账户信息成功');
   }
 
   /// 构建用户尾部
