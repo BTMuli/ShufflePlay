@@ -19,8 +19,8 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 0.1.0+1
 
 environment:
-  sdk: '>=3.4.0 <4.0.0'
-  flutter: "3.22.3"
+  sdk: '>=3.5.0 <4.0.0'
+  flutter: "3.24.0"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -42,7 +42,7 @@ dependencies:
   dio: ^5.5.0+1
   encrypt: ^5.0.3
   file_selector: ^1.0.3
-  fluent_ui: ^4.9.0
+  fluent_ui: ^4.9.1
   flutter_acrylic: ^1.1.4
   flutter_riverpod: ^2.5.1
   flutter_screenutil: ^5.9.3
@@ -50,16 +50,20 @@ dependencies:
   json_annotation: ^4.9.0
   json_schema: ^5.2.0
   logger: ^2.4.0
+  msvcredist:
+    git:
+      url: https://github.com/insertjokehere/flutter_msvcredist.git
+      ref: main
   package_info_plus: ^8.0.1
   path: ^1.9.0
-  path_provider: ^2.1.3
+  path_provider: ^2.1.4
   provider: ^6.1.2
   sqflite_common_ffi: ^2.3.3
   system_theme: ^3.0.0
   url_launcher: ^6.3.0
   uuid: ^4.4.2
   webview_windows: ^0.4.0
-  window_manager: ^0.3.9
+  window_manager: ^0.4.0
   windows_taskbar: ^1.1.2
 
 dev_dependencies:
@@ -71,14 +75,17 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  build_runner: ^2.4.11
+  build_runner: ^2.4.12
   flutter_lints: ^4.0.0
   husky: ^0.1.7
   import_sorter: ^4.6.0
   json_serializable: ^6.8.0
   lint_staged: ^0.5.1
-  msix: ^3.16.7
-
+#  msix: ^3.16.7
+  msix:
+    git:
+      url: https://github.com/insertjokehere/msix.git
+      ref: msvc_redist
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
@@ -121,7 +128,6 @@ lint_staged:
 
 # msix
 msix_config:
-  store: false
   protocol_activation: ShufflePlay
   display_name: ShufflePlay
   logo_path: assets/images/ShufflePlay.png
