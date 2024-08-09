@@ -7,7 +7,7 @@ import '../../models/bbs/bbs_base_model.dart';
 import '../../models/database/user/user_bbs_model.dart';
 import '../../models/database/user/user_nap_model.dart';
 import '../../models/nap/gacha/nap_gacha_model.dart';
-import '../../models/plugins/UIGF/uigf_enum.dart';
+import '../../plugins/UIGF/models/uigf_enum.dart';
 import '../core/client.dart';
 
 class SprNapApiGacha {

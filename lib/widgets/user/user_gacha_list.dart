@@ -4,7 +4,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 // Project imports:
 import '../../database/user/user_gacha.dart';
 import '../../models/database/user/user_gacha_model.dart';
-import '../../models/plugins/UIGF/uigf_enum.dart';
+import '../../plugins/UIGF/models/uigf_enum.dart';
 import '../../utils/trans_time.dart';
 
 class UserGachaList extends StatefulWidget {

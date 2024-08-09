@@ -5,7 +5,6 @@ import 'dart:convert';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:json_schema/json_schema.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
@@ -16,11 +15,12 @@ import '../../models/database/user/user_bbs_model.dart';
 import '../../models/database/user/user_nap_model.dart';
 import '../../models/nap/gacha/nap_gacha_model.dart';
 import '../../models/nap/token/nap_authkey_model.dart';
-import '../../models/plugins/UIGF/uigf_enum.dart';
-import '../../models/plugins/UIGF/uigf_model.dart';
+import '../../plugins/Hakushi/hakushi_client.dart';
+import '../../plugins/UIGF/models/uigf_enum.dart';
+import '../../plugins/UIGF/models/uigf_model.dart';
+import '../../plugins/UIGF/uigf_tool.dart';
 import '../../request/nap/nap_api_account.dart';
 import '../../request/nap/nap_api_gacha.dart';
-import '../../request/plugins/hakushi_client.dart';
 import '../../store/user/user_bbs.dart';
 import '../../tools/file_tool.dart';
 import '../../ui/sp_dialog.dart';
@@ -36,9 +36,6 @@ class UserGachaPage extends ConsumerStatefulWidget {
 }
 
 class _UserGachaPageState extends ConsumerState<UserGachaPage> {
-  /// UIGFv4 JSON Schema
-  late JsonSchema schema;
-
   /// uid列表
   List<String> uidList = [];
 
@@ -57,15 +54,16 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage> {
   /// 文件工具
   final fileTool = SPFileTool();
 
+  /// Uigf工具
+  final SppUigfTool uigfTool = SppUigfTool();
+
   /// 进度条
-  SpProgress progress = SpProgress();
+  SpProgressController progress = SpProgressController();
 
   @override
   void initState() {
     super.initState();
-    const schemaFile = 'lib/source/schema/uigf-4.0-schema.json';
     Future.microtask(() async {
-      schema = await JsonSchema.createFromUrl(schemaFile);
       await refreshData();
     });
   }
@@ -77,9 +75,7 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage> {
     } else {
       curUid = null;
     }
-    if (mounted) {
-      setState(() {});
-    }
+    if (mounted) setState(() {});
   }
 
   Future<void> importUigf4Json(BuildContext context) async {
@@ -93,17 +89,33 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage> {
       if (context.mounted) await SpInfobar.error(context, '文件读取失败');
       return;
     }
-    var fileJson = jsonDecode(file);
-    var result = schema.validate(fileJson);
-    if (!result.isValid) {
-      var error = result.errors.first;
+    try {
+      jsonDecode(file);
+    } catch (e) {
       if (context.mounted) {
-        await SpInfobar.error(context, error.message);
+        await SpInfobar.error(context, '文件解析失败');
       }
       return;
     }
+    var fileJson = jsonDecode(file);
+    var result = await uigfTool.validate(fileJson);
+    if (!result.isValid) {
+      var error = result.errors.first;
+      if (context.mounted) {
+        await SpInfobar.error(context, '文件解析失败: ${error.message}');
+      }
+      return;
+    }
+    if (!context.mounted) return;
+    progress = SpProgress.show(
+      context,
+      title: '导入数据',
+      text: '请稍后...',
+      onTaskbar: true,
+    );
     var data = UigfModelFull.fromJson(fileJson);
     await sqliteUser.importUigf(data);
+    progress.end();
     await refreshData();
     if (context.mounted) {
       await SpInfobar.success(context, '导入成功');
@@ -138,7 +150,7 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage> {
     UserNapModel account,
   ) async {
     if (context.mounted) {
-      progress = SpProgressWidget.show(
+      progress = SpProgress.show(
         context,
         title: '获取调频数据',
         text: '请稍后...',

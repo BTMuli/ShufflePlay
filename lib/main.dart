@@ -12,7 +12,7 @@ import 'app.dart';
 import 'database/sp_sqlite.dart';
 import 'tools/log_tool.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
   await Window.initialize();

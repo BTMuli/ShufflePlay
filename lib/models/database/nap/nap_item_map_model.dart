@@ -5,7 +5,7 @@ import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 
 // Project imports:
-import '../../plugins/Hakushi/hakushi_model.dart';
+import '../../../plugins/Hakushi/models/hakushi_model.dart';
 import 'nap_item_map_enum.dart';
 
 /// NapItemMap 表的数据模型

@@ -20,6 +20,7 @@ import '../../request/nap/nap_api_account.dart';
 import '../../store/user/user_bbs.dart';
 import '../../ui/sp_dialog.dart';
 import '../../ui/sp_infobar.dart';
+import '../../ui/sp_progress.dart';
 
 class AppConfigUserWidget extends ConsumerStatefulWidget {
   const AppConfigUserWidget({super.key});
@@ -41,6 +42,9 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
 
   /// 所有用户
   List<UserBBSModel> get users => ref.watch(userBbsStoreProvider).users;
+
+  /// Progress
+  SpProgressController progress = SpProgressController();
 
   /// nap数据库
   final sqliteNap = SpsUserNap();
@@ -97,6 +101,7 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
     UserBBSModelBrief? brief = await getUserBrief(cookie);
     var user = UserBBSModel(uid: cookie.stuid, cookie: cookie, brief: brief);
     await ref.read(userBbsStoreProvider).addUser(user);
+    await refreshGameAccounts(user);
   }
 
   /// 刷新用户cookie
@@ -255,7 +260,11 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
                     message: '短信验证码登录',
                     child: IconButton(
                       icon: const Icon(FluentIcons.comment_active),
-                      onPressed: () {},
+                      onPressed: () async {
+                        if (context.mounted) {
+                          await SpInfobar.warn(context, '暂未实现');
+                        }
+                      },
                     ),
                   )
                 : null,

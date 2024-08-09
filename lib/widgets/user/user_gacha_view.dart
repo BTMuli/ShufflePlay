@@ -2,7 +2,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 
 // Project imports:
-import '../../models/plugins/UIGF/uigf_enum.dart';
+import '../../plugins/UIGF/models/uigf_enum.dart';
 import 'user_gacha_list.dart';
 
 class UserGachaViewWidget extends StatefulWidget {

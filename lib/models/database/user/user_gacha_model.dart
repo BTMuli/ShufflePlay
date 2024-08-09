@@ -2,8 +2,8 @@
 import 'package:json_annotation/json_annotation.dart';
 
 // Project imports:
-import '../../plugins/UIGF/uigf_enum.dart';
-import '../../plugins/UIGF/uigf_model.dart';
+import '../../../plugins/UIGF/models/uigf_enum.dart';
+import '../../../plugins/UIGF/models/uigf_model.dart';
 
 /// UserGacha 表的数据模型
 /// 该表在 lib/database/user/user_gacha.dart 中定义

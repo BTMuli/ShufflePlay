@@ -2,8 +2,8 @@
 import 'package:json_annotation/json_annotation.dart';
 
 // Project imports:
+import '../../../plugins/UIGF/models/uigf_enum.dart';
 import '../../bbs/bbs_base_model.dart';
-import '../../plugins/UIGF/uigf_enum.dart';
 
 /// 祈愿返回数据模型
 part 'nap_gacha_model.g.dart';

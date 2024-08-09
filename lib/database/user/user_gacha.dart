@@ -5,8 +5,8 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 // Project imports:
 import '../../models/database/user/user_gacha_model.dart';
 import '../../models/nap/gacha/nap_gacha_model.dart';
-import '../../models/plugins/UIGF/uigf_enum.dart';
-import '../../models/plugins/UIGF/uigf_model.dart';
+import '../../plugins/UIGF/models/uigf_enum.dart';
+import '../../plugins/UIGF/models/uigf_model.dart';
 import '../../utils/trans_time.dart';
 import '../sp_sqlite.dart';
 
@@ -44,7 +44,7 @@ class SpsUserGacha {
   }
 
   /// 获取所有不重复的uid
-  Future<List<String>> getAllUid({bool check = true}) async {
+  Future<List<String>> getAllUid({bool check = false}) async {
     if (check) await _instance.preCheck();
     var result = await _instance.sqlite.db.query(
       _instance._tableName,

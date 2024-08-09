@@ -4,9 +4,9 @@ import 'package:dio/dio.dart';
 // Project imports:
 import '../../database/nap/nap_item_map.dart';
 import '../../models/database/nap/nap_item_map_model.dart';
-import '../../models/plugins/Hakushi/hakushi_model.dart';
+import '../../request/core/client.dart';
 import '../../tools/log_tool.dart';
-import '../core/client.dart';
+import 'models/hakushi_model.dart';
 
 class SprPluginHakushi {
   /// 数据库

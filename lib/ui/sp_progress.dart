@@ -6,7 +6,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:windows_taskbar/windows_taskbar.dart';
 
-class SpProgress extends ChangeNotifier {
+class SpProgressController extends ChangeNotifier {
   /// 标题
   late String title;
 
@@ -71,7 +71,7 @@ class SpProgress extends ChangeNotifier {
   }
 
   /// 构造
-  SpProgress({
+  SpProgressController({
     this.title = '加载中',
     this.text = '请稍后...',
     this.progress,
@@ -85,20 +85,20 @@ class SpProgress extends ChangeNotifier {
   }
 }
 
-class SpProgressWidget extends StatefulWidget {
+class SpProgress extends StatefulWidget {
   /// 控制器
-  final SpProgress controller;
+  final SpProgressController controller;
 
-  const SpProgressWidget(this.controller, {super.key});
+  const SpProgress(this.controller, {super.key});
 
-  static SpProgress show(
+  static SpProgressController show(
     BuildContext context, {
     String? title,
     String? text,
     double? progress,
     bool onTaskbar = false,
   }) {
-    var controller = SpProgress(
+    var controller = SpProgressController(
       title: title ?? '加载中',
       text: text ?? '请稍后...',
       progress: progress,
@@ -107,19 +107,19 @@ class SpProgressWidget extends StatefulWidget {
     showDialog(
       barrierDismissible: false,
       context: context,
-      builder: (context) => SpProgressWidget(controller),
+      builder: (context) => SpProgress(controller),
     );
     controller.isShow = true;
     return controller;
   }
 
   @override
-  State<SpProgressWidget> createState() => _SpProgressWidget();
+  State<SpProgress> createState() => _SpProgressWidget();
 }
 
-class _SpProgressWidget extends State<SpProgressWidget> {
+class _SpProgressWidget extends State<SpProgress> {
   /// controller
-  SpProgress get controller => widget.controller;
+  SpProgressController get controller => widget.controller;
 
   @override
   void initState() {
