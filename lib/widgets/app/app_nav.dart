@@ -10,6 +10,7 @@ import 'package:window_manager/window_manager.dart';
 // Project imports:
 import '../../pages/main/app_config.dart';
 import '../../pages/main/app_dev.dart';
+import '../../pages/nap/nap_anno.dart';
 import '../../pages/user/user_gacha.dart';
 import '../../store/app/app_config.dart';
 import '../../store/user/user_bbs.dart';
@@ -52,6 +53,11 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget>
   /// 获取导航项
   List<PaneItem> getNavItems(BuildContext context) {
     return [
+      PaneItem(
+        icon: const Icon(FluentIcons.home),
+        title: const Text('公告'),
+        body: const NapAnnoPage(),
+      ),
       PaneItem(
         icon: const Icon(FluentIcons.auto_enhance_on),
         title: const Text('调频记录'),

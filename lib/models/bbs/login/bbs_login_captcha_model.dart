@@ -8,7 +8,7 @@ import '../bbs_base_model.dart';
 part 'bbs_login_captcha_model.g.dart';
 
 /// 获取验证码返回
-@JsonSerializable(createToJson: true)
+@JsonSerializable(explicitToJson: true)
 class BbsLoginCaptchaResp extends BBSResp<BbsLoginCaptchaData> {
   /// constructor
   BbsLoginCaptchaResp({

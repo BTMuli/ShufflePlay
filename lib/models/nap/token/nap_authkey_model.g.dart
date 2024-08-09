@@ -13,14 +13,6 @@ NapAuthkeyModelResp _$NapAuthkeyModelRespFromJson(Map<String, dynamic> json) =>
       data: NapAuthkeyModelData.fromJson(json['data'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$NapAuthkeyModelRespToJson(
-        NapAuthkeyModelResp instance) =>
-    <String, dynamic>{
-      'retcode': instance.retcode,
-      'message': instance.message,
-      'data': instance.data?.toJson(),
-    };
-
 NapAuthkeyModelData _$NapAuthkeyModelDataFromJson(Map<String, dynamic> json) =>
     NapAuthkeyModelData(
       signType: (json['sign_type'] as num).toInt(),

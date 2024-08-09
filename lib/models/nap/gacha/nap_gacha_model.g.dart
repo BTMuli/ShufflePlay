@@ -13,13 +13,6 @@ NapGachaModelResp _$NapGachaModelRespFromJson(Map<String, dynamic> json) =>
       data: NapGachaModelData.fromJson(json['data'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$NapGachaModelRespToJson(NapGachaModelResp instance) =>
-    <String, dynamic>{
-      'retcode': instance.retcode,
-      'message': instance.message,
-      'data': instance.data?.toJson(),
-    };
-
 NapGachaModelData _$NapGachaModelDataFromJson(Map<String, dynamic> json) =>
     NapGachaModelData(
       list: (json['list'] as List<dynamic>)

@@ -42,6 +42,7 @@ class _UserGachaViewWidgetState extends State<UserGachaViewWidget> {
             icon: selectedTab == tabList.indexOf(pool)
                 ? const Icon(FluentIcons.giftbox_open)
                 : const Icon(FluentIcons.giftbox),
+            selectedBackgroundColor: FluentTheme.of(context).accentColor,
           ),
       ],
       onChanged: (index) {

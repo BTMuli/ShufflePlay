@@ -18,7 +18,7 @@ Map<String, dynamic> _$BbsLoginCaptchaRespToJson(
     <String, dynamic>{
       'retcode': instance.retcode,
       'message': instance.message,
-      'data': instance.data,
+      'data': instance.data?.toJson(),
     };
 
 BbsLoginCaptchaData _$BbsLoginCaptchaDataFromJson(Map<String, dynamic> json) =>

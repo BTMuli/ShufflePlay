@@ -19,7 +19,7 @@ Map<String, dynamic> _$BbsTokenModelLbSRespToJson(
     <String, dynamic>{
       'retcode': instance.retcode,
       'message': instance.message,
-      'data': instance.data,
+      'data': instance.data?.toJson(),
     };
 
 BbsTokenModelCbSResp _$BbsTokenModelCbSRespFromJson(
@@ -35,7 +35,7 @@ Map<String, dynamic> _$BbsTokenModelCbSRespToJson(
     <String, dynamic>{
       'retcode': instance.retcode,
       'message': instance.message,
-      'data': instance.data,
+      'data': instance.data?.toJson(),
     };
 
 BbsTokenModelLbSData _$BbsTokenModelLbSDataFromJson(
