@@ -15,6 +15,7 @@ Update: 2024-08-06
 
 <div style="width: 100%; text-align: center; margin: 0 auto;">
   <img alt="icon" src="./assets/images/ShufflePlay.png" />
+  <img alt="icon" src="./assets/images/ShufflePlayMini.png" />
 </div>
 
 # ShufflePlay

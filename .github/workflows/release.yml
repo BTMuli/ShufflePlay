@@ -46,7 +46,7 @@ jobs:
           --store true 
           -i "27581BTMuli.25716F7F62159"
           -b "CN=5FE33156-C3CE-4E71-A036-81BAA99521CB" 
-          -n "ShufflePlay(Store)" 
+          -n "ShufflePlay_Store" 
           -p ${{ secrets.SIGN_SECRET }}
 
       - name: 上传文件
@@ -57,7 +57,7 @@ jobs:
           path: |
             ShufflePlay.zip
             ShufflePlay.msix
-            ShufflePlay(Store).msix
+            ShufflePlay_Store.msix
 
       - name: 发行Release
         uses: marvinpinto/action-automatic-releases@latest
@@ -67,4 +67,4 @@ jobs:
           files: |
             ShufflePlay.zip
             ShufflePlay.msix
-            ShufflePlay(Store).msix
+            ShufflePlay_Store.msix

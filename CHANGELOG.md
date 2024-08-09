@@ -11,7 +11,7 @@ Update: 2024-08-09
 
 # 更新日志
 
-## [v0.1.0](https://github.com/BTMuli/ShufflePlay/releases/tag/v0.1.0) (2024-08-08)
+## [v0.1.0](https://github.com/BTMuli/ShufflePlay/releases/tag/v0.1.0) (2024-08-09)
 
 - ✨ 多账号管理、同账号下不同游戏账号切换
 - ✨ 设备信息刷新
