@@ -11,6 +11,7 @@ import 'package:window_manager/window_manager.dart';
 import 'app.dart';
 import 'database/sp_sqlite.dart';
 import 'tools/log_tool.dart';
+import 'tools/webview_tool.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,6 +22,7 @@ Future<void> main() async {
   /// 初始化配置
   await SPLogTool().init();
   await SPSqlite().init();
+  await SPWebviewTool.init();
 
   WindowOptions windowOptions = const WindowOptions(
     title: 'ShufflePlay',

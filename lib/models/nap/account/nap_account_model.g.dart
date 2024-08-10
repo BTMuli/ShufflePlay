@@ -13,6 +13,14 @@ NapAccountModelResp _$NapAccountModelRespFromJson(Map<String, dynamic> json) =>
       data: NapAccountModelData.fromJson(json['data'] as Map<String, dynamic>),
     );
 
+Map<String, dynamic> _$NapAccountModelRespToJson(
+        NapAccountModelResp instance) =>
+    <String, dynamic>{
+      'retcode': instance.retcode,
+      'message': instance.message,
+      'data': instance.data?.toJson(),
+    };
+
 NapAccountModelData _$NapAccountModelDataFromJson(Map<String, dynamic> json) =>
     NapAccountModelData(
       list: (json['list'] as List<dynamic>)

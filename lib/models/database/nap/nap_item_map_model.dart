@@ -123,7 +123,7 @@ class NapItemMapModel {
 }
 
 /// 物品地区
-@JsonSerializable(explicitToJson: true)
+@JsonSerializable()
 class NapItemMapLocale {
   /// 中文翻译
   @JsonKey(name: 'zh')

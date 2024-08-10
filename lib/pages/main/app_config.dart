@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher_string.dart';
+import 'package:webview_windows/webview_windows.dart';
 
 // Project imports:
 import '../../database/app/app_config.dart';
@@ -52,12 +53,16 @@ class _AppConfigPageState extends ConsumerState<AppConfigPage>
   /// 应用配置数据库
   final sqliteAppConfig = SpsAppConfig();
 
+  /// webview version
+  String? webviewVersion;
+
   @override
   void initState() {
     super.initState();
     Future.microtask(() async {
       packageInfo = await PackageInfo.fromPlatform();
       deviceInfo = await DeviceInfoPlugin().windowsInfo;
+      webviewVersion = await WebviewController.getWebViewVersion();
       if (mounted) {
         setState(() {});
       }
@@ -70,7 +75,8 @@ class _AppConfigPageState extends ConsumerState<AppConfigPage>
   }
 
   /// 构建设备信息
-  Widget buildDeviceInfo(WindowsDeviceInfo diw) {
+  Widget buildDeviceInfo(WindowsDeviceInfo? diw) {
+    if (diw == null) return const Text('无法获取设备信息');
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Expander(
@@ -92,6 +98,22 @@ class _AppConfigPageState extends ConsumerState<AppConfigPage>
               title: Text('设备 ${diw.computerName} ${diw.productId}'),
               subtitle: Text(
                 '标识符 ${diw.deviceId.substring(1, diw.deviceId.length - 1)}',
+              ),
+            ),
+            ListTile(
+              leading: const Icon(material.Icons.web_asset_outlined),
+              title: const Text('Webview2Runtime'),
+              subtitle: Text(webviewVersion ?? '未知版本'),
+              trailing: IconButton(
+                icon: Icon(
+                  FluentIcons.download,
+                  color: FluentTheme.of(context).accentColor,
+                ),
+                onPressed: () async {
+                  await launchUrlString(
+                    'https://developer.microsoft.com/microsoft-edge/webview2/',
+                  );
+                },
               ),
             ),
           ],
@@ -270,10 +292,8 @@ class _AppConfigPageState extends ConsumerState<AppConfigPage>
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           child: const AppConfigUserWidget(),
         ),
-        if (deviceInfo != null) ...[
-          SizedBox(height: 10.h),
-          buildDeviceInfo(deviceInfo!)
-        ],
+        SizedBox(height: 10.h),
+        buildDeviceInfo(deviceInfo)
       ]),
     );
   }
