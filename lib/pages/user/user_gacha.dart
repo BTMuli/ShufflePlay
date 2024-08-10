@@ -310,11 +310,13 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage> {
             for (var uid in uidList)
               MenuFlyoutItem(
                 text: Text(uid),
-                onPressed: () {
-                  if (mounted) {
+                onPressed: () async {
+                  if (curUid == uid) return;
+                  if (context.mounted) {
                     setState(() {
                       curUid = uid;
                     });
+                    await refreshData();
                   }
                 },
               ),
