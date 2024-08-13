@@ -34,6 +34,18 @@ class SPFileTool {
     return path.join(dir, relativePath);
   }
 
+  /// 获取assets目录下的文件路径
+  Future<String> getAssetsPath(String relativePath) async {
+    var assetsPath = path.join(
+      path.dirname(Platform.resolvedExecutable),
+      'data',
+      'flutter_assets',
+      'assets',
+      relativePath,
+    );
+    return Uri.file(assetsPath).toString();
+  }
+
   /// 检测文件是否存在
   Future<bool> isFileExist(String path) async {
     return File(path).exists();

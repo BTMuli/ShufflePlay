@@ -93,6 +93,13 @@ class SpWebviewController extends ChangeNotifier {
                 icon: const Icon(FluentIcons.chrome_close),
                 onPressed: () => Navigator.pop(context),
               ),
+              IconButton(
+                icon: const Icon(FluentIcons.chrome_restore),
+                onPressed: () async {
+                  var data = '{"message": "Hello, Flutter!"}';
+                  await webview.postWebMessage(data);
+                },
+              )
             ],
           ),
           constraints: BoxConstraints(
@@ -117,6 +124,13 @@ class SpWebviewController extends ChangeNotifier {
     super.dispose();
     webview.dispose();
     notifyListeners();
+  }
+
+  void listen(String event, {Function(dynamic)? callback}) {
+    webview.webMessage.listen((event) {
+      if (event == null) return;
+      if (callback != null) callback(event);
+    });
   }
 }
 

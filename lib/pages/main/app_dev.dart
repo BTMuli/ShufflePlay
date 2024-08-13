@@ -3,6 +3,8 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // Project imports:
+import '../../tools/file_tool.dart';
+import '../../tools/log_tool.dart';
 import '../../ui/sp_webview.dart';
 
 /// 测试页面
@@ -21,12 +23,14 @@ class _AppDevPageState extends ConsumerState<AppDevPage> {
   /// 创建新窗口
   Future<void> createNewWindow() async {
     if (!mounted) return;
-    controller = await SpWebview.createWebview(
-      context,
-      'https://www.baidu.com',
-    );
+    var fileTool = SPFileTool();
+    var filePath = await fileTool.getAssetsPath('lib/test.html');
     if (!mounted) return;
-    await controller!.show(context);
+    controller = await SpWebview.createWebview(context, filePath);
+    controller!.listen('message', callback: (event) {
+      SPLogTool.info('[Webview] Receive message: $event');
+    });
+    if (mounted) await controller!.show(context);
   }
 
   /// 构建函数
