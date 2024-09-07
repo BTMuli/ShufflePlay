@@ -40,36 +40,36 @@ class NapAnnoCardWidget extends StatelessWidget {
               padding: WidgetStateProperty.all(EdgeInsets.zero),
             ),
             onPressed: onPressed,
-            child: CachedNetworkImage(
-              imageUrl: anno.banner,
-              progressIndicatorBuilder: (context, url, progress) => Center(
-                child: ProgressRing(value: progress.progress),
-              ),
-              fit: BoxFit.cover,
-              errorWidget: (context, url, error) => const Center(
-                child: Icon(FluentIcons.error),
+            child: AspectRatio(
+              aspectRatio: 36 / 13,
+              child: CachedNetworkImage(
+                imageUrl: anno.banner,
+                progressIndicatorBuilder: (context, url, progress) => Center(
+                  child: ProgressRing(value: progress.progress),
+                ),
+                fit: BoxFit.contain,
+                errorWidget: (context, url, error) => const Center(
+                  child: Icon(FluentIcons.error),
+                ),
               ),
             ),
           ),
           Tooltip(
             message: getTitle(anno.title),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      anno.subtitle,
-                      style: TextStyle(
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    anno.subtitle,
+                    style: TextStyle(
+                      fontSize: 16.spMin,
+                      fontWeight: FontWeight.bold,
                     ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ],
