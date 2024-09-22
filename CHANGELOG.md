@@ -2,14 +2,20 @@
 Author: 目棃
 Description: 更新日志
 Date: 2024-08-08
-Update: 2024-08-09
+Update: 2024-09-22
 ---
 
 > 本文档 [`Frontmatter`](https://github.com/BTMuli/MuCli#Frontmatter) 由 [MuCli](https://github.com/BTMuli/Mucli) 自动生成于 `2024-08-08 18:24:38`
 >
-> 更新于 `2024-08-09 18:43:48`
+> 更新于 `2024-09-22 12:32:28`
 
 # 更新日志
+
+## [v0.1.1](https://github.com/BTMuli/ShufflePlay/releases/tag/v0.1.0) (2024-09-22)
+
+- 🐛 切换uid后即时刷新数据
+- 🐛 修复设置页无法切换账号
+- 💄 公告cover填充
 
 ## [v0.1.0](https://github.com/BTMuli/ShufflePlay/releases/tag/v0.1.0) (2024-08-09)
 
