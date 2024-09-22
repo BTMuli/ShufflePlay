@@ -251,6 +251,13 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
               subtitle: Text(user.brief?.sign ?? '暂无签名'),
               trailing: buildUserTrailing(user),
               selected: user.uid == uid,
+              onPressed: () {
+                if (uid == null || uid == user.uid) {
+                  return;
+                }
+                ref.read(userBbsStoreProvider).switchUser(user.uid);
+                setState(() {});
+              },
             ),
           ListTile(
             leading: const Icon(FluentIcons.add),
