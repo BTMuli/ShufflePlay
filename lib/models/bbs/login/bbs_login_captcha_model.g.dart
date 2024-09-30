@@ -13,14 +13,6 @@ BbsLoginCaptchaResp _$BbsLoginCaptchaRespFromJson(Map<String, dynamic> json) =>
       data: BbsLoginCaptchaData.fromJson(json['data'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$BbsLoginCaptchaRespToJson(
-        BbsLoginCaptchaResp instance) =>
-    <String, dynamic>{
-      'retcode': instance.retcode,
-      'message': instance.message,
-      'data': instance.data?.toJson(),
-    };
-
 BbsLoginCaptchaData _$BbsLoginCaptchaDataFromJson(Map<String, dynamic> json) =>
     BbsLoginCaptchaData(
       sentNew: json['sent_new'] as String,

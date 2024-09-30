@@ -8,7 +8,7 @@ import '../bbs_base_model.dart';
 part 'bbs_info_user_model.g.dart';
 
 /// 获取用户信息的返回数据模型
-@JsonSerializable(explicitToJson: true)
+@JsonSerializable(explicitToJson: true, createToJson: false)
 class BbsInfoUserModelResp extends BBSResp<BbsInfoUserModelDataFull> {
   /// constructor
   BbsInfoUserModelResp({

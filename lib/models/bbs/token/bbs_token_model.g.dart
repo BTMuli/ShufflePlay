@@ -14,14 +14,6 @@ BbsTokenModelLbSResp _$BbsTokenModelLbSRespFromJson(
       data: BbsTokenModelLbSData.fromJson(json['data'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$BbsTokenModelLbSRespToJson(
-        BbsTokenModelLbSResp instance) =>
-    <String, dynamic>{
-      'retcode': instance.retcode,
-      'message': instance.message,
-      'data': instance.data?.toJson(),
-    };
-
 BbsTokenModelCbSResp _$BbsTokenModelCbSRespFromJson(
         Map<String, dynamic> json) =>
     BbsTokenModelCbSResp(
@@ -29,14 +21,6 @@ BbsTokenModelCbSResp _$BbsTokenModelCbSRespFromJson(
       message: json['message'] as String,
       data: BbsTokenModelCbSData.fromJson(json['data'] as Map<String, dynamic>),
     );
-
-Map<String, dynamic> _$BbsTokenModelCbSRespToJson(
-        BbsTokenModelCbSResp instance) =>
-    <String, dynamic>{
-      'retcode': instance.retcode,
-      'message': instance.message,
-      'data': instance.data?.toJson(),
-    };
 
 BbsTokenModelLbSData _$BbsTokenModelLbSDataFromJson(
         Map<String, dynamic> json) =>

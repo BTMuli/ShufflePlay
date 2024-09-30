@@ -8,7 +8,7 @@ import '../../bbs/bbs_base_model.dart';
 part 'nap_authkey_model.g.dart';
 
 /// 获取authkey返回
-@JsonSerializable(explicitToJson: true)
+@JsonSerializable(explicitToJson: true, createToJson: false)
 class NapAuthkeyModelResp extends BBSResp<NapAuthkeyModelData> {
   NapAuthkeyModelResp({
     required super.retcode,

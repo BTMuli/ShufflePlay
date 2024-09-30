@@ -9,7 +9,7 @@ import '../../bbs/bbs_base_model.dart';
 part 'nap_gacha_model.g.dart';
 
 /// 祈愿返回数据模型
-@JsonSerializable(explicitToJson: true)
+@JsonSerializable(explicitToJson: true, createToJson: false)
 class NapGachaModelResp extends BBSResp<NapGachaModelData> {
   NapGachaModelResp({
     required super.retcode,

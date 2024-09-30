@@ -13,13 +13,6 @@ BbsDeviceModelResp _$BbsDeviceModelRespFromJson(Map<String, dynamic> json) =>
       data: BbsDeviceModelData.fromJson(json['data'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$BbsDeviceModelRespToJson(BbsDeviceModelResp instance) =>
-    <String, dynamic>{
-      'retcode': instance.retcode,
-      'message': instance.message,
-      'data': instance.data?.toJson(),
-    };
-
 BbsDeviceModelData _$BbsDeviceModelDataFromJson(Map<String, dynamic> json) =>
     BbsDeviceModelData(
       deviceFp: json['device_fp'] as String,

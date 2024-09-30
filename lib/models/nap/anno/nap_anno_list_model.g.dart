@@ -14,14 +14,6 @@ NapAnnoListModelResp _$NapAnnoListModelRespFromJson(
       data: NapAnnoListModelData.fromJson(json['data'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$NapAnnoListModelRespToJson(
-        NapAnnoListModelResp instance) =>
-    <String, dynamic>{
-      'retcode': instance.retcode,
-      'message': instance.message,
-      'data': instance.data?.toJson(),
-    };
-
 NapAnnoListModelData _$NapAnnoListModelDataFromJson(
         Map<String, dynamic> json) =>
     NapAnnoListModelData(

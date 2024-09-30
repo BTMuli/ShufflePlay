@@ -15,14 +15,6 @@ BbsInfoUserModelResp _$BbsInfoUserModelRespFromJson(
           json['data'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$BbsInfoUserModelRespToJson(
-        BbsInfoUserModelResp instance) =>
-    <String, dynamic>{
-      'retcode': instance.retcode,
-      'message': instance.message,
-      'data': instance.data?.toJson(),
-    };
-
 BbsInfoUserModelDataFull _$BbsInfoUserModelDataFullFromJson(
         Map<String, dynamic> json) =>
     BbsInfoUserModelDataFull(

@@ -8,7 +8,7 @@ import '../../bbs/bbs_base_model.dart';
 part 'nap_account_model.g.dart';
 
 /// 用户游戏账号信息返回
-@JsonSerializable(explicitToJson: true)
+@JsonSerializable(explicitToJson: true, createToJson: false)
 class NapAccountModelResp extends BBSResp<NapAccountModelData> {
   /// constructor
   NapAccountModelResp({

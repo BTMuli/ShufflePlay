@@ -1,10 +1,17 @@
+// Dart imports:
+import 'dart:io';
+
 // Package imports:
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // Project imports:
+import '../../models/nap/token/nap_auth_ticket_model.dart';
+import '../../request/nap/nap_api_passport.dart';
+import '../../store/user/user_bbs.dart';
 import '../../tools/file_tool.dart';
 import '../../tools/log_tool.dart';
+import '../../ui/sp_infobar.dart';
 import '../../ui/sp_webview.dart';
 
 /// 测试页面
@@ -33,6 +40,49 @@ class _AppDevPageState extends ConsumerState<AppDevPage> {
     if (mounted) await controller!.show(context);
   }
 
+  Future<void> getAuthTicket() async {
+    var curUser = ref.read(userBbsStoreProvider).user;
+    if (curUser == null) {
+      if (mounted) {
+        await SpInfobar.warn(context, '请先登录');
+      }
+      return;
+    }
+    var curAccount = ref.read(userBbsStoreProvider).account;
+    if (curAccount == null) {
+      if (mounted) {
+        await SpInfobar.warn(context, '请先登录');
+      }
+      return;
+    }
+    var apiNap = SprNapApiPassport();
+    var authTicketResp = await apiNap.getLoginAuthTicket(
+      curAccount,
+      curUser.cookie!,
+    );
+    if (authTicketResp.retcode != 0) {
+      if (mounted) {
+        await SpInfobar.bbs(context, authTicketResp);
+      }
+      return;
+    }
+    var ticketData = authTicketResp.data as NapAuthTicketModelData;
+    if (mounted) {
+      await SpInfobar.success(context, '成功获取 authTicket: ${ticketData.ticket}');
+    }
+    // todo 用户设置游戏路径
+    const gamePath =
+        "D:\\Games\\miHoYo Launcher\\games\\ZenlessZoneZero Game\\ZenlessZoneZero.exe";
+    // 以管理员权限运行 exe login_auth_ticket=xxx
+    var result = await Process.run(
+      gamePath,
+      ['login_auth_ticket=${ticketData.ticket}'],
+      runInShell: true,
+    );
+    SPLogTool.info(result.stdout);
+    SPLogTool.info(result.stderr);
+  }
+
   /// 构建函数
   @override
   Widget build(BuildContext context) {
@@ -42,7 +92,8 @@ class _AppDevPageState extends ConsumerState<AppDevPage> {
         child: IconButton(
           icon: const Icon(FluentIcons.f12_dev_tools),
           onPressed: () async {
-            await createNewWindow();
+            // await createNewWindow();
+            await getAuthTicket();
           },
         ),
       ),

@@ -8,7 +8,7 @@ import '../../bbs/bbs_base_model.dart';
 /// 游戏内公告内容返回数据
 part 'nap_anno_content_model.g.dart';
 
-@JsonSerializable(explicitToJson: true)
+@JsonSerializable(explicitToJson: true, createToJson: false)
 class NapAnnoContentModelResp extends BBSResp<NapAnnoContentModelData> {
   NapAnnoContentModelResp({
     required super.retcode,

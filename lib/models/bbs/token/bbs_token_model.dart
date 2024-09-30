@@ -8,7 +8,7 @@ import '../bbs_base_model.dart';
 part 'bbs_token_model.g.dart';
 
 /// 根据stoken获取ltoken返回
-@JsonSerializable(explicitToJson: true)
+@JsonSerializable(explicitToJson: true, createToJson: false)
 class BbsTokenModelLbSResp extends BBSResp<BbsTokenModelLbSData> {
   /// constructor
   BbsTokenModelLbSResp({
@@ -23,7 +23,7 @@ class BbsTokenModelLbSResp extends BBSResp<BbsTokenModelLbSData> {
 }
 
 /// 根据stoken获取cookieToken返回
-@JsonSerializable(explicitToJson: true)
+@JsonSerializable(explicitToJson: true, createToJson: false)
 class BbsTokenModelCbSResp extends BBSResp<BbsTokenModelCbSData> {
   /// constructor
   BbsTokenModelCbSResp({

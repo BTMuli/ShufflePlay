@@ -8,7 +8,7 @@ import '../bbs_base_model.dart';
 part 'bbs_device_model.g.dart';
 
 /// 获取设备指纹返回
-@JsonSerializable(explicitToJson: true)
+@JsonSerializable(explicitToJson: true, createToJson: false)
 class BbsDeviceModelResp extends BBSResp<BbsDeviceModelData> {
   /// constructor
   BbsDeviceModelResp({
