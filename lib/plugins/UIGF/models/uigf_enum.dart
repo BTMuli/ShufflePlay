@@ -88,7 +88,7 @@ extension UigfNapPoolTypeExtension on UigfNapPoolType {
       case UigfNapPoolType.upC:
         return '角色UP';
       case UigfNapPoolType.upW:
-        return '武器UP';
+        return '音擎UP';
       case UigfNapPoolType.bond:
         return '邦布';
     }
