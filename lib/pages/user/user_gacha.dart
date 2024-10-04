@@ -35,7 +35,8 @@ class UserGachaPage extends ConsumerStatefulWidget {
   ConsumerState<UserGachaPage> createState() => _UserGachaPageState();
 }
 
-class _UserGachaPageState extends ConsumerState<UserGachaPage> {
+class _UserGachaPageState extends ConsumerState<UserGachaPage>
+    with AutomaticKeepAliveClientMixin {
   /// uid列表
   List<String> uidList = [];
 
@@ -61,10 +62,14 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage> {
   SpProgressController progress = SpProgressController();
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   void initState() {
     super.initState();
     Future.microtask(() async {
       await refreshData();
+      await refreshMetaData();
     });
   }
 
@@ -76,6 +81,16 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage> {
       curUid = null;
     }
     if (mounted) setState(() {});
+  }
+
+  Future<void> refreshMetaData() async {
+    await sqliteMap.preCheck();
+    await hakushiApi.freshCharacter();
+    await hakushiApi.freshWeapon();
+    await hakushiApi.freshBangboo();
+    if (mounted) {
+      await SpInfobar.success(context, '刷新元数据成功');
+    }
   }
 
   Future<void> importUigf4Json(BuildContext context) async {
@@ -282,15 +297,7 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage> {
         SizedBox(width: 10.w),
         IconButton(
           icon: const Icon(FluentIcons.database_refresh),
-          onPressed: () async {
-            await sqliteMap.preCheck();
-            await hakushiApi.freshCharacter();
-            await hakushiApi.freshWeapon();
-            await hakushiApi.freshBangboo();
-            if (context.mounted) {
-              await SpInfobar.success(context, '刷新成功');
-            }
-          },
+          onPressed: () async => await refreshMetaData(),
         ),
       ],
     );
@@ -355,6 +362,7 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return ScaffoldPage(
       header: buildHeader(),
       content: Padding(
