@@ -71,6 +71,7 @@ class _AppDevPageState extends ConsumerState<AppDevPage> {
       await SpInfobar.success(context, '成功获取 authTicket: ${ticketData.ticket}');
     }
     // todo 用户设置游戏路径
+    var startTime = DateTime.now();
     const gamePath =
         "D:\\Games\\miHoYo Launcher\\games\\ZenlessZoneZero Game\\ZenlessZoneZero.exe";
     // 以管理员权限运行 exe login_auth_ticket=xxx
@@ -79,6 +80,8 @@ class _AppDevPageState extends ConsumerState<AppDevPage> {
       ['login_auth_ticket=${ticketData.ticket}'],
       runInShell: true,
     );
+    var timeCost = DateTime.now().difference(startTime).inMilliseconds;
+    SPLogTool.info('Run game time cost: $timeCost ms');
     SPLogTool.info(result.stdout);
     SPLogTool.info(result.stderr);
   }

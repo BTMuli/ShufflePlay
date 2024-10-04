@@ -33,8 +33,6 @@ class SprNapApiPassport {
     };
     var headers = {
       "x-rpc-client_type": "3",
-      "x-rpc-game_biz": account.gameBiz,
-      "x-rpc-hyp_web_source": "nap",
       "x-rpc-app_id": "ddxf5dufpuyo",
     };
     try {

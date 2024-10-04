@@ -10,12 +10,14 @@ import 'package:window_manager/window_manager.dart';
 // Project imports:
 import '../../pages/main/app_config.dart';
 import '../../pages/main/app_dev.dart';
+import '../../pages/main/app_game.dart';
 import '../../pages/nap/nap_anno.dart';
 import '../../pages/user/user_gacha.dart';
 import '../../store/app/app_config.dart';
 import '../../store/user/user_bbs.dart';
 import '../../ui/sp_infobar.dart';
 import '../../utils/get_app_theme.dart';
+import 'app_icon.dart';
 
 class AppNavWidget extends ConsumerStatefulWidget {
   const AppNavWidget({super.key});
@@ -50,25 +52,28 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget>
     super.dispose();
   }
 
+  /// 封装导航项
+  PaneItem getPaneItem(int index, Widget body, IconData icon, String title) {
+    return PaneItem(
+      icon: curIndex == index ? SPIcon(icon) : Icon(icon),
+      title: Text(title),
+      body: body,
+    );
+  }
+
   /// 获取导航项
   List<PaneItem> getNavItems(BuildContext context) {
     return [
-      PaneItem(
-        icon: const Icon(FluentIcons.home),
-        title: const Text('公告'),
-        body: const NapAnnoPage(),
-      ),
-      PaneItem(
-        icon: const Icon(FluentIcons.auto_enhance_on),
-        title: const Text('调频记录'),
-        body: const UserGachaPage(),
+      getPaneItem(0, const NapAnnoPage(), FluentIcons.home, '游戏公告'),
+      getPaneItem(1, const AppGamePage(), FluentIcons.game, '启动游戏'),
+      getPaneItem(
+        2,
+        const UserGachaPage(),
+        FluentIcons.auto_enhance_on,
+        '调频记录',
       ),
       if (kDebugMode)
-        PaneItem(
-          icon: const Icon(FluentIcons.test_beaker),
-          title: const Text('测试页'),
-          body: const AppDevPage(),
-        ),
+        getPaneItem(3, const AppDevPage(), FluentIcons.test_beaker, '测试页'),
     ];
   }
 
@@ -201,11 +206,7 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget>
         onTap: showOptionsFlyout,
       ),
       buildThemeModeItem(),
-      PaneItem(
-        icon: const Icon(FluentIcons.settings),
-        title: const Text('设置'),
-        body: const AppConfigPage(),
-      ),
+      getPaneItem(4, const AppConfigPage(), FluentIcons.settings, '设置'),
     ];
   }
 
