@@ -122,6 +122,21 @@ class _AppConfigPageState extends ConsumerState<AppConfigPage>
     );
   }
 
+  /// 构建游戏相关信息
+  Widget buildGameInfo(BuildContext context) {
+    return ListTile(
+      leading: const Icon(material.Icons.gamepad_outlined),
+      title: const Text('游戏信息'),
+      subtitle: const Text('游戏相关信息'),
+      trailing: Button(
+        child: const Text('启动游戏'),
+        onPressed: () async {
+          // await getAuthTicket();
+        },
+      ),
+    );
+  }
+
   /// 构建设备指纹信息
   Widget buildFpInfo(BuildContext context, AppConfigModelDevice device) {
     return ListTile(
@@ -287,6 +302,8 @@ class _AppConfigPageState extends ConsumerState<AppConfigPage>
     return ScaffoldPage(
       content: ListView(children: [
         if (packageInfo != null) buildAppInfo(packageInfo!, context),
+        SizedBox(height: 10.h),
+        buildGameInfo(context),
         SizedBox(height: 10.h),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.w),

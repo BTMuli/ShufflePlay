@@ -170,4 +170,19 @@ class SpsAppConfig {
   Future<void> writeDevice(AppConfigModelDevice value) async {
     await _instance.write('device', jsonEncode(value));
   }
+
+  /// 读取游戏安装目录
+  Future<String> readGameDir() async {
+    var res = await _instance.read('gameDir');
+    if (res == null || res.isEmpty) {
+      await _instance.writeGameDir('');
+      return '';
+    }
+    return res;
+  }
+
+  /// 写/更新游戏安装目录
+  Future<void> writeGameDir(String value) async {
+    await _instance.write('gameDir', value);
+  }
 }

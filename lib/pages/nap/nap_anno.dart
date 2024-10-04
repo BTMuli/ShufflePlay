@@ -2,6 +2,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 // Project imports:
 import '../../models/nap/anno/nap_anno_content_model.dart';
@@ -74,11 +75,33 @@ class _NapAnnoPageState extends State<NapAnnoPage>
 
   /// 获取标题
   String getTitle(String title) {
+    title = title.replaceAll('&amp;', '&');
     var reg = RegExp(r'<[^>]*>');
     if (reg.hasMatch(title)) {
       return title.replaceAll(reg, '');
     }
     return title;
+  }
+
+  /// 获取内容
+  String getContent(String content) {
+    content = content.replaceAll('&lt;', '<');
+    content = content.replaceAll('&gt;', '>');
+    return content;
+  }
+
+  /// 尝试打开链接
+  Future<bool> tryLaunchUrl(String url) async {
+    var reg = RegExp(
+        r"javascript:miHoYoGameJSSDK.openIn(Browser|Webview)\('(.*)('|%27)\);");
+    var match = reg.firstMatch(url);
+    if (match == null) return false;
+    var target = match.group(1);
+    if (target == null) return false;
+    if (await canLaunchUrlString(target)) {
+      await launchUrlString(target);
+    }
+    return true;
   }
 
   /// 显示公告
@@ -98,13 +121,11 @@ class _NapAnnoPageState extends State<NapAnnoPage>
             ),
             title: Text(getTitle(content.title)),
             content: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(
-                horizontal: 8.w,
-                vertical: 8.h,
-              ),
+              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
               child: HtmlWidget(
-                content.content,
+                getContent(content.content),
                 textStyle: const TextStyle(fontFamily: 'SarasaGothic'),
+                onTapUrl: tryLaunchUrl,
               ),
             ),
             actions: [

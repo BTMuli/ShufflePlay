@@ -10,7 +10,6 @@ import 'package:window_manager/window_manager.dart';
 // Project imports:
 import '../../pages/main/app_config.dart';
 import '../../pages/main/app_dev.dart';
-import '../../pages/main/app_game.dart';
 import '../../pages/nap/nap_anno.dart';
 import '../../pages/user/user_gacha.dart';
 import '../../store/app/app_config.dart';
@@ -65,15 +64,14 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget>
   List<PaneItem> getNavItems(BuildContext context) {
     return [
       getPaneItem(0, const NapAnnoPage(), FluentIcons.home, '游戏公告'),
-      getPaneItem(1, const AppGamePage(), FluentIcons.game, '启动游戏'),
       getPaneItem(
-        2,
+        1,
         const UserGachaPage(),
         FluentIcons.auto_enhance_on,
         '调频记录',
       ),
       if (kDebugMode)
-        getPaneItem(3, const AppDevPage(), FluentIcons.test_beaker, '测试页'),
+        getPaneItem(2, const AppDevPage(), FluentIcons.test_beaker, '测试页'),
     ];
   }
 
@@ -206,7 +204,12 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget>
         onTap: showOptionsFlyout,
       ),
       buildThemeModeItem(),
-      getPaneItem(4, const AppConfigPage(), FluentIcons.settings, '设置'),
+      getPaneItem(
+        kDebugMode ? 3 : 2,
+        const AppConfigPage(),
+        FluentIcons.settings,
+        '设置',
+      ),
     ];
   }
 
