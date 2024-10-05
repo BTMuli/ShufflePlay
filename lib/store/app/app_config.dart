@@ -26,17 +26,24 @@ class SpAppConfigStore extends ChangeNotifier {
   /// 设备指纹
   AppConfigModelDevice? _device;
 
+  /// 游戏目录
+  String? _gameDir;
+
   /// 获取主题
   ThemeMode get themeMode => _themeMode;
 
   /// 获取设备信息
   AppConfigModelDevice? get device => _device;
 
+  /// 获取游戏目录
+  String? get gameDir => _gameDir;
+
   /// 构造函数
   SpAppConfigStore() {
     initThemeConfig();
     initAccentColorConfig();
     initAppDevice();
+    initGameDir();
   }
 
   /// 初始化主题
@@ -57,10 +64,23 @@ class SpAppConfigStore extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// 初始化游戏目录
+  Future<void> initGameDir() async {
+    _gameDir = await sqlite.readGameDir();
+    notifyListeners();
+  }
+
   /// 设置主题
   Future<void> setThemeMode(ThemeMode value) async {
     _themeMode = value;
     await sqlite.writeThemeMode(value);
+    notifyListeners();
+  }
+
+  /// 设置游戏目录
+  Future<void> setGameDir(String value) async {
+    _gameDir = value;
+    await sqlite.writeGameDir(value);
     notifyListeners();
   }
 

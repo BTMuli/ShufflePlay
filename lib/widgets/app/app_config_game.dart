@@ -7,11 +7,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as path;
 
 // Project imports:
-import '../../database/app/app_config.dart';
 import '../../models/database/user/user_bbs_model.dart';
 import '../../models/database/user/user_nap_model.dart';
 import '../../models/nap/token/nap_auth_ticket_model.dart';
 import '../../request/nap/nap_api_passport.dart';
+import '../../store/app/app_config.dart';
 import '../../store/user/user_bbs.dart';
 import '../../tools/file_tool.dart';
 import '../../ui/sp_dialog.dart';
@@ -33,9 +33,6 @@ class _AppConfigGameWidgetState extends ConsumerState<AppConfigGameWidget> {
   /// 当前账户
   UserNapModel? get account => ref.watch(userBbsStoreProvider).account;
 
-  /// 数据库
-  final SpsAppConfig sqlite = SpsAppConfig();
-
   /// 文件工具
   final SPFileTool fileTool = SPFileTool();
 
@@ -43,16 +40,7 @@ class _AppConfigGameWidgetState extends ConsumerState<AppConfigGameWidget> {
   final SprNapApiPassport apiNap = SprNapApiPassport();
 
   /// 游戏目录
-  late String gameDir = '';
-
-  @override
-  void initState() {
-    super.initState();
-    Future.delayed(Duration.zero, () async {
-      gameDir = await sqlite.readGameDir();
-      setState(() {});
-    });
-  }
+  String? get gameDir => ref.watch(appConfigStoreProvider).gameDir;
 
   /// 尝试编辑游戏目录
   Future<void> tryEditGameDir(BuildContext context) async {
@@ -69,8 +57,7 @@ class _AppConfigGameWidgetState extends ConsumerState<AppConfigGameWidget> {
       }
       return;
     }
-    gameDir = dir;
-    await sqlite.writeGameDir(dir);
+    await ref.read(appConfigStoreProvider.notifier).setGameDir(dir);
     if (context.mounted) {
       await SpInfobar.success(context, '成功设置游戏目录');
       setState(() {});
@@ -79,11 +66,11 @@ class _AppConfigGameWidgetState extends ConsumerState<AppConfigGameWidget> {
 
   /// 尝试启动游戏
   Future<void> tryLaunchGame(BuildContext context) async {
-    if (gameDir.isEmpty) {
+    if (gameDir == null || gameDir!.isEmpty) {
       if (context.mounted) await SpInfobar.warn(context, '请先设置游戏目录');
       return;
     }
-    var gamePath = path.join(gameDir, 'ZenlessZoneZero.exe');
+    var gamePath = path.join(gameDir!, 'ZenlessZoneZero.exe');
     var checkFile = await fileTool.isFileExist(gamePath);
     if (!checkFile) {
       if (context.mounted) {
@@ -135,7 +122,7 @@ class _AppConfigGameWidgetState extends ConsumerState<AppConfigGameWidget> {
         ListTile(
           leading: Icon(FluentIcons.folder),
           title: Text('游戏目录'),
-          subtitle: Text(gameDir.isEmpty ? '未设置' : gameDir),
+          subtitle: Text(gameDir ?? '未设置'),
           trailing: IconButton(
             icon: SPIcon(FluentIcons.edit),
             onPressed: () async => await tryEditGameDir(context),
