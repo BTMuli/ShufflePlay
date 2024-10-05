@@ -25,52 +25,73 @@ class NapAnnoCardWidget extends StatelessWidget {
     return title;
   }
 
+  /// 构建封面
+  Widget buildCover() {
+    return AspectRatio(
+      aspectRatio: 36 / 13,
+      child: ClipRRect(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(4.sp),
+          topRight: Radius.circular(4.sp),
+        ),
+        child: CachedNetworkImage(
+          imageUrl: anno.banner,
+          progressIndicatorBuilder: (context, url, progress) => Center(
+            child: ProgressRing(value: progress.progress),
+          ),
+          fit: BoxFit.contain,
+          errorWidget: (context, url, error) => const Center(
+            child: Icon(FluentIcons.error),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// 构建标题栏，当标题过长时，省略号显示
+  Widget buildTitle() {
+    return Tooltip(
+      message: getTitle(anno.title),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Expanded(
+            child: Text(
+              ' ${anno.subtitle}',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18.sp,
+              ),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
       padding: EdgeInsets.zero,
-      borderRadius: BorderRadius.circular(4.0),
+      borderRadius: BorderRadius.circular(4.sp),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Button(
             style: ButtonStyle(
               padding: WidgetStateProperty.all(EdgeInsets.zero),
             ),
             onPressed: onPressed,
-            child: AspectRatio(
-              aspectRatio: 36 / 13,
-              child: CachedNetworkImage(
-                imageUrl: anno.banner,
-                progressIndicatorBuilder: (context, url, progress) => Center(
-                  child: ProgressRing(value: progress.progress),
-                ),
-                fit: BoxFit.contain,
-                errorWidget: (context, url, error) => const Center(
-                  child: Icon(FluentIcons.error),
-                ),
-              ),
-            ),
+            child: buildCover(),
           ),
-          Tooltip(
-            message: getTitle(anno.title),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    anno.subtitle,
-                    style: TextStyle(
-                      fontSize: 16.spMin,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                  ),
-                ),
-              ],
-            ),
+          Flexible(
+            fit: FlexFit.tight,
+            child: Center(child: buildTitle()),
           ),
         ],
       ),

@@ -93,10 +93,11 @@ class _NapAnnoPageState extends State<NapAnnoPage>
   /// 尝试打开链接
   Future<bool> tryLaunchUrl(String url) async {
     var reg = RegExp(
-        r"javascript:miHoYoGameJSSDK.openIn(Browser|Webview)\('(.*)('|%27)\);");
+      r"javascript:miHoYoGameJSSDK.openIn(Browser|Webview)\('(.*)('|%27)\);",
+    );
     var match = reg.firstMatch(url);
     if (match == null) return false;
-    var target = match.group(1);
+    var target = match.group(2);
     if (target == null) return false;
     if (await canLaunchUrlString(target)) {
       await launchUrlString(target);
@@ -163,13 +164,11 @@ class _NapAnnoPageState extends State<NapAnnoPage>
 
   /// 构建列表
   Widget buildList(List<NapAnnoListModel> list, BuildContext context) {
-    if (list.isEmpty) {
-      return const Center(child: ProgressRing());
-    }
+    if (list.isEmpty) return const Center(child: ProgressRing());
     return GridView.builder(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
-        childAspectRatio: 2,
+        childAspectRatio: 36 / 16,
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
       ),
