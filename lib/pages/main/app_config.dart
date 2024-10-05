@@ -18,6 +18,7 @@ import '../../request/bbs/bbs_api_device.dart';
 import '../../store/app/app_config.dart';
 import '../../ui/sp_infobar.dart';
 import '../../utils/get_app_theme.dart';
+import '../../widgets/app/app_config_game.dart';
 import '../../widgets/app/app_config_user.dart';
 import '../../widgets/bbs/bbs_infobar.dart';
 
@@ -118,21 +119,6 @@ class _AppConfigPageState extends ConsumerState<AppConfigPage>
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  /// 构建游戏相关信息
-  Widget buildGameInfo(BuildContext context) {
-    return ListTile(
-      leading: const Icon(material.Icons.gamepad_outlined),
-      title: const Text('游戏信息'),
-      subtitle: const Text('游戏相关信息'),
-      trailing: Button(
-        child: const Text('启动游戏'),
-        onPressed: () async {
-          // await getAuthTicket();
-        },
       ),
     );
   }
@@ -303,7 +289,10 @@ class _AppConfigPageState extends ConsumerState<AppConfigPage>
       content: ListView(children: [
         if (packageInfo != null) buildAppInfo(packageInfo!, context),
         SizedBox(height: 10.h),
-        buildGameInfo(context),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.w),
+          child: const AppConfigGameWidget(),
+        ),
         SizedBox(height: 10.h),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
