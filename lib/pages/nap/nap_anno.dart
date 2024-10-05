@@ -105,9 +105,10 @@ class _NapAnnoPageState extends State<NapAnnoPage>
   }
 
   /// 显示公告
-  VoidCallback showAnno(BuildContext context, NapAnnoContentModel content) {
-    return () {
-      showDialog(
+  Future<void> showAnno(BuildContext context, int annoId) async {
+    try {
+      var content = annoContentList.firstWhere((e) => e.annId == annoId);
+      await showDialog(
         barrierDismissible: true,
         dismissWithEsc: true,
         context: context,
@@ -130,16 +131,17 @@ class _NapAnnoPageState extends State<NapAnnoPage>
             ),
             actions: [
               Button(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
+                onPressed: () => Navigator.of(context).pop(),
                 child: const Text('关闭'),
               ),
             ],
           );
         },
       );
-    };
+    } on StateError {
+      if (context.mounted) await SpInfobar.error(context, '公告内容不存在');
+      return;
+    }
   }
 
   /// 构建头部
@@ -151,9 +153,7 @@ class _NapAnnoPageState extends State<NapAnnoPage>
           Text('公告', style: FluentTheme.of(context).typography.title),
           SizedBox(width: 8.w),
           Button(
-            onPressed: () async {
-              await loadAnnoList();
-            },
+            onPressed: () async => await loadAnnoList(),
             child: const Icon(FluentIcons.refresh),
           ),
         ],
@@ -176,13 +176,9 @@ class _NapAnnoPageState extends State<NapAnnoPage>
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
       itemCount: list.length,
       itemBuilder: (context, index) {
-        var anno = list[index];
-        var content = annoContentList.firstWhere(
-          (element) => element.annId == anno.annId,
-        );
         return NapAnnoCardWidget(
-          anno: anno,
-          onPressed: showAnno(context, content),
+          anno: list[index],
+          onPressed: () async => await showAnno(context, list[index].annId),
         );
       },
     );
@@ -218,9 +214,8 @@ class _NapAnnoPageState extends State<NapAnnoPage>
           ),
         ],
         onChanged: (index) {
-          setState(() {
-            currentIndex = index;
-          });
+          currentIndex = index;
+          setState(() {});
         },
       ),
     );
