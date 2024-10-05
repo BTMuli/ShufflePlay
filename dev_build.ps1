@@ -42,3 +42,17 @@ Write-Output "开始构建应用版本：$version，本地版本: $versionGet"
 $command = "dart run msix:create --version=$version -p $signPwd"
 Write-Output "dart run msix:create --version=$version"
 Invoke-Expression $command
+# 根据外部输入判断是否安装
+$install = Read-Host "是否安装应用？(y/n)"
+if ($install -eq "y")
+{
+    Write-Output "开始安装应用"
+    $command = "Add-AppxPackage -Path .\ShufflePlay.msix"
+    Write-Output $command
+    Invoke-Expression $command
+    Write-Output "安装完成"
+}
+else
+{
+    Write-Output "不安装应用"
+}
