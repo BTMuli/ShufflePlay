@@ -40,3 +40,17 @@ const _$UigfNapPoolTypeEnumMap = {
   UigfNapPoolType.upW: '3',
   UigfNapPoolType.bond: '5',
 };
+
+UserGachaRefreshModel _$UserGachaRefreshModelFromJson(
+        Map<String, dynamic> json) =>
+    UserGachaRefreshModel(
+      $enumDecode(_$UigfNapPoolTypeEnumMap, json['type']),
+      id: json['id'] as String?,
+    );
+
+Map<String, dynamic> _$UserGachaRefreshModelToJson(
+        UserGachaRefreshModel instance) =>
+    <String, dynamic>{
+      'type': _$UigfNapPoolTypeEnumMap[instance.type]!,
+      'id': instance.id,
+    };

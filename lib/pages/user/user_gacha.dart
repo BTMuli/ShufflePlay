@@ -12,6 +12,7 @@ import 'package:path_provider/path_provider.dart';
 import '../../database/nap/nap_item_map.dart';
 import '../../database/user/user_gacha.dart';
 import '../../models/database/user/user_bbs_model.dart';
+import '../../models/database/user/user_gacha_model.dart';
 import '../../models/database/user/user_nap_model.dart';
 import '../../models/nap/gacha/nap_gacha_model.dart';
 import '../../models/nap/token/nap_authkey_model.dart';
@@ -159,11 +160,39 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage>
     }
   }
 
+  /// 尝试刷新用户调频数据
+  Future<void> tryRefreshUserGacha(
+    BuildContext context, {
+    bool isForce = false,
+  }) async {
+    var curUser = ref.read(userBbsStoreProvider).user;
+    if (curUser == null) {
+      if (context.mounted) await SpInfobar.warn(context, '未登录');
+      return;
+    }
+    var curAccount = ref.read(userBbsStoreProvider).account;
+    if (curAccount == null) {
+      if (context.mounted) await SpInfobar.warn(context, '未登录');
+      return;
+    }
+    var title = isForce ? '全量刷新用户调频数据？' : '增量刷新用户调频数据？';
+    var text = '${curAccount.nickname} '
+        'UID: ${curAccount.gameUid} '
+        '[${curAccount.regionName}]';
+    var check = await SpDialog.confirm(context, title, text);
+    if (check == null || !check) return;
+    if (context.mounted) {
+      await refreshUserGacha(context, curUser, curAccount, isForce: isForce);
+    }
+  }
+
+  /// 刷新用户调频数据
   Future<void> refreshUserGacha(
     BuildContext context,
     UserBBSModel user,
-    UserNapModel account,
-  ) async {
+    UserNapModel account, {
+    bool isForce = false,
+  }) async {
     if (context.mounted) {
       progress = SpProgress.show(
         context,
@@ -191,6 +220,14 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage>
       UigfNapPoolType.upW,
     ];
     for (var poolType in poolTypeList) {
+      UserGachaRefreshModel lastData = UserGachaRefreshModel(poolType);
+      if (!isForce) {
+        progress.update(text: '正在获取${poolType.label}池最新数据...');
+        lastData = await sqliteUser.getLatestGacha(
+          account.gameUid,
+          poolType,
+        );
+      }
       progress.update(text: '开始获取${poolType.label}池数据...');
       var page = 1;
       String? endId;
@@ -211,6 +248,12 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage>
         var gachaData = gachaResp.data as NapGachaModelData;
         progress.update(text: '正在导入${poolType.label}池数据，第$page页...');
         await sqliteUser.importNapGacha(account.gameUid, gachaData.list);
+        if (!isForce && lastData.id != null) {
+          if (gachaData.list.any((element) => element.id == lastData.id)) {
+            progress.update(text: '获取${poolType.label}池数据完成');
+            break;
+          }
+        }
         if (gachaData.list.isEmpty || gachaData.list.length < 20) {
           progress.update(text: '获取${poolType.label}池数据完成');
           break;
@@ -248,33 +291,16 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage>
           child: const Text('导出'),
         ),
         SizedBox(width: 10.w),
-        Button(
-          child: const Text('刷新'),
-          onPressed: () async {
-            var curUser = ref.read(userBbsStoreProvider).user;
-            if (curUser == null) {
-              if (context.mounted) {
-                await SpInfobar.warn(context, '未登录');
-              }
-              return;
-            }
-            var curAccount = ref.read(userBbsStoreProvider).account;
-            if (curAccount == null) {
-              if (context.mounted) {
-                await SpInfobar.warn(context, '未登录');
-              }
-              return;
-            }
-            var check = await SpDialog.confirm(
+        Tooltip(
+          message: '长按全量刷新',
+          child: Button(
+            onPressed: () async => await tryRefreshUserGacha(context),
+            onLongPress: () async => await tryRefreshUserGacha(
               context,
-              '是否刷新用户调频数据？',
-              '${curAccount.nickname} '
-                  'UID: ${curAccount.gameUid} [${curAccount.regionName}]',
-            );
-            if (check == null || !check) return;
-            if (!context.mounted) return;
-            await refreshUserGacha(context, curUser, curAccount);
-          },
+              isForce: true,
+            ),
+            child: const Text('刷新'),
+          ),
         ),
         SizedBox(width: 10.w),
         Button(

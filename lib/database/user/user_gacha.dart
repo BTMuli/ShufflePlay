@@ -101,6 +101,29 @@ class SpsUserGacha {
     );
   }
 
+  /// 获取指定[uid]指定卡池[gachaType]的最新一条祈愿记录的id
+  Future<UserGachaRefreshModel> getLatestGacha(
+    String uid,
+    UigfNapPoolType gachaType,
+  ) async {
+    await _instance.preCheck();
+    var result = await _instance.sqlite.db.query(
+      _instance._tableName,
+      columns: ['id'],
+      where: 'uid = ? AND gacha_type = ?',
+      whereArgs: [uid, gachaType.value],
+      orderBy: 'id DESC',
+      limit: 1,
+    );
+    var res = UserGachaRefreshModel(gachaType);
+    if (result.isEmpty) {
+      return res;
+    } else {
+      res.id = result.first['id'] as String;
+      return res;
+    }
+  }
+
   /// 导入祈愿记录-通过 UIGF 数据
   Future<void> importUigf(UigfModelFull uigf) async {
     await _instance.preCheck();

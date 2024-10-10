@@ -73,3 +73,25 @@ class UserGachaModel extends UigfModelNapItem {
     };
   }
 }
+
+/// 用于增量刷新的数据模型
+@JsonSerializable(explicitToJson: true)
+class UserGachaRefreshModel {
+  /// 类型
+  @JsonKey(name: 'type')
+  final UigfNapPoolType type;
+
+  /// 增量刷新的id
+  @JsonKey(name: 'id')
+  late String? id;
+
+  /// 构造函数
+  UserGachaRefreshModel(this.type, {this.id});
+
+  /// 从 JSON 中构造
+  factory UserGachaRefreshModel.fromJson(Map<String, dynamic> json) =>
+      _$UserGachaRefreshModelFromJson(json);
+
+  /// 转换为 JSON
+  Map<String, dynamic> toJson() => _$UserGachaRefreshModelToJson(this);
+}
