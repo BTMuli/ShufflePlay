@@ -42,6 +42,11 @@ class SpInfobarQueue extends ChangeNotifier {
   Timer? _timer;
 
   Future<void> initTimer() async {
+    if (_infoBars.length == 1) {
+      await _infoBars.first.show();
+      _infoBars.removeAt(0);
+      notifyListeners();
+    }
     _timer = Timer.periodic(const Duration(milliseconds: 1500), (timer) async {
       if (_infoBars.isNotEmpty) {
         await _infoBars.first.show();

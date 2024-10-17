@@ -21,6 +21,7 @@ import '../../../store/user/user_bbs.dart';
 import '../../../ui/sp_dialog.dart';
 import '../../../ui/sp_infobar.dart';
 import '../../../ui/sp_progress.dart';
+import '../app_icon.dart';
 
 class AppConfigUserWidget extends ConsumerStatefulWidget {
   const AppConfigUserWidget({super.key});
@@ -190,7 +191,7 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         IconButton(
-          icon: const Icon(FluentIcons.refresh),
+          icon: const SPIcon(FluentIcons.refresh),
           onPressed: () async {
             var check = await SpDialog.confirm(
               context,
@@ -203,7 +204,7 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
         ),
         SizedBox(width: 8.w),
         IconButton(
-          icon: const Icon(FluentIcons.delete),
+          icon: const SPIcon(FluentIcons.delete),
           onPressed: () async {
             var check = await SpDialog.confirm(
               context,
@@ -260,7 +261,7 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
               },
             ),
           ListTile(
-            leading: const Icon(FluentIcons.add),
+            leading: const SPIcon(FluentIcons.add),
             title: const Text('添加用户（通过cookie）'),
             onPressed: () async {
               await addUserByCookie();
@@ -269,7 +270,7 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
                 ? Tooltip(
                     message: '短信验证码登录',
                     child: IconButton(
-                      icon: const Icon(FluentIcons.comment_active),
+                      icon: const SPIcon(FluentIcons.comment_active),
                       onPressed: () async {
                         if (context.mounted) {
                           await SpInfobar.warn(context, '暂未实现');
