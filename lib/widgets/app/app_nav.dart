@@ -65,29 +65,27 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget>
   }
 
   /// 启动游戏
-  Future<void> tryLaunchGame(BuildContext context) async {
+  Future<void> tryLaunchGame() async {
     if (gameDir == null || gameDir!.isEmpty) {
-      if (context.mounted) await SpInfobar.warn(context, '请先设置游戏路径');
+      if (mounted) await SpInfobar.warn(context, '请先设置游戏路径');
       return;
     }
     var gamePath = path.join(gameDir!, 'ZenlessZoneZero.exe');
     var checkFile = await fileTool.isFileExist(gamePath);
     if (!checkFile) {
-      if (context.mounted) {
-        await SpInfobar.warn(context, '未检测到 ZenlessZoneZero.exe');
-      }
+      if (mounted) await SpInfobar.warn(context, '未检测到 ZenlessZoneZero.exe');
       return;
     }
     var account = ref.read(userBbsStoreProvider).account;
     var user = ref.read(userBbsStoreProvider).user;
     if (account == null || user == null) {
-      if (context.mounted) await SpInfobar.warn(context, '请先登录');
+      if (mounted) await SpInfobar.warn(context, '请先登录');
       return;
     }
     var apiNap = SprNapApiPassport();
     var tickResp = await apiNap.getLoginAuthTicket(account, user.cookie!);
     if (tickResp.retcode != 0) {
-      if (context.mounted) await SpInfobar.bbs(context, tickResp);
+      if (mounted) await SpInfobar.bbs(context, tickResp);
       return;
     }
     var ticketData = tickResp.data as NapAuthTicketModelData;
@@ -99,27 +97,23 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget>
   }
 
   /// 重置窗口大小
-  Future<void> resetWindowSize(BuildContext context) async {
+  Future<void> resetWindowSize() async {
     var size = await windowManager.getSize();
     var target = const Size(1280, 720);
     if (size == target) {
-      if (context.mounted) await SpInfobar.warn(context, '无需重置大小！');
+      if (mounted) await SpInfobar.warn(context, '无需重置大小！');
       return;
     }
     await windowManager.setSize(target);
-    if (context.mounted) {
-      await SpInfobar.success(context, '已成功重置窗口大小！');
-    }
+    if (mounted) await SpInfobar.success(context, '已成功重置窗口大小！');
   }
 
   /// 改变置顶状态
-  Future<void> changeAlwaysOnTop(BuildContext context) async {
+  Future<void> changeAlwaysOnTop() async {
     var isAlwaysOnTop = await windowManager.isAlwaysOnTop();
     await windowManager.setAlwaysOnTop(!isAlwaysOnTop);
     var str = isAlwaysOnTop ? '取消置顶' : '置顶';
-    if (context.mounted) {
-      await SpInfobar.success(context, '$str成功');
-    }
+    if (mounted) await SpInfobar.success(context, '$str成功');
   }
 
   /// 封装导航项
@@ -147,27 +141,27 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget>
   }
 
   /// 展示设置flyout
-  void showOptionsFlyout() {
-    flyoutTool.showFlyout(
+  Future<void> showOptionsFlyout() async {
+    await flyoutTool.showFlyout(
       barrierDismissible: true,
       dismissOnPointerMoveAway: false,
       dismissWithEsc: true,
-      builder: (context) => MenuFlyout(
+      builder: (_) => MenuFlyout(
         items: [
           MenuFlyoutItem(
             leading: SPIcon(FluentIcons.game),
             text: const Text('启动游戏'),
-            onPressed: () async => await tryLaunchGame(context),
+            onPressed: tryLaunchGame,
           ),
           MenuFlyoutItem(
             leading: const Icon(FluentIcons.reset_device),
             text: const Text('重置窗口大小'),
-            onPressed: () async => await resetWindowSize(context),
+            onPressed: resetWindowSize,
           ),
           MenuFlyoutItem(
             leading: const Icon(FluentIcons.pinned_solid),
             text: const Text('窗口置顶/取消置顶'),
-            onPressed: () async => await changeAlwaysOnTop(context),
+            onPressed: changeAlwaysOnTop,
           ),
         ],
       ),

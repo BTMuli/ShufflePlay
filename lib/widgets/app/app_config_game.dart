@@ -43,58 +43,54 @@ class _AppConfigGameWidgetState extends ConsumerState<AppConfigGameWidget> {
   String? get gameDir => ref.watch(appConfigStoreProvider).gameDir;
 
   /// 尝试编辑游戏目录
-  Future<void> tryEditGameDir(BuildContext context) async {
+  Future<void> tryEditGameDir() async {
     var dir = await fileTool.selectDir(context: context);
     if (dir == null) {
-      if (context.mounted) await SpInfobar.warn(context, '未选择目录');
+      if (mounted) await SpInfobar.warn(context, '未选择目录');
       return;
     }
     var gamePath = path.join(dir, 'ZenlessZoneZero.exe');
     var checkFile = await fileTool.isFileExist(gamePath);
     if (!checkFile) {
-      if (context.mounted) {
-        await SpInfobar.warn(context, '未检测到 ZenlessZoneZero.exe');
-      }
+      if (mounted) await SpInfobar.warn(context, '未检测到 ZenlessZoneZero.exe');
       return;
     }
     await ref.read(appConfigStoreProvider.notifier).setGameDir(dir);
-    if (context.mounted) {
-      await SpInfobar.success(context, '成功设置游戏目录');
-      setState(() {});
-    }
+    if (mounted) await SpInfobar.success(context, '成功设置游戏目录');
+    setState(() {});
   }
 
   /// 尝试启动游戏
-  Future<void> tryLaunchGame(BuildContext context) async {
+  Future<void> tryLaunchGame() async {
     if (gameDir == null || gameDir!.isEmpty) {
-      if (context.mounted) await SpInfobar.warn(context, '请先设置游戏目录');
+      if (mounted) await SpInfobar.warn(context, '请先设置游戏目录');
       return;
     }
     var gamePath = path.join(gameDir!, 'ZenlessZoneZero.exe');
     var checkFile = await fileTool.isFileExist(gamePath);
     if (!checkFile) {
-      if (context.mounted) {
+      if (mounted) {
         await SpInfobar.warn(context, '未检测到 ZenlessZoneZero.exe');
       }
       return;
     }
     if (account == null || user == null) {
-      if (context.mounted) await SpInfobar.warn(context, '请先登录');
+      if (mounted) await SpInfobar.warn(context, '请先登录');
       return;
     }
-    if (context.mounted) {
+    if (mounted) {
       var confirm = await SpDialog.confirm(
         context,
         '启动游戏',
         '当前账户：${account!.gameUid}(${account!.regionName})',
       );
       if (confirm == null || !confirm) {
-        if (context.mounted) await SpInfobar.warn(context, '取消启动游戏');
+        if (mounted) await SpInfobar.warn(context, '取消启动游戏');
         return;
       }
       var ticketResp = await apiNap.getLoginAuthTicket(account!, user!.cookie!);
       if (ticketResp.retcode != 0) {
-        if (context.mounted) await SpInfobar.bbs(context, ticketResp);
+        if (mounted) await SpInfobar.bbs(context, ticketResp);
         return;
       }
       var ticketData = ticketResp.data as NapAuthTicketModelData;
@@ -115,7 +111,7 @@ class _AppConfigGameWidgetState extends ConsumerState<AppConfigGameWidget> {
         message: '启动游戏',
         child: IconButton(
           icon: SPIcon(FluentIcons.rocket),
-          onPressed: () async => await tryLaunchGame(context),
+          onPressed: tryLaunchGame,
         ),
       ),
       content: Column(children: [
@@ -125,7 +121,7 @@ class _AppConfigGameWidgetState extends ConsumerState<AppConfigGameWidget> {
           subtitle: Text(gameDir ?? '未设置'),
           trailing: IconButton(
             icon: SPIcon(FluentIcons.edit),
-            onPressed: () async => await tryEditGameDir(context),
+            onPressed: tryEditGameDir,
           ),
         )
       ]),
