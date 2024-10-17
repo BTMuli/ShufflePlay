@@ -31,11 +31,17 @@ class SPLogTool {
   /// 日志
   late Logger logger;
 
+  /// 日志目录
+  late String _logDir;
+
   /// 获取实例
   factory SPLogTool() => instance;
 
   /// 文件工具
   final SPFileTool fileTool = SPFileTool();
+
+  /// 获取日志目录
+  String get logDir => _logDir;
 
   /// 获取文件名称 yyyy-MM-dd.log
   static String _getFileName() {
@@ -45,8 +51,7 @@ class SPLogTool {
 
   /// 获取日志文件
   Future<File> _getLogFile() async {
-    var dir = await instance.fileTool.getAppDataPath('log');
-    var file = path.join(dir, _getFileName());
+    var file = path.join(logDir, _getFileName());
     if (!await instance.fileTool.isFileExist(file)) {
       return await instance.fileTool.createFile(file);
     }
@@ -57,11 +62,10 @@ class SPLogTool {
   Future<void> init() async {
     var outputC = ConsoleOutput();
     var outputs = <LogOutput>[outputC];
+    _logDir = await instance.fileTool.getAppDataPath('log');
     PrettyPrinter printer;
     if (!kDebugMode) {
-      var file = await _getLogFile();
-      var outputF = FileOutput(file: file, overrideExisting: false);
-      outputs.add(outputF);
+      outputs.add(FileOutput(file: await _getLogFile()));
       printer = PrettyPrinter(
         methodCount: 0,
         errorMethodCount: 5,
@@ -86,8 +90,7 @@ class SPLogTool {
 
   /// 打开日志目录
   Future<void> openLogDir() async {
-    var dir = await instance.fileTool.getAppDataPath('log');
-    await fileTool.openDir(dir);
+    await fileTool.openDir(logDir);
   }
 
   /// 打印信息日志

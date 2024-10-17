@@ -7,16 +7,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as path;
 
 // Project imports:
-import '../../models/database/user/user_bbs_model.dart';
-import '../../models/database/user/user_nap_model.dart';
-import '../../models/nap/token/nap_auth_ticket_model.dart';
-import '../../request/nap/nap_api_passport.dart';
-import '../../store/app/app_config.dart';
-import '../../store/user/user_bbs.dart';
-import '../../tools/file_tool.dart';
-import '../../ui/sp_dialog.dart';
-import '../../ui/sp_infobar.dart';
-import 'app_icon.dart';
+import '../../../models/database/user/user_bbs_model.dart';
+import '../../../models/database/user/user_nap_model.dart';
+import '../../../models/nap/token/nap_auth_ticket_model.dart';
+import '../../../request/nap/nap_api_passport.dart';
+import '../../../store/app/app_config.dart';
+import '../../../store/user/user_bbs.dart';
+import '../../../tools/file_tool.dart';
+import '../../../ui/sp_dialog.dart';
+import '../../../ui/sp_infobar.dart';
+import '../app_icon.dart';
 
 class AppConfigGameWidget extends ConsumerStatefulWidget {
   const AppConfigGameWidget({super.key});
@@ -114,17 +114,19 @@ class _AppConfigGameWidgetState extends ConsumerState<AppConfigGameWidget> {
           onPressed: tryLaunchGame,
         ),
       ),
-      content: Column(children: [
-        ListTile(
-          leading: Icon(FluentIcons.folder),
-          title: Text('游戏目录'),
-          subtitle: Text(gameDir ?? '未设置'),
-          trailing: IconButton(
-            icon: SPIcon(FluentIcons.edit),
-            onPressed: tryEditGameDir,
-          ),
-        )
-      ]),
+      content: Column(
+        children: [
+          ListTile(
+            leading: Icon(FluentIcons.folder),
+            title: Text('游戏目录'),
+            subtitle: Text(gameDir ?? '未设置'),
+            trailing: IconButton(
+              icon: SPIcon(FluentIcons.edit),
+              onPressed: tryEditGameDir,
+            ),
+          )
+        ],
+      ),
     );
   }
 }
