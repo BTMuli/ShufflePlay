@@ -1,4 +1,5 @@
 // Flutter imports:
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 // Package imports:
@@ -22,7 +23,10 @@ Future<void> main() async {
   /// 初始化配置
   await SPLogTool().init();
   await SPSqlite().init();
-  await SPWebviewTool.init();
+  // 如果是Windows平台，初始化WebView，否则不初始化
+  if(defaultTargetPlatform == TargetPlatform.windows) {
+    await SPWebviewTool.init();
+  }
 
   WindowOptions windowOptions = const WindowOptions(
     title: 'ShufflePlay',
@@ -34,5 +38,7 @@ Future<void> main() async {
   });
 
   runApp(const ProviderScope(child: SPApp()));
-  await Window.setEffect(effect: WindowEffect.acrylic);
+  if(defaultTargetPlatform == TargetPlatform.windows) {
+    await Window.setEffect(effect: WindowEffect.acrylic);
+  }
 }
