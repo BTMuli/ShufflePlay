@@ -1,8 +1,11 @@
+// Flutter imports:
+import 'package:flutter/foundation.dart';
+
 // Package imports:
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter/foundation.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart' as mdi;
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart'
+    as mdi;
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:webview_windows/webview_windows.dart';
 
@@ -30,10 +33,10 @@ class _AppConfigDeviceWidgetState extends State<AppConfigDeviceWidget> {
   void initState() {
     super.initState();
     Future.microtask(() async {
-      if(defaultTargetPlatform == TargetPlatform.windows) {
+      if (defaultTargetPlatform == TargetPlatform.windows) {
         deviceInfoWin = await DeviceInfoPlugin().windowsInfo;
         webviewVersion = await WebviewController.getWebViewVersion();
-      } else if(defaultTargetPlatform == TargetPlatform.macOS) {
+      } else if (defaultTargetPlatform == TargetPlatform.macOS) {
         deviceInfoMac = await DeviceInfoPlugin().macOsInfo;
       }
       if (mounted) setState(() {});
@@ -58,9 +61,8 @@ class _AppConfigDeviceWidgetState extends State<AppConfigDeviceWidget> {
     return ListTile(
       leading: Icon(mdi.MdiIcons.apple),
       title: const Text('MacOS'),
-      subtitle: Text(
-        '${dim.majorVersion}.${dim.minorVersion}.${dim.patchVersion}'
-      ),
+      subtitle:
+          Text('${dim.majorVersion}.${dim.minorVersion}.${dim.patchVersion}'),
     );
   }
 
@@ -94,14 +96,16 @@ class _AppConfigDeviceWidgetState extends State<AppConfigDeviceWidget> {
 
   @override
   Widget build(BuildContext context) {
-    if ((defaultTargetPlatform == TargetPlatform.windows && deviceInfoWin == null) ||
-        (defaultTargetPlatform == TargetPlatform.macOS && deviceInfoMac == null)) {
+    if ((defaultTargetPlatform == TargetPlatform.windows &&
+            deviceInfoWin == null) ||
+        (defaultTargetPlatform == TargetPlatform.macOS &&
+            deviceInfoMac == null)) {
       return ListTile(
         leading: const Icon(FluentIcons.error),
         title: const Text('无法获取设备信息'),
       );
     }
-    if(defaultTargetPlatform == TargetPlatform.windows) {
+    if (defaultTargetPlatform == TargetPlatform.windows) {
       return Expander(
         leading: Icon(mdi.MdiIcons.microsoftWindows),
         header: Text(deviceInfoWin!.productName),
@@ -114,9 +118,8 @@ class _AppConfigDeviceWidgetState extends State<AppConfigDeviceWidget> {
       );
     }
     return Expander(
-      leading: Icon(mdi.MdiIcons.appleIcloud),
-      header: Text(deviceInfoMac!.computerName),
-      content: buildOSInfoMac(deviceInfoMac!)
-    );
+        leading: Icon(mdi.MdiIcons.appleIcloud),
+        header: Text(deviceInfoMac!.computerName),
+        content: buildOSInfoMac(deviceInfoMac!));
   }
 }

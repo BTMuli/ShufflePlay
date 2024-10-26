@@ -153,9 +153,9 @@ class SPFileTool {
   Future<bool> openDir(String dirPath) async {
     var check = await isDirExist(dirPath);
     if (!check) return false;
-    if(defaultTargetPlatform == TargetPlatform.windows) {
+    if (defaultTargetPlatform == TargetPlatform.windows) {
       await Process.run('explorer', [dirPath]);
-    } else if(defaultTargetPlatform == TargetPlatform.macOS) {
+    } else if (defaultTargetPlatform == TargetPlatform.macOS) {
       await Process.run('open', [dirPath]);
     }
     return true;

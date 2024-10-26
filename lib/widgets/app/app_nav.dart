@@ -148,12 +148,12 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget>
       dismissWithEsc: true,
       builder: (_) => MenuFlyout(
         items: [
-          if(defaultTargetPlatform == TargetPlatform.windows)
-          MenuFlyoutItem(
-            leading: SPIcon(FluentIcons.game),
-            text: const Text('启动游戏'),
-            onPressed: tryLaunchGame,
-          ),
+          if (defaultTargetPlatform == TargetPlatform.windows)
+            MenuFlyoutItem(
+              leading: SPIcon(FluentIcons.game),
+              text: const Text('启动游戏'),
+              onPressed: tryLaunchGame,
+            ),
           MenuFlyoutItem(
             leading: const Icon(FluentIcons.reset_device),
             text: const Text('重置窗口大小'),

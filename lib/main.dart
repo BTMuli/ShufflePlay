@@ -24,7 +24,7 @@ Future<void> main() async {
   await SPLogTool().init();
   await SPSqlite().init();
   // 如果是Windows平台，初始化WebView，否则不初始化
-  if(defaultTargetPlatform == TargetPlatform.windows) {
+  if (defaultTargetPlatform == TargetPlatform.windows) {
     await SPWebviewTool.init();
   }
 
@@ -38,7 +38,7 @@ Future<void> main() async {
   });
 
   runApp(const ProviderScope(child: SPApp()));
-  if(defaultTargetPlatform == TargetPlatform.windows) {
+  if (defaultTargetPlatform == TargetPlatform.windows) {
     await Window.setEffect(effect: WindowEffect.acrylic);
   }
 }

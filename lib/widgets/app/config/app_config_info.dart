@@ -6,7 +6,8 @@ import 'package:flutter/material.dart' as material;
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart' as mdi;
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart'
+    as mdi;
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -90,7 +91,8 @@ class _AppConfigInfoWidgetState extends ConsumerState<AppConfigInfoWidget> {
   /// 构建应用信息
   Widget buildAppInfo() {
     return ListTile(
-      leading: Image.asset('assets/images/ShufflePlayMini.png', width: 24, height:24),
+      leading: Image.asset('assets/images/ShufflePlayMini.png',
+          width: 24, height: 24),
       title: const Text('ShufflePlay'),
       subtitle: Text('版本: ${packageInfo!.version}+${packageInfo!.buildNumber}'),
       trailing: IconButton(
@@ -119,16 +121,14 @@ class _AppConfigInfoWidgetState extends ConsumerState<AppConfigInfoWidget> {
   MenuFlyoutItemBase buildThemeItem(SpAppThemeConfig theme) {
     return MenuFlyoutItem(
       text: Text(theme.label),
-      leading: curThemeMode == theme.cur
-          ? SPIcon(theme.icon)
-          : Icon(theme.icon),
+      leading:
+          curThemeMode == theme.cur ? SPIcon(theme.icon) : Icon(theme.icon),
       onPressed: () async => await ref
           .read(appConfigStoreProvider.notifier)
           .setThemeMode(theme.cur),
       selected: curThemeMode == theme.cur,
-      trailing: curThemeMode == theme.cur
-          ? const Icon(material.Icons.check)
-          : null,
+      trailing:
+          curThemeMode == theme.cur ? const Icon(material.Icons.check) : null,
     );
   }
 
@@ -223,8 +223,7 @@ class _AppConfigInfoWidgetState extends ConsumerState<AppConfigInfoWidget> {
           if (deviceLocal != null) buildDeviceInfo(),
           buildThemeInfo(),
           buildAccentColorInfo(),
-          if(defaultTargetPlatform==TargetPlatform.windows)
-          buildLogInfo(),
+          if (defaultTargetPlatform == TargetPlatform.windows) buildLogInfo(),
         ],
       ),
     );

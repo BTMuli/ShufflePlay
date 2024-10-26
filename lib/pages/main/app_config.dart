@@ -1,6 +1,8 @@
+// Flutter imports:
+import 'package:flutter/foundation.dart';
+
 // Package imports:
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -32,13 +34,13 @@ class _AppConfigPageState extends ConsumerState<AppConfigPage>
             padding: EdgeInsets.symmetric(horizontal: 16.w),
             child: const AppConfigInfoWidget(),
           ),
-          if(defaultTargetPlatform == TargetPlatform.windows)
-            ...[
-          SizedBox(height: 10.h),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.w),
-            child: const AppConfigGameWidget(),
-          )],
+          if (defaultTargetPlatform == TargetPlatform.windows) ...[
+            SizedBox(height: 10.h),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: const AppConfigGameWidget(),
+            )
+          ],
           SizedBox(height: 10.h),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.w),
