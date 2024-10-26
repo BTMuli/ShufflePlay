@@ -148,6 +148,7 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget>
       dismissWithEsc: true,
       builder: (_) => MenuFlyout(
         items: [
+          if(defaultTargetPlatform == TargetPlatform.windows)
           MenuFlyoutItem(
             leading: SPIcon(FluentIcons.game),
             text: const Text('启动游戏'),

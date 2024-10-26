@@ -1,11 +1,12 @@
 // Flutter imports:
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' as material;
 
 // Package imports:
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart' as mdi;
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -32,9 +33,6 @@ class _AppConfigInfoWidgetState extends ConsumerState<AppConfigInfoWidget> {
   /// 应用信息
   PackageInfo? packageInfo;
 
-  /// 设备信息
-  WindowsDeviceInfo? deviceInfo;
-
   /// deviceApi
   final SprBbsApiDevice apiDevice = SprBbsApiDevice();
 
@@ -57,7 +55,6 @@ class _AppConfigInfoWidgetState extends ConsumerState<AppConfigInfoWidget> {
     super.initState();
     Future.microtask(() async {
       packageInfo = await PackageInfo.fromPlatform();
-      deviceInfo = await DeviceInfoPlugin().windowsInfo;
       if (mounted) setState(() {});
     });
   }
@@ -80,7 +77,7 @@ class _AppConfigInfoWidgetState extends ConsumerState<AppConfigInfoWidget> {
       deviceLocal!.deviceFp = deviceFp;
       await ref.read(appConfigStoreProvider.notifier).setDevice(deviceLocal!);
       if (mounted) {
-        await SpInfobar.info(
+        await SpInfobar.success(
           context,
           '更新设备指纹: ${deviceLocal!.deviceFp} -> $deviceFp',
         );
@@ -93,11 +90,11 @@ class _AppConfigInfoWidgetState extends ConsumerState<AppConfigInfoWidget> {
   /// 构建应用信息
   Widget buildAppInfo() {
     return ListTile(
-      leading: const Icon(FluentIcons.info),
+      leading: Image.asset('assets/images/ShufflePlayMini.png', width: 24, height:24),
       title: const Text('ShufflePlay'),
       subtitle: Text('版本: ${packageInfo!.version}+${packageInfo!.buildNumber}'),
       trailing: IconButton(
-        icon: SPIcon(FluentIcons.edge_logo),
+        icon: SPIcon(mdi.MdiIcons.github),
         onPressed: () async {
           await launchUrlString('https://github.com/BTMuli/ShufflePlay');
         },
@@ -118,6 +115,23 @@ class _AppConfigInfoWidgetState extends ConsumerState<AppConfigInfoWidget> {
     );
   }
 
+  /// 构建主题项
+  MenuFlyoutItemBase buildThemeItem(SpAppThemeConfig theme) {
+    return MenuFlyoutItem(
+      text: Text(theme.label),
+      leading: curThemeMode == theme.cur
+          ? SPIcon(theme.icon)
+          : Icon(theme.icon),
+      onPressed: () async => await ref
+          .read(appConfigStoreProvider.notifier)
+          .setThemeMode(theme.cur),
+      selected: curThemeMode == theme.cur,
+      trailing: curThemeMode == theme.cur
+          ? const Icon(material.Icons.check)
+          : null,
+    );
+  }
+
   /// 构建主题信息
   Widget buildThemeInfo() {
     var themes = getThemeModeConfigList();
@@ -128,24 +142,7 @@ class _AppConfigInfoWidgetState extends ConsumerState<AppConfigInfoWidget> {
       subtitle: Text('当前：${curTheme.label}'),
       trailing: DropDownButton(
         title: Text(curTheme.label),
-        items: [
-          for (var theme in themes)
-            MenuFlyoutItem(
-              text: Text(theme.label),
-              leading: curThemeMode == theme.cur
-                  ? SPIcon(theme.icon)
-                  : Icon(theme.icon),
-              onPressed: () async {
-                await ref
-                    .read(appConfigStoreProvider.notifier)
-                    .setThemeMode(theme.cur);
-              },
-              selected: curThemeMode == theme.cur,
-              trailing: curThemeMode == theme.cur
-                  ? const Icon(material.Icons.check)
-                  : null,
-            ),
-        ],
+        items: themes.map(buildThemeItem).toList(),
       ),
     );
   }
@@ -226,6 +223,7 @@ class _AppConfigInfoWidgetState extends ConsumerState<AppConfigInfoWidget> {
           if (deviceLocal != null) buildDeviceInfo(),
           buildThemeInfo(),
           buildAccentColorInfo(),
+          if(defaultTargetPlatform==TargetPlatform.windows)
           buildLogInfo(),
         ],
       ),

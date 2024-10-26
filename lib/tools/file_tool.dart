@@ -2,6 +2,7 @@
 import 'dart:io';
 
 // Flutter imports:
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 // Package imports:
@@ -152,7 +153,11 @@ class SPFileTool {
   Future<bool> openDir(String dirPath) async {
     var check = await isDirExist(dirPath);
     if (!check) return false;
-    await Process.run('explorer', [dirPath]);
+    if(defaultTargetPlatform == TargetPlatform.windows) {
+      await Process.run('explorer', [dirPath]);
+    } else if(defaultTargetPlatform == TargetPlatform.macOS) {
+      await Process.run('open', [dirPath]);
+    }
     return true;
   }
 }
