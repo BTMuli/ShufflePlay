@@ -51,6 +51,7 @@ class SpsUserGacha {
       columns: ['uid'],
       distinct: true,
     );
+    if(result.isEmpty) return [];
     return result.map((e) => e['uid'] as String).toList();
   }
 
