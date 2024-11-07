@@ -6,8 +6,6 @@ import 'package:flutter/material.dart' as material;
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart'
-    as mdi;
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -21,6 +19,9 @@ import '../../../ui/sp_infobar.dart';
 import '../../../utils/get_app_theme.dart';
 import '../../bbs/bbs_infobar.dart';
 import '../app_icon.dart';
+
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart'
+    as mdi;
 
 class AppConfigInfoWidget extends ConsumerStatefulWidget {
   const AppConfigInfoWidget({super.key});

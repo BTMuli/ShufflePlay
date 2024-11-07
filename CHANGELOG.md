@@ -2,14 +2,19 @@
 Author: 目棃
 Description: 更新日志
 Date: 2024-08-08
-Update: 2024-10-10
+Update: 2024-11-09
 ---
 
 > 本文档 [`Frontmatter`](https://github.com/BTMuli/MuCli#Frontmatter) 由 [MuCli](https://github.com/BTMuli/Mucli) 自动生成于 `2024-08-08 18:24:38`
 >
-> 更新于 `2024-10-10 15:32:05`
+> 更新于 `2024-11-09 19:22:32`
 
 # 更新日志
+
+## [v0.2.1](https://github.com/BTMuli/ShufflePlay/releases/tag/v0.2.1) (2024-11-09)
+
+- ✨ 支持MacOS [`#1`](https://github.com/BTMuli/ShufflePlay/issues/1)
+- 🐛 修复祈愿数据库初始化读取异常
 
 ## [v0.2.0](https://github.com/BTMuli/ShufflePlay/releases/tag/v0.2.0) (2024-10-10)
 

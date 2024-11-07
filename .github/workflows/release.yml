@@ -7,39 +7,47 @@ on:
       - 'v*.*.*'
 
 jobs:
-  build:
+  createRelease:
+    name: Create Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          body: |
+            <a href="https://apps.microsoft.com/detail/9n6vc24jx0jq?mode=direct">
+              <img src="https://get.microsoft.com/images/zh-cn%20dark.svg" width="200"/>
+            </a>
+  buildWindows:
+    needs: createRelease
     name: Build Windows
     runs-on: windows-latest
     permissions:
       contents: write
     steps:
-
       - name: 签出仓库
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           ref: master
-
       - name: 初始化 Flutter 环境
         uses: subosito/flutter-action@v2
         with:
           channel: stable
           architecture: x64
-
-      - name: 检查环境
-        run: flutter doctor
-
       - name: 拉取依赖
         run: flutter pub get
-
       - name: 打包并压缩
         run: |
           flutter build windows
           Compress-Archive -Path ./build/windows/x64/runner/Release/* -DestinationPath ShufflePlay.zip
-
       - name: 打包msix
         run: dart run msix:create -p ${{ secrets.SIGN_SECRET }}
-
       - name: 打包msix-Store
         run: >
           dart run msix:create 
@@ -48,23 +56,38 @@ jobs:
           -b "CN=5FE33156-C3CE-4E71-A036-81BAA99521CB" 
           -n "ShufflePlay_Store" 
           -p ${{ secrets.SIGN_SECRET }}
-
       - name: 上传文件
-        uses: actions/upload-artifact@v4
+        uses: xresloader/upload-to-github-release@v1
         with:
-          name: ShufflePlay
-          compression-level: 0
-          path: |
-            ShufflePlay.zip
-            ShufflePlay.msix
-            ShufflePlay_Store.msix
-
-      - name: 发行Release
-        uses: marvinpinto/action-automatic-releases@latest
+          file: ShufflePlay.zip;ShufflePlay.msix;ShufflePlay_Store.msix
+          tags: true
+          release_name: ${{ github.ref }}
+  buildMac:
+    needs: createRelease
+    name: Build Mac
+    runs-on: macos-latest
+    permissions:
+      contents: write
+    steps:
+      - name: 签出仓库
+        uses: actions/checkout@v4
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          draft: true
-          files: |
-            ShufflePlay.zip
-            ShufflePlay.msix
-            ShufflePlay_Store.msix
+          fetch-depth: 0
+          ref: master
+      - name: 初始化 Flutter 环境
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          architecture: x64
+      - name: 拉取依赖
+        run: flutter pub get
+      - name: 打包
+        run: |
+          flutter build macos
+          zip -r ShufflePlay.app.zip ./build/macos/Build/Products/Release/ShufflePlay.app
+      - name: 上传文件
+        uses: xresloader/upload-to-github-release@v1
+        with:
+          file: ShufflePlay.app.zip
+          tags: true
+          release_name: ${{ github.ref }}
