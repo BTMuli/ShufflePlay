@@ -15,8 +15,8 @@ import '../../../store/app/app_config.dart';
 import '../../../store/user/user_bbs.dart';
 import '../../../tools/file_tool.dart';
 import '../../../ui/sp_dialog.dart';
+import '../../../ui/sp_icon.dart';
 import '../../../ui/sp_infobar.dart';
-import '../app_icon.dart';
 
 class AppConfigGameWidget extends ConsumerStatefulWidget {
   const AppConfigGameWidget({super.key});

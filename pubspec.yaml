@@ -32,7 +32,7 @@ dependencies:
   cached_network_image: ^3.4.1
   crypto: ^3.0.6
   cupertino_icons: ^1.0.6
-  device_info_plus: ^11.0.0
+  device_info_plus: ^11.1.1
   desktop_multi_window: ^0.2.0
   dio: ^5.7.0
   encrypt: ^5.0.3
@@ -52,7 +52,7 @@ dependencies:
     git:
       url: https://github.com/insertjokehere/flutter_msvcredist.git
       ref: main
-  package_info_plus: ^8.0.3
+  package_info_plus: ^8.1.1
   path: ^1.9.0
   path_provider: ^2.1.5
   provider: ^6.1.2

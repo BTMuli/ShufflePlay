@@ -59,7 +59,7 @@ class NapAnnoCardWidget extends StatelessWidget {
         children: [
           Expanded(
             child: Text(
-              ' ${anno.subtitle}',
+              ' ${getTitle(anno.subtitle)}',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18.sp,

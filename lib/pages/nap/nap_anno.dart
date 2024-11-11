@@ -8,6 +8,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 import '../../models/nap/anno/nap_anno_content_model.dart';
 import '../../models/nap/anno/nap_anno_list_model.dart';
 import '../../request/nap/nap_api_anno.dart';
+import '../../ui/sp_icon.dart';
 import '../../ui/sp_infobar.dart';
 import '../../widgets/nap/nap_anno_card.dart';
 
@@ -44,9 +45,7 @@ class _NapAnnoPageState extends State<NapAnnoPage>
   @override
   void initState() {
     super.initState();
-    Future.microtask(() async {
-      await loadAnnoList();
-    });
+    Future.microtask(loadAnnoList);
   }
 
   /// 加载公告列表
@@ -77,9 +76,7 @@ class _NapAnnoPageState extends State<NapAnnoPage>
   String getTitle(String title) {
     title = title.replaceAll('&amp;', '&');
     var reg = RegExp(r'<[^>]*>');
-    if (reg.hasMatch(title)) {
-      return title.replaceAll(reg, '');
-    }
+    if (reg.hasMatch(title)) return title.replaceAll(reg, '');
     return title;
   }
 
@@ -99,9 +96,7 @@ class _NapAnnoPageState extends State<NapAnnoPage>
     if (match == null) return false;
     var target = match.group(2);
     if (target == null) return false;
-    if (await canLaunchUrlString(target)) {
-      await launchUrlString(target);
-    }
+    if (await canLaunchUrlString(target)) await launchUrlString(target);
     return true;
   }
 
@@ -153,10 +148,13 @@ class _NapAnnoPageState extends State<NapAnnoPage>
         children: [
           Text('公告', style: FluentTheme.of(context).typography.title),
           SizedBox(width: 8.w),
-          Button(
-            onPressed: () async => await loadAnnoList(),
-            child: const Icon(FluentIcons.refresh),
-          ),
+          Tooltip(
+            message: '点击刷新',
+            child: IconButton(
+              onPressed: loadAnnoList,
+              icon: SPIcon(FluentIcons.refresh),
+            ),
+          )
         ],
       ),
     );
@@ -183,6 +181,22 @@ class _NapAnnoPageState extends State<NapAnnoPage>
     );
   }
 
+  /// 构建tab
+  Tab buildTab(BuildContext context, bool isGame) {
+    return Tab(
+      icon: currentIndex == (isGame ? 0 : 1)
+          ? Icon(FluentIcons.game)
+          : Icon(FluentIcons.calendar),
+      text: Text(isGame ? '游戏公告' : '活动公告'),
+      body: buildList(
+        annoList.where((e) => e.type == (isGame ? 3 : 4)).toList(),
+        context,
+      ),
+      selectedBackgroundColor: FluentTheme.of(context).accentColor,
+      backgroundColor: FluentTheme.of(context).accentColor.withOpacity(0.2),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -192,26 +206,7 @@ class _NapAnnoPageState extends State<NapAnnoPage>
         currentIndex: currentIndex,
         closeButtonVisibility: CloseButtonVisibilityMode.never,
         tabWidthBehavior: TabWidthBehavior.sizeToContent,
-        tabs: [
-          Tab(
-            icon: currentIndex == 0 ? const Icon(FluentIcons.game) : null,
-            text: const Text('游戏公告'),
-            body: buildList(
-              annoList.where((e) => e.type == 3).toList(),
-              context,
-            ),
-            selectedBackgroundColor: FluentTheme.of(context).accentColor,
-          ),
-          Tab(
-            icon: currentIndex == 1 ? const Icon(FluentIcons.calendar) : null,
-            text: const Text('活动公告'),
-            body: buildList(
-              annoList.where((e) => e.type == 4).toList(),
-              context,
-            ),
-            selectedBackgroundColor: FluentTheme.of(context).accentColor,
-          ),
-        ],
+        tabs: [buildTab(context, true), buildTab(context, false)],
         onChanged: (index) {
           currentIndex = index;
           setState(() {});

@@ -21,9 +21,9 @@ import '../../request/nap/nap_api_passport.dart';
 import '../../store/app/app_config.dart';
 import '../../store/user/user_bbs.dart';
 import '../../tools/file_tool.dart';
+import '../../ui/sp_icon.dart';
 import '../../ui/sp_infobar.dart';
 import '../../utils/get_app_theme.dart';
-import 'app_icon.dart';
 
 class AppNavWidget extends ConsumerStatefulWidget {
   const AppNavWidget({super.key});

@@ -8,7 +8,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 import 'package:webview_windows/webview_windows.dart';
 
 // Project imports:
-import '../app_icon.dart';
+import '../../../ui/sp_icon.dart';
 
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart'
     as mdi;

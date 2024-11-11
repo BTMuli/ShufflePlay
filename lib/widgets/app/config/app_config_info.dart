@@ -15,10 +15,10 @@ import '../../../models/database/app/app_config_model.dart';
 import '../../../request/bbs/bbs_api_device.dart';
 import '../../../store/app/app_config.dart';
 import '../../../tools/log_tool.dart';
+import '../../../ui/sp_icon.dart';
 import '../../../ui/sp_infobar.dart';
 import '../../../utils/get_app_theme.dart';
 import '../../bbs/bbs_infobar.dart';
-import '../app_icon.dart';
 
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart'
     as mdi;
