@@ -153,12 +153,13 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget>
         items: [
           if (defaultTargetPlatform == TargetPlatform.windows &&
               account != null &&
-              user != null) ...[
+              user != null)
             MenuFlyoutItem(
               leading: SPIcon(FluentIcons.game),
               text: const Text('启动游戏'),
               onPressed: () async => await tryLaunchGame(account, user),
             ),
+          if (account != null && user != null)
             MenuFlyoutItem(
               leading: SPIcon(FluentIcons.giftbox),
               text: const Text('签到'),
@@ -176,7 +177,6 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget>
                 }
               },
             ),
-          ],
           MenuFlyoutItem(
             leading: const Icon(FluentIcons.reset_device),
             text: const Text('重置窗口大小'),

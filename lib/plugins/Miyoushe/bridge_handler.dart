@@ -46,7 +46,7 @@ Future<void> handleBridgeMessage(
       await handleGetStatusBarHeight(data, controller);
       break;
     case "hideLoading":
-      await controller.loadJSBridge();
+      await controller.webview.loadJSBridge();
       break;
     case 'pushPage':
       await handlePushPage(data, controller);
@@ -62,10 +62,12 @@ Future<void> handleBridgeMessage(
         '[Miyoushe] Unknown method: ${data.method}\n'
         'payload: ${data.payload}',
       );
-      await SpInfobar.warn(
-        controller.context,
-        'Unknown method: ${data.method}',
-      );
+      if (controller.context.mounted) {
+        await SpInfobar.warn(
+          controller.context,
+          'Unknown method: ${data.method}',
+        );
+      }
       break;
   }
 }
@@ -80,7 +82,7 @@ Future<void> handleClosePage(
   if (canGoback) {
     controller.routeStack.removeLast();
     await controller.webview.loadUrl(controller.routeStack.last);
-    await controller.loadJSBridge();
+    await controller.webview.loadJSBridge();
   } else {
     await controller.close();
   }
@@ -92,7 +94,7 @@ Future<void> handleEventTrack(
   MiyousheController controller,
 ) async {
   SPLogTool.debug('[Miyoushe] Event track: ${arg.payload}');
-  await controller.loadJSBridge();
+  await controller.webview.loadJSBridge();
 }
 
 /// 处理消息-getActionTicket
@@ -239,7 +241,7 @@ Future<void> handlePushPage(
   SPLogTool.debug('[Miyoushe] Push page: ${data.page}');
   controller.routeStack.add(data.page);
   await controller.webview.loadUrl(data.page);
-  await controller.loadJSBridge();
+  await controller.webview.loadJSBridge();
 }
 
 /// 处理消息-setPresentationStyle
@@ -253,7 +255,7 @@ Future<void> handleSetPresentationStyle(
   SPLogTool.debug(
     '[Miyoushe] Set presentation style: ${data.payload?.toJson().toString()}',
   );
-  await controller.loadJSBridge();
+  await controller.webview.loadJSBridge();
 }
 
 /// 处理消息-share

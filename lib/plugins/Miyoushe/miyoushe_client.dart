@@ -80,32 +80,6 @@ class MiyousheController extends ChangeNotifier {
     return await webview.executeScript(script);
   }
 
-  /// 加载 JSBridge
-  Future<void> loadJSBridge({bool isFirst = false}) async {
-    if (isFirst) webview.addListener(handleMessage);
-    String bridgeJS;
-    if (defaultTargetPlatform == TargetPlatform.windows) {
-      bridgeJS = '''javascript:(function() {
-      if(window.MiHoYoJSInterface) return;
-      window.MiHoYoJSInterface = {
-        postMessage: function(arg) => window.chrome.webview.postMessage(arg),
-        closePage: function() { this.postMessage('{"method":"closePage"}') },
-      };
-    })();''';
-    } else if (defaultTargetPlatform == TargetPlatform.macOS) {
-      bridgeJS = '''javascript:(function() {
-      if(window.MiHoYoJSInterface) return;
-      window.MiHoYoJSInterface = {
-        postMessage: function(arg) => SPBridge.postMessage(arg),
-        closePage: function() { this.postMessage('{"method":"closePage"}') },
-      };
-    })();''';
-    } else {
-      throw UnimplementedError();
-    }
-    await webview.executeScript(bridgeJS);
-  }
-
   /// callback null
   Future<void> callbackNull(String cb) async => await callback(cb, null);
 
@@ -113,7 +87,7 @@ class MiyousheController extends ChangeNotifier {
   Future<void> callback(String cb, dynamic data) async {
     BBSResp resp = BBSResp.success(data: data);
     SPLogTool.debug('[Miyoushe] Callback: $cb, $resp');
-    await webview.executeScript('javascript:mhyWebBridge("$cb", $resp)');
+    await webview.callback(cb, resp);
   }
 
   /// 处理消息
@@ -135,7 +109,7 @@ class MiyousheController extends ChangeNotifier {
   /// 刷新
   Future<void> reload() async {
     await webview.reload();
-    await loadJSBridge();
+    await webview.loadJSBridge();
   }
 
   Future<void> show(BuildContext context) async {
@@ -254,7 +228,9 @@ class _MiyousheClientState extends ConsumerState<MiyousheClient> {
       );
     }
     if (defaultTargetPlatform == TargetPlatform.macOS) {
-      return WebViewWidget(controller: widget.controller.webview.webMac!);
+      return WebViewWidget(
+        controller: widget.controller.webview.webMac!,
+      );
     }
     return const Text('Unsupported platform');
   }
