@@ -163,8 +163,17 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget>
               leading: SPIcon(FluentIcons.giftbox),
               text: const Text('签到'),
               onPressed: () async {
-                controller = await MiyousheClient.createSign(context);
-                if (mounted) await controller.show(context);
+                var check = await MiyousheClient.check();
+                if (!check) {
+                  if (mounted) {
+                    await SpInfobar.error(context, '未检测到webview2Runtime');
+                  }
+                  return;
+                }
+                if (mounted) {
+                  controller = await MiyousheClient.createSign(context);
+                  if (mounted) await controller.show(context);
+                }
               },
             ),
           ],

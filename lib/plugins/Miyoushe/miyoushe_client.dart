@@ -224,6 +224,11 @@ class MiyousheClient extends ConsumerStatefulWidget {
 
   @override
   ConsumerState<MiyousheClient> createState() => _MiyousheClientState();
+
+  static Future<bool> check() async {
+    var version = await WebviewController.getWebViewVersion();
+    return version != null;
+  }
 }
 
 class _MiyousheClientState extends ConsumerState<MiyousheClient> {
