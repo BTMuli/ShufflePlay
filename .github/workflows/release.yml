@@ -84,7 +84,7 @@ jobs:
       - name: 打包
         run: |
           flutter build macos
-          zip -r ShufflePlay.app.zip ./build/macos/Build/Products/Release/ShufflePlay.app
+          Compress-Archive -Path ./build/macos/Build/Products/Release/ShufflePlay.app -DestinationPath ShufflePlay.app.zip
       - name: 上传文件
         uses: xresloader/upload-to-github-release@v1
         with:
