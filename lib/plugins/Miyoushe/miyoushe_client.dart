@@ -11,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_windows/webview_windows.dart';
 
 // Project imports:
@@ -19,6 +20,7 @@ import '../../models/bbs/bbs_constant_enum.dart';
 import '../../models/bbs/bridge/bbs_bridge_model.dart';
 import '../../tools/log_tool.dart';
 import 'bridge_handler.dart';
+import 'miyoushe_webview.dart';
 
 class MiyousheController extends ChangeNotifier {
   late WidgetRef? ref;
@@ -40,10 +42,9 @@ class MiyousheController extends ChangeNotifier {
   /// 窗口userAgent
   late String userAgent;
 
-  /// 窗口控制器
-  late WebviewController webview;
-
   List<String> routeStack = [];
+
+  late MiyousheWebview webview;
 
   Future<void> initialize(
     String url, {
@@ -57,25 +58,14 @@ class MiyousheController extends ChangeNotifier {
     this.height = height ?? 600.sp;
     this.title = title ?? '米游社';
     this.userAgent = userAgent ?? bbsUaMobile;
-    webview = WebviewController();
+    webview = MiyousheWebview();
     routeStack = [url];
     try {
-      await initWebviewController();
+      await webview.initController(this);
     } on PlatformException catch (e) {
       SPLogTool.warn('[Miyoushe] Fail to initialize webview: ${e.message}');
     }
     notifyListeners();
-  }
-
-  Future<void> initWebviewController() async {
-    await webview.initialize();
-    await loadJSBridge(isFirst: true);
-    await webview.setUserAgent(userAgent);
-    await webview.loadUrl(url);
-    await loadJSBridge();
-    SPLogTool.debug('[Miyoushe] Initialize webview: $url');
-    await webview.setBackgroundColor(Colors.transparent);
-    await webview.setPopupWindowPolicy(WebviewPopupWindowPolicy.deny);
   }
 
   @override
@@ -92,8 +82,10 @@ class MiyousheController extends ChangeNotifier {
 
   /// 加载 JSBridge
   Future<void> loadJSBridge({bool isFirst = false}) async {
-    if (isFirst) webview.webMessage.listen(handleMessage);
-    var bridgeJS = '''javascript:(function() {
+    if (isFirst) webview.addListener(handleMessage);
+    String bridgeJS;
+    if (defaultTargetPlatform == TargetPlatform.windows) {
+      bridgeJS = '''javascript:(function() {
       if(window.MiHoYoJSInterface) return;
       window.MiHoYoJSInterface = {
         postMessage: function(arg) { 
@@ -102,6 +94,19 @@ class MiyousheController extends ChangeNotifier {
         closePage: function() { this.postMessage('{"method":"closePage"}') },
       };
     })();''';
+    } else if (defaultTargetPlatform == TargetPlatform.macOS) {
+      bridgeJS = '''javascript:(function() {
+      if(window.MiHoYoJSInterface) return;
+      window.MiHoYoJSInterface = {
+        postMessage: function(arg) { 
+          window.webkit.messageHandlers.jsBridge.postMessage(arg);
+        },
+        closePage: function() { this.postMessage('{"method":"closePage"}') },
+      };
+    })();''';
+    } else {
+      throw UnimplementedError();
+    }
     await webview.executeScript(bridgeJS);
   }
 
@@ -154,7 +159,7 @@ class MiyousheController extends ChangeNotifier {
               if (kDebugMode)
                 IconButton(
                   icon: const Icon(material.Icons.developer_mode),
-                  onPressed: webview.openDevTools,
+                  onPressed: () async => await webview.openDevTools(context),
                 ),
               IconButton(
                 icon: const Icon(FluentIcons.chrome_close),
@@ -226,8 +231,13 @@ class MiyousheClient extends ConsumerStatefulWidget {
   ConsumerState<MiyousheClient> createState() => _MiyousheClientState();
 
   static Future<bool> check() async {
-    var version = await WebviewController.getWebViewVersion();
-    return version != null;
+    if (defaultTargetPlatform == TargetPlatform.windows) {
+      return await WebviewController.getWebViewVersion() != null;
+    }
+    if (defaultTargetPlatform == TargetPlatform.macOS) {
+      return true;
+    }
+    return false;
   }
 }
 
@@ -240,10 +250,16 @@ class _MiyousheClientState extends ConsumerState<MiyousheClient> {
 
   @override
   Widget build(BuildContext context) {
-    return Webview(
-      widget.controller.webview,
-      width: widget.controller.width,
-      height: widget.controller.height,
-    );
+    if (defaultTargetPlatform == TargetPlatform.windows) {
+      return Webview(
+        widget.controller.webview.webWin!,
+        width: widget.controller.width,
+        height: widget.controller.height,
+      );
+    }
+    if (defaultTargetPlatform == TargetPlatform.macOS) {
+      return WebViewWidget(controller: widget.controller.webview.webMac!);
+    }
+    return const Text('Unsupported platform');
   }
 }
