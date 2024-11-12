@@ -88,9 +88,7 @@ class MiyousheController extends ChangeNotifier {
       bridgeJS = '''javascript:(function() {
       if(window.MiHoYoJSInterface) return;
       window.MiHoYoJSInterface = {
-        postMessage: function(arg) { 
-          window.chrome.webview.postMessage(arg);
-        },
+        postMessage: function(arg) => window.chrome.webview.postMessage(arg),
         closePage: function() { this.postMessage('{"method":"closePage"}') },
       };
     })();''';
@@ -98,9 +96,7 @@ class MiyousheController extends ChangeNotifier {
       bridgeJS = '''javascript:(function() {
       if(window.MiHoYoJSInterface) return;
       window.MiHoYoJSInterface = {
-        postMessage: function(arg) { 
-          window.webkit.messageHandlers.jsBridge.postMessage(arg);
-        },
+        postMessage: function(arg) => SPBridge.postMessage(arg),
         closePage: function() { this.postMessage('{"method":"closePage"}') },
       };
     })();''';

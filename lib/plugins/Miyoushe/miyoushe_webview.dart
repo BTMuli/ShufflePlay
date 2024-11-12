@@ -65,7 +65,7 @@ class MiyousheWebview {
       webWin!.webMessage.listen((event) => callback(event));
     } else if (defaultTargetPlatform == TargetPlatform.macOS) {
       webMac!.addJavaScriptChannel(
-        'jsBridge',
+        'SPBridge',
         onMessageReceived: (message) => callback(message.message),
       );
     }
