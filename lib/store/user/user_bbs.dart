@@ -115,6 +115,11 @@ class SpUserBbsStore extends ChangeNotifier {
 
   /// 添加用户
   Future<void> addUser(UserBBSModel user) async {
+    // 如果用户已存在，则更新用户
+    if (_uids.contains(user.uid)) {
+      await updateUser(user);
+      return;
+    }
     await sqlite.writeUser(user);
     _uids.add(user.uid);
     _users.add(user);
