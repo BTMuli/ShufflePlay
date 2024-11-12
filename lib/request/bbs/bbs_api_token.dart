@@ -25,6 +25,44 @@ class SprBbsApiToken {
     client.dio.options.baseUrl = baseUrl;
   }
 
+  /// getActionTicket
+  Future<BBSResp> getActionTicket(UserBBSModelCookie ck, String type) async {
+    var device = await sqlite.readDevice();
+    var cookie = {"mid": ck.mid, "stoken": ck.stoken};
+    var params = {"action_type": type, "stoken": ck.stoken, "uid": ck.stuid};
+    var header = getDsReqHeader(
+      cookie,
+      "GET",
+      params,
+      BbsConstantSalt.k2,
+      device,
+    );
+    try {
+      var resp = await client.dio.get(
+        'getActionTicketBySToken',
+        queryParameters: params,
+        options: Options(headers: header),
+      );
+      if (resp.data['retcode'] == 0) {
+        return BbsTokenModelAtSResp.fromJson(resp.data);
+      }
+      return BBSResp.error(
+        retcode: resp.data['retcode'],
+        message: resp.data['message'],
+      );
+    } on DioException catch (e) {
+      return BBSResp.error(
+        retcode: e.response?.statusCode ?? 666,
+        message: '[DioException] Fail to get actionTicket ${e.message}',
+      );
+    } on Exception catch (e) {
+      return BBSResp.error(
+        retcode: 666,
+        message: '[Exception] Fail to get actionTicket ${e.toString()}',
+      );
+    }
+  }
+
   /// 根据stoken获取ltoken
   Future<BBSResp> getLToken(UserBBSModelCookie ck) async {
     var device = await sqlite.readDevice();

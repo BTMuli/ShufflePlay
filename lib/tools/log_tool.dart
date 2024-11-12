@@ -119,4 +119,12 @@ class SPLogTool {
     }
     instance.logger.log(Level.error, str);
   }
+
+  static void debug(dynamic message) {
+    var str = message.toString();
+    if (message is List<String>) {
+      str = message.join('\n');
+    }
+    instance.logger.log(Level.debug, str);
+  }
 }

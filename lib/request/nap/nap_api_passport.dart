@@ -31,10 +31,7 @@ class SprNapApiPassport {
       "uid": account.uid,
       "mid": ck.mid,
     };
-    var headers = {
-      "x-rpc-client_type": "3",
-      "x-rpc-app_id": "ddxf5dufpuyo",
-    };
+    var headers = {"x-rpc-client_type": "3", "x-rpc-app_id": "ddxf5dufpuyo"};
     try {
       var resp = await client.dio.post(
         'account/ma-cn-verifier/app/createAuthTicketByGameBiz',

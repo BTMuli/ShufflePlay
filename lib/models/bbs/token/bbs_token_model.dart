@@ -7,6 +7,21 @@ import '../bbs_base_model.dart';
 /// 获取token相关的数据结构
 part 'bbs_token_model.g.dart';
 
+/// 根据stoken获取actionTicket返回
+@JsonSerializable(explicitToJson: true, createToJson: false)
+class BbsTokenModelAtSResp extends BBSResp<BbsTokenModelAtSData> {
+  /// constructor
+  BbsTokenModelAtSResp({
+    required super.retcode,
+    required super.message,
+    required BbsTokenModelAtSData super.data,
+  });
+
+  /// from json
+  factory BbsTokenModelAtSResp.fromJson(Map<String, dynamic> json) =>
+      _$BbsTokenModelAtSRespFromJson(json);
+}
+
 /// 根据stoken获取ltoken返回
 @JsonSerializable(explicitToJson: true, createToJson: false)
 class BbsTokenModelLbSResp extends BBSResp<BbsTokenModelLbSData> {
@@ -35,6 +50,37 @@ class BbsTokenModelCbSResp extends BBSResp<BbsTokenModelCbSData> {
   /// from json
   factory BbsTokenModelCbSResp.fromJson(Map<String, dynamic> json) =>
       _$BbsTokenModelCbSRespFromJson(json);
+}
+
+/// 根据stoken获取actionTicket数据
+@JsonSerializable()
+class BbsTokenModelAtSData {
+  /// ticket
+  @JsonKey(name: 'ticket')
+  String ticket;
+
+  /// is_verified
+  @JsonKey(name: 'is_verified')
+  bool isVerified;
+
+  /// account_info
+  /// todo 这边没有用到，先不处理
+  @JsonKey(name: 'account_info')
+  dynamic accountInfo;
+
+  /// constructor
+  BbsTokenModelAtSData({
+    required this.ticket,
+    required this.isVerified,
+    required this.accountInfo,
+  });
+
+  /// from json
+  factory BbsTokenModelAtSData.fromJson(Map<String, dynamic> json) =>
+      _$BbsTokenModelAtSDataFromJson(json);
+
+  /// to json
+  Map<String, dynamic> toJson() => _$BbsTokenModelAtSDataToJson(this);
 }
 
 /// 根据stoken获取ltoken数据

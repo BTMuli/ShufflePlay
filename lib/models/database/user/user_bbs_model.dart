@@ -165,6 +165,19 @@ class UserBBSModelCookie {
     cookie += 'stuid=$stuid;';
     return cookie;
   }
+
+  /// toMap
+  Map<String, String?> toMap() {
+    return {
+      'account_id': accountId,
+      'cookie_token': cookieToken,
+      'ltoken': ltoken,
+      'ltuid': ltuid,
+      'mid': mid,
+      'stoken': stoken,
+      'stuid': stuid,
+    };
+  }
 }
 
 /// 用户简略信息

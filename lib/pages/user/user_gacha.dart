@@ -323,7 +323,7 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage>
         SizedBox(width: 10.w),
         IconButton(
           icon: const Icon(FluentIcons.database_refresh),
-          onPressed: () async => await refreshMetaData(),
+          onPressed: refreshMetaData,
         ),
       ],
     );
@@ -346,9 +346,8 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage>
                 onPressed: () async {
                   if (curUid == uid) return;
                   if (context.mounted) {
-                    setState(() {
-                      curUid = uid;
-                    });
+                    curUid = uid;
+                    setState(() {});
                     await refreshData();
                   }
                 },

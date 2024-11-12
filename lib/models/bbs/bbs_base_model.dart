@@ -1,3 +1,6 @@
+// Dart imports:
+import 'dart:convert';
+
 // Package imports:
 import 'package:json_annotation/json_annotation.dart';
 
@@ -36,6 +39,9 @@ class BBSResp<T> {
   Map<String, dynamic> toJson(dynamic Function(T value) toJsonT) =>
       _$BBSRespToJson(this, toJsonT);
 
+  @override
+  String toString() => jsonEncode(toJson((value) => value));
+
   /// error
   static BBSResp<T> error<T>({
     required int retcode,
@@ -43,4 +49,8 @@ class BBSResp<T> {
     T? data,
   }) =>
       BBSResp(retcode: retcode, message: message, data: data);
+
+  /// success
+  static BBSResp success({required dynamic data}) =>
+      BBSResp(retcode: 0, message: 'success', data: data);
 }

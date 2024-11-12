@@ -6,6 +6,14 @@ part of 'bbs_token_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+BbsTokenModelAtSResp _$BbsTokenModelAtSRespFromJson(
+        Map<String, dynamic> json) =>
+    BbsTokenModelAtSResp(
+      retcode: (json['retcode'] as num).toInt(),
+      message: json['message'] as String,
+      data: BbsTokenModelAtSData.fromJson(json['data'] as Map<String, dynamic>),
+    );
+
 BbsTokenModelLbSResp _$BbsTokenModelLbSRespFromJson(
         Map<String, dynamic> json) =>
     BbsTokenModelLbSResp(
@@ -21,6 +29,22 @@ BbsTokenModelCbSResp _$BbsTokenModelCbSRespFromJson(
       message: json['message'] as String,
       data: BbsTokenModelCbSData.fromJson(json['data'] as Map<String, dynamic>),
     );
+
+BbsTokenModelAtSData _$BbsTokenModelAtSDataFromJson(
+        Map<String, dynamic> json) =>
+    BbsTokenModelAtSData(
+      ticket: json['ticket'] as String,
+      isVerified: json['is_verified'] as bool,
+      accountInfo: json['account_info'],
+    );
+
+Map<String, dynamic> _$BbsTokenModelAtSDataToJson(
+        BbsTokenModelAtSData instance) =>
+    <String, dynamic>{
+      'ticket': instance.ticket,
+      'is_verified': instance.isVerified,
+      'account_info': instance.accountInfo,
+    };
 
 BbsTokenModelLbSData _$BbsTokenModelLbSDataFromJson(
         Map<String, dynamic> json) =>

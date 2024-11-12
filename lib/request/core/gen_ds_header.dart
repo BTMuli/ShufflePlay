@@ -32,6 +32,7 @@ Map<String, String> getDsReqHeader(
     "referer": "https://webstatic.mihoyo.com/",
     "x-rpc-device_fp": device.deviceFp,
     "x-rpc-device_id": device.deviceId,
+    "x-rpc-device_name": device.deviceName,
     "ds": ds,
     "cookie": transCookie(cookie),
   };
@@ -58,6 +59,30 @@ String getDs(String method, String data, BbsConstantSalt salt, bool isSign) {
   return '$time,$randomStr,$md5Str';
 }
 
+/// 获取ds-js版本
+String getDsJsVersion(
+    BbsConstantSalt salt, bool isSign, dynamic body, dynamic query) {
+  var saltStr = salt.salt;
+  var time = (DateTime.now().millisecondsSinceEpoch / 1000).floor();
+  var randomStr = genRandomStr(
+    1,
+    type: RandomStringType.number,
+    min: 100000,
+    max: 200000,
+  );
+  String hashStr;
+  if (isSign) {
+    randomStr = genRandomStr(6);
+    hashStr = 'salt=$saltStr&t=$time&r=$randomStr';
+  } else {
+    var bodyStr = body is String ? body : transData(body);
+    var queryStr = query is String ? query : transData(query);
+    hashStr = 'salt=$saltStr&t=$time&r=$randomStr&b=$bodyStr&q=$queryStr';
+  }
+  var md5Str = md5.convert(utf8.encode(hashStr)).toString();
+  return '$time,$randomStr,$md5Str';
+}
+
 /// 转换数据，按照字典序排序
 String transData(Map<String, dynamic> data) {
   var keys = data.keys.toList();
@@ -66,6 +91,7 @@ String transData(Map<String, dynamic> data) {
   for (var key in keys) {
     result += '$key=${data[key]}&';
   }
+  if (result.isEmpty) return '';
   return result.substring(0, result.length - 1);
 }
 
