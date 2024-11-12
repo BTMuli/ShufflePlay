@@ -40,7 +40,7 @@ class MiyousheWebview {
   /// 初始化控制器-Windows
   Future<void> initControllerWin(MiyousheController controller) async {
     await webWin!.initialize();
-    webWin!.addListener(controller.handleMessage as VoidCallback);
+    webWin!.webMessage.listen(controller.handleMessage);
     await loadJSBridgeWin();
     await webWin!.setUserAgent(controller.userAgent);
     await loadUrl(controller.url);
