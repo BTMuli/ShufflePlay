@@ -75,7 +75,7 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage>
   }
 
   Future<void> refreshData() async {
-    uidList = await sqliteUser.getAllUid();
+    uidList = await sqliteUser.getAllUid(check: true);
     if (uidList.isNotEmpty) {
       curUid = uidList.first;
     } else {
@@ -94,15 +94,15 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage>
     }
   }
 
-  Future<void> importUigf4Json(BuildContext context) async {
+  Future<void> importUigf4Json() async {
     var filePath = await fileTool.selectFile(context: context);
     if (filePath == null) {
-      if (context.mounted) await SpInfobar.warn(context, '未选择文件');
+      if (mounted) await SpInfobar.warn(context, '未选择文件');
       return;
     }
     var file = await fileTool.readFile(filePath);
     if (file == null) {
-      if (context.mounted) await SpInfobar.error(context, '文件读取失败');
+      if (mounted) await SpInfobar.error(context, '文件读取失败');
       return;
     }
     try {
@@ -138,25 +138,29 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage>
     }
   }
 
-  Future<void> exportUigf4Json(BuildContext context) async {
+  Future<void> exportUigf4Json() async {
     var check = await SpDialog.confirm(context, '是否导出当前UID数据？', 'UID: $curUid');
     if (check == null || !check) return;
     var data = await sqliteUser.exportUigf(uids: [curUid!]);
     var downloadPath = await getDownloadsDirectory();
-    if (!context.mounted || downloadPath == null) {
-      if (context.mounted) await SpInfobar.error(context, '导出失败');
+    if (downloadPath == null) {
+      if (mounted) await SpInfobar.error(context, '导出失败');
       return;
     }
-    var dirPath = await fileTool.selectDir(context: context);
-    if (dirPath == null) {
-      if (context.mounted) await SpInfobar.warn(context, '未选择目录');
-      return;
-    }
-    var fileName = 'uigf_${DateTime.now().millisecondsSinceEpoch}.json';
-    var filePath = path.join(dirPath, fileName);
-    await fileTool.writeFile(filePath, jsonEncode(data));
-    if (context.mounted) {
-      await SpInfobar.success(context, '导出成功');
+    if (mounted) {
+      var dirPath = await fileTool.selectDir(
+        initialDirectory: downloadPath.path,
+        confirmButtonText: '导出',
+      );
+      debugPrint('dirPath: $dirPath');
+      if (dirPath == null) {
+        if (mounted) await SpInfobar.warn(context, '未选择目录');
+        return;
+      }
+      var fileName = 'uigf_${DateTime.now().millisecondsSinceEpoch}.json';
+      var filePath = path.join(dirPath, fileName);
+      await fileTool.writeFile(filePath, jsonEncode(data));
+      if (mounted) await SpInfobar.success(context, '导出成功');
     }
   }
 
@@ -274,9 +278,7 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage>
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         Button(
-          onPressed: () async {
-            await importUigf4Json(context);
-          },
+          onPressed: importUigf4Json,
           child: const Text('导入'),
         ),
         SizedBox(width: 10.w),
@@ -286,7 +288,7 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage>
               await SpInfobar.warn(context, '未选择UID');
               return;
             }
-            await exportUigf4Json(context);
+            await exportUigf4Json();
           },
           child: const Text('导出'),
         ),

@@ -44,7 +44,7 @@ class _AppConfigGameWidgetState extends ConsumerState<AppConfigGameWidget> {
 
   /// 尝试编辑游戏目录
   Future<void> tryEditGameDir() async {
-    var dir = await fileTool.selectDir(context: context);
+    var dir = await fileTool.selectDir();
     if (dir == null) {
       if (mounted) await SpInfobar.warn(context, '未选择目录');
       return;
