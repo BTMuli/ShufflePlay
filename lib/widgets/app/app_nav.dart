@@ -12,11 +12,14 @@ import 'package:path/path.dart' as path;
 import 'package:window_manager/window_manager.dart';
 
 // Project imports:
+import '../../models/database/user/user_bbs_model.dart';
+import '../../models/database/user/user_nap_model.dart';
 import '../../models/nap/token/nap_auth_ticket_model.dart';
 import '../../pages/main/app_config.dart';
 import '../../pages/main/app_dev.dart';
 import '../../pages/nap/nap_anno.dart';
 import '../../pages/user/user_gacha.dart';
+import '../../plugins/Miyoushe/miyoushe_client.dart';
 import '../../request/nap/nap_api_passport.dart';
 import '../../store/app/app_config.dart';
 import '../../store/user/user_bbs.dart';
@@ -48,6 +51,9 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget>
 
   final FlyoutController flyoutUser = FlyoutController();
 
+  /// webview controller
+  late MiyousheController controller = MiyousheController();
+
   /// 文件工具
   final SPFileTool fileTool = SPFileTool();
 
@@ -61,11 +67,12 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget>
   void dispose() {
     flyoutTool.dispose();
     flyoutUser.dispose();
+    controller.dispose();
     super.dispose();
   }
 
   /// 启动游戏
-  Future<void> tryLaunchGame() async {
+  Future<void> tryLaunchGame(UserNapModel account, UserBBSModel user) async {
     if (gameDir == null || gameDir!.isEmpty) {
       if (mounted) await SpInfobar.warn(context, '请先设置游戏路径');
       return;
@@ -74,12 +81,6 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget>
     var checkFile = await fileTool.isFileExist(gamePath);
     if (!checkFile) {
       if (mounted) await SpInfobar.warn(context, '未检测到 ZenlessZoneZero.exe');
-      return;
-    }
-    var account = ref.read(userBbsStoreProvider).account;
-    var user = ref.read(userBbsStoreProvider).user;
-    if (account == null || user == null) {
-      if (mounted) await SpInfobar.warn(context, '请先登录');
       return;
     }
     var apiNap = SprNapApiPassport();
@@ -142,18 +143,31 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget>
 
   /// 展示设置flyout
   Future<void> showOptionsFlyout() async {
+    var account = ref.read(userBbsStoreProvider).account;
+    var user = ref.read(userBbsStoreProvider).user;
     await flyoutTool.showFlyout(
       barrierDismissible: true,
       dismissOnPointerMoveAway: false,
       dismissWithEsc: true,
       builder: (_) => MenuFlyout(
         items: [
-          if (defaultTargetPlatform == TargetPlatform.windows)
+          if (defaultTargetPlatform == TargetPlatform.windows &&
+              account != null &&
+              user != null) ...[
             MenuFlyoutItem(
               leading: SPIcon(FluentIcons.game),
               text: const Text('启动游戏'),
-              onPressed: tryLaunchGame,
+              onPressed: () async => await tryLaunchGame(account, user),
             ),
+            MenuFlyoutItem(
+              leading: SPIcon(FluentIcons.giftbox),
+              text: const Text('签到'),
+              onPressed: () async {
+                controller = await MiyousheClient.createSign(context);
+                if (mounted) await controller.show(context);
+              },
+            ),
+          ],
           MenuFlyoutItem(
             leading: const Icon(FluentIcons.reset_device),
             text: const Text('重置窗口大小'),

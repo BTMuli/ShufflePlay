@@ -53,8 +53,8 @@ class MiyousheController extends ChangeNotifier {
     String? userAgent,
   }) async {
     this.url = url;
-    this.width = width ?? 400.w;
-    this.height = height ?? 800.h;
+    this.width = width ?? 400.sp;
+    this.height = height ?? 600.sp;
     this.title = title ?? '米游社';
     this.userAgent = userAgent ?? bbsUaMobile;
     webview = WebviewController();
@@ -161,12 +161,6 @@ class MiyousheController extends ChangeNotifier {
                 onPressed: () => Navigator.pop(context),
               ),
             ],
-          ),
-          constraints: BoxConstraints(
-            maxWidth: width,
-            maxHeight: height,
-            minWidth: width,
-            minHeight: height,
           ),
           content: MiyousheClient(this),
         ),

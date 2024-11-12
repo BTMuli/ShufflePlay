@@ -6,6 +6,7 @@ import '../../request/bbs/bbs_api_token.dart';
 import '../../request/core/gen_ds_header.dart';
 import '../../store/user/user_bbs.dart';
 import '../../tools/log_tool.dart';
+import '../../ui/sp_infobar.dart';
 import 'miyoushe_client.dart';
 
 /// 处理JSBridge的消息
@@ -60,6 +61,10 @@ Future<void> handleBridgeMessage(
       SPLogTool.warn(
         '[Miyoushe] Unknown method: ${data.method}\n'
         'payload: ${data.payload}',
+      );
+      await SpInfobar.warn(
+        controller.context,
+        'Unknown method: ${data.method}',
       );
       break;
   }
@@ -227,6 +232,10 @@ Future<void> handlePushPage(
   var data = BbsBridgePayloadPushPage.fromJson(
     arg.payload as Map<String, dynamic>,
   );
+  if (!data.page.startsWith('http')) {
+    await SpInfobar.warn(controller.context, 'Invalid page: ${data.page}');
+    return;
+  }
   SPLogTool.debug('[Miyoushe] Push page: ${data.page}');
   controller.routeStack.add(data.page);
   await controller.webview.loadUrl(data.page);
