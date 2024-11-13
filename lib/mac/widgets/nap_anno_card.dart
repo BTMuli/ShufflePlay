@@ -1,6 +1,8 @@
+// Flutter imports:
+import 'package:flutter/material.dart';
+
 // Package imports:
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
@@ -81,13 +83,7 @@ class NapAnnoCardWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          TextButton(
-            style: ButtonStyle(
-              padding: WidgetStateProperty.all(EdgeInsets.zero),
-            ),
-            onPressed: onPressed,
-            child: buildCover(),
-          ),
+          InkWell(onTap: onPressed, child: buildCover()),
           Flexible(
             fit: FlexFit.tight,
             child: Center(child: buildTitle()),

@@ -24,8 +24,8 @@ import '../../shared/database/nap_item_map.dart';
 import '../../shared/database/user_gacha.dart';
 import '../../shared/store/user_bbs.dart';
 import '../../shared/tools/file_tool.dart';
-import '../ui/sp_dialog.dart';
 import '../../shared/ui/sp_infobar.dart';
+import '../ui/sp_dialog.dart';
 import '../ui/sp_progress.dart';
 import '../widgets/user_gacha_view.dart';
 

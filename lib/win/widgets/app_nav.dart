@@ -19,6 +19,7 @@ import '../../plugins/Miyoushe/miyoushe_client.dart';
 import '../../request/nap/nap_api_passport.dart';
 import '../../shared/store/user_bbs.dart';
 import '../../shared/tools/file_tool.dart';
+import '../../shared/ui/sp_infobar.dart';
 import '../../shared/utils/get_app_theme.dart';
 import '../pages/app_config.dart';
 import '../pages/app_dev.dart';
@@ -26,7 +27,6 @@ import '../pages/nap_anno.dart';
 import '../pages/user_gacha.dart';
 import '../store/app_config.dart';
 import '../ui/sp_icon.dart';
-import '../../shared/ui/sp_infobar.dart';
 
 class AppNavWidget extends ConsumerStatefulWidget {
   const AppNavWidget({super.key});

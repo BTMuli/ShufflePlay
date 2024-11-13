@@ -1,10 +1,14 @@
-import 'package:flutter/material.dart';
+// Flutter imports:
+import 'package:flutter/cupertino.dart';
+
+// Package imports:
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:macos_ui/macos_ui.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
+// Project imports:
 import '../../models/nap/anno/nap_anno_content_model.dart';
 import '../../models/nap/anno/nap_anno_list_model.dart';
 import '../../request/nap/nap_api_anno.dart';
@@ -106,15 +110,45 @@ class _NapAnnoPageState extends State<NapAnnoPage>
         context: context,
         builder: (context) {
           return MacosSheet(
-            insetPadding:
-                EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-            child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
-              child: HtmlWidget(
-                getContent(content.content),
-                textStyle: const TextStyle(fontFamily: 'SarasaGothic'),
-                onTapUrl: tryLaunchUrl,
-              ),
+            insetPadding: EdgeInsets.symmetric(
+              horizontal: 60.w,
+              vertical: 60.h,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Text(
+                  getTitle(content.title),
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxHeight: 500.h,
+                    maxWidth: 1000.w,
+                  ),
+                  child: SingleChildScrollView(
+                    child: HtmlWidget(
+                      getContent(content.content),
+                      textStyle: const TextStyle(fontFamily: 'SarasaGothic'),
+                      onTapUrl: tryLaunchUrl,
+                    ),
+                  ),
+                ),
+                MacosIconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: MacosIcon(
+                    MdiIcons.close,
+                    color: MacosTheme.brightnessOf(context).resolve(
+                      const Color.fromRGBO(0, 0, 0, 0.5),
+                      const Color.fromRGBO(255, 255, 255, 0.5),
+                    ),
+                    size: 20.0,
+                  ),
+                ),
+              ],
             ),
           );
         },
@@ -131,7 +165,7 @@ class _NapAnnoPageState extends State<NapAnnoPage>
       useMousePosition: false,
       child: MacosIconButton(
         icon: MacosIcon(
-          MdiIcons.pageLayoutSidebarLeft,
+          CupertinoIcons.sidebar_left,
           color: MacosTheme.brightnessOf(context).resolve(
             const Color.fromRGBO(0, 0, 0, 0.5),
             const Color.fromRGBO(255, 255, 255, 0.5),

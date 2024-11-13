@@ -15,9 +15,9 @@ import '../../../../models/database/app/app_config_model.dart';
 import '../../../../request/bbs/bbs_api_device.dart';
 import '../../../../shared/tools/log_tool.dart';
 import '../../../../shared/utils/get_app_theme.dart';
+import '../../shared/ui/sp_infobar.dart';
 import '../store/app_config.dart';
 import '../ui/sp_icon.dart';
-import '../../shared/ui/sp_infobar.dart';
 import 'bbs_infobar.dart';
 
 class AppConfigInfoWidget extends ConsumerStatefulWidget {
