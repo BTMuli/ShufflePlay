@@ -1,28 +1,54 @@
 // Dart imports:
 import 'dart:async';
 
+// Flutter imports:
+import 'package:flutter/cupertino.dart';
+
 // Package imports:
-import 'package:fluent_ui/fluent_ui.dart';
+import 'package:macos_ui/macos_ui.dart';
 
 // Project imports:
 import '../../models/bbs/bbs_base_model.dart';
+import '../models/ui_model.dart';
 
 class SpInfoBarType {
-  /// info
-  InfoBar infoBar;
+  /// severity
+  final InfoBarSeverity severity;
+
+  /// message
+  final String message;
 
   /// context
   BuildContext context;
 
   /// constructor
-  SpInfoBarType(this.infoBar, this.context);
+  SpInfoBarType(
+    this.context,
+    this.message, {
+    this.severity = InfoBarSeverity.info,
+  });
 
   /// show
   Future<void> show() async {
-    await displayInfoBar(
-      context,
-      builder: (context, close) => infoBar,
-      duration: const Duration(seconds: 2),
+    await showMacosAlertDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        return MacosAlertDialog(
+          title: MacosIcon(severity.icon, color: severity.color),
+          appIcon: Image.asset(
+            'assets/images/ShufflePlayMini.png',
+            width: 24,
+            height: 24,
+          ),
+          message: Text(message),
+          primaryButton: PushButton(
+            controlSize: ControlSize.large,
+            child: Text('OK'),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        );
+      },
     );
   }
 }
@@ -31,26 +57,24 @@ class SpInfoBarType {
 class SpInfobarQueue extends ChangeNotifier {
   SpInfobarQueue._();
 
-  static final SpInfobarQueue _instance = SpInfobarQueue._();
+  static final SpInfobarQueue instance = SpInfobarQueue._();
 
-  factory SpInfobarQueue() => _instance;
+  factory SpInfobarQueue() => instance;
+  final List<SpInfoBarType> infoQueue = [];
 
-  final List<SpInfoBarType> _infoBars = [];
-
-  List<SpInfoBarType> get infoBars => _infoBars;
-
-  Timer? _timer;
+  List<SpInfoBarType> get infoBars => infoQueue;
+  Timer? timer;
 
   Future<void> initTimer() async {
-    if (_infoBars.length == 1) {
-      await _infoBars.first.show();
-      _infoBars.removeAt(0);
+    if (infoBars.length == 1) {
+      await infoBars.first.show();
+      infoBars.removeAt(0);
       notifyListeners();
     }
-    _timer = Timer.periodic(const Duration(milliseconds: 1500), (timer) async {
-      if (_infoBars.isNotEmpty) {
-        await _infoBars.first.show();
-        _infoBars.removeAt(0);
+    timer = Timer.periodic(const Duration(milliseconds: 1500), (timer) {
+      if (infoBars.isNotEmpty) {
+        infoBars.first.show();
+        infoBars.removeAt(0);
         notifyListeners();
       } else {
         timer.cancel();
@@ -59,10 +83,8 @@ class SpInfobarQueue extends ChangeNotifier {
   }
 
   Future<void> add(SpInfoBarType infobar) async {
-    _infoBars.add(infobar);
-    if (_timer == null || !_timer!.isActive) {
-      await initTimer();
-    }
+    infoBars.add(infobar);
+    if (timer == null || !timer!.isActive) await initTimer();
     notifyListeners();
   }
 }
@@ -72,13 +94,13 @@ class SpInfobar {
   SpInfobar._();
 
   /// 实例
-  static final SpInfobar _instance = SpInfobar._();
+  static final SpInfobar instance = SpInfobar._();
 
   /// 获取实例
-  factory SpInfobar() => _instance;
+  factory SpInfobar() => instance;
 
   /// 队列
-  static final _infoBarQueue = SpInfobarQueue();
+  static final infoBarQueue = SpInfobarQueue();
 
   /// show
   static Future<void> show(
@@ -86,11 +108,8 @@ class SpInfobar {
     String text,
     InfoBarSeverity severity,
   ) async {
-    var infoBar = SpInfoBarType(
-      InfoBar(title: Text(text), severity: severity),
-      context,
-    );
-    return await _infoBarQueue.add(infoBar);
+    var infoBar = SpInfoBarType(context, text, severity: severity);
+    return await infoBarQueue.add(infoBar);
   }
 
   /// bbs

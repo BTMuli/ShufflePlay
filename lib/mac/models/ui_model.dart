@@ -26,3 +26,33 @@ extension MacosUiColorExtension on AccentColor {
     }
   }
 }
+
+enum InfoBarSeverity { error, warning, success, info }
+
+extension InfobarSeverityExtension on InfoBarSeverity {
+  Color get color {
+    switch (this) {
+      case InfoBarSeverity.error:
+        return Colors.red;
+      case InfoBarSeverity.warning:
+        return Colors.orange;
+      case InfoBarSeverity.success:
+        return Colors.green;
+      case InfoBarSeverity.info:
+        return Colors.blue;
+    }
+  }
+
+  IconData get icon {
+    switch (this) {
+      case InfoBarSeverity.error:
+        return Icons.error;
+      case InfoBarSeverity.warning:
+        return Icons.warning;
+      case InfoBarSeverity.success:
+        return Icons.check_circle;
+      case InfoBarSeverity.info:
+        return Icons.info;
+    }
+  }
+}

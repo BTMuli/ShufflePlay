@@ -47,6 +47,8 @@ dependencies:
   json_annotation: ^4.9.0
   json_schema: ^5.2.0
   logger: ^2.4.0
+  macos_ui: ^2.0.9
+  material_design_icons_flutter: ^7.0.7296
   msvcredist:
     git:
       url: https://github.com/insertjokehere/flutter_msvcredist.git
@@ -59,12 +61,10 @@ dependencies:
   system_theme: ^3.1.2
   url_launcher: ^6.3.1
   uuid: ^4.4.2
+  webview_flutter: ^4.9.0
   webview_windows: ^0.4.0
   window_manager: ^0.4.3
   windows_taskbar: ^1.1.2
-  material_design_icons_flutter: ^7.0.7296
-  webview_flutter: ^4.9.0
-  macos_ui: ^2.0.9
 
 dev_dependencies:
   build_runner: ^2.4.12

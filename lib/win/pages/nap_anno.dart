@@ -8,8 +8,8 @@ import 'package:url_launcher/url_launcher_string.dart';
 import '../../models/nap/anno/nap_anno_content_model.dart';
 import '../../models/nap/anno/nap_anno_list_model.dart';
 import '../../request/nap/nap_api_anno.dart';
-import '../../shared/ui/sp_infobar.dart';
 import '../ui/sp_icon.dart';
+import '../ui/sp_infobar.dart';
 import '../widgets/nap_anno_card.dart';
 
 /// 公告页面

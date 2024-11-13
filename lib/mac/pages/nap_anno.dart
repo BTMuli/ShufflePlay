@@ -12,7 +12,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 import '../../models/nap/anno/nap_anno_content_model.dart';
 import '../../models/nap/anno/nap_anno_list_model.dart';
 import '../../request/nap/nap_api_anno.dart';
-import '../../shared/ui/sp_infobar.dart';
+import '../ui/sp_infobar.dart';
 import '../widgets/nap_anno_card.dart';
 
 /// 公告页面
@@ -50,13 +50,14 @@ class _NapAnnoPageState extends State<NapAnnoPage>
   }
 
   /// 加载公告列表
-  Future<void> loadAnnoList() async {
+  Future<void> loadAnnoList({BuildContext? ctx}) async {
+    BuildContext context = ctx ?? this.context;
     annoList.clear();
     annoContentList.clear();
-    if (mounted) setState(() {});
+    setState(() {});
     var listResp = await api.getAnnoList();
     if (listResp.retcode != 0) {
-      if (mounted) await SpInfobar.bbs(context, listResp);
+      if (context.mounted) await SpInfobar.bbs(context, listResp);
       return;
     }
     var listData = listResp.data as NapAnnoListModelData;
@@ -64,13 +65,13 @@ class _NapAnnoPageState extends State<NapAnnoPage>
     t = listData.t;
     var contentResp = await api.getAnnoContent(t);
     if (contentResp.retcode != 0) {
-      if (mounted) await SpInfobar.bbs(context, contentResp);
+      if (context.mounted) await SpInfobar.bbs(context, contentResp);
       return;
     }
     var contentData = contentResp.data as NapAnnoContentModelData;
     annoContentList = contentData.list;
-    if (mounted) setState(() {});
-    if (mounted) await SpInfobar.success(context, '公告加载成功');
+    setState(() {});
+    if (context.mounted) await SpInfobar.success(context, '公告加载成功');
   }
 
   /// 获取标题
@@ -159,6 +160,16 @@ class _NapAnnoPageState extends State<NapAnnoPage>
     }
   }
 
+  Widget buildTitle() {
+    return Row(children: [
+      Text('游戏公告', style: MacosTheme.of(context).typography.largeTitle),
+      MacosIconButton(
+        icon: MacosIcon(CupertinoIcons.refresh),
+        onPressed: loadAnnoList,
+      ),
+    ]);
+  }
+
   Widget buildTopLeading(BuildContext context) {
     return MacosTooltip(
       message: '隐藏/显示侧边栏',
@@ -185,7 +196,7 @@ class _NapAnnoPageState extends State<NapAnnoPage>
 
   /// 构建列表
   Widget buildList(List<NapAnnoListModel> list, BuildContext context) {
-    if (list.isEmpty) return const ProgressCircle();
+    if (list.isEmpty) return Center(child: const ProgressCircle());
     return GridView.builder(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
@@ -209,7 +220,7 @@ class _NapAnnoPageState extends State<NapAnnoPage>
     super.build(context);
     return MacosScaffold(
       toolBar: ToolBar(
-        title: const Text('游戏公告'),
+        title: buildTitle(),
         titleWidth: 150.w,
         leading: buildTopLeading(context),
       ),

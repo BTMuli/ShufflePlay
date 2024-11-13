@@ -6,7 +6,7 @@ import '../../request/core/gen_ds_header.dart';
 import '../../shared/database/app_config.dart';
 import '../../shared/store/user_bbs.dart';
 import '../../shared/tools/log_tool.dart';
-import '../../shared/ui/sp_infobar.dart';
+import '../../win/ui/sp_infobar.dart';
 import 'miyoushe_client.dart';
 
 /// 处理JSBridge的消息

@@ -18,9 +18,9 @@ import '../../../../request/bbs/bbs_api_token.dart';
 import '../../../../request/nap/nap_api_account.dart';
 import '../../../../shared/database/user_nap.dart';
 import '../../../../shared/store/user_bbs.dart';
-import '../../shared/ui/sp_infobar.dart';
 import '../ui/sp_dialog.dart';
 import '../ui/sp_icon.dart';
+import '../ui/sp_infobar.dart';
 import '../ui/sp_progress.dart';
 
 class AppConfigUserWidget extends ConsumerStatefulWidget {
