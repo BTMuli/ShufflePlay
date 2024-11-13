@@ -11,11 +11,4 @@ Future<void> main() async {
     return;
   }
   await mainWin();
-  // if (defaultTargetPlatform == TargetPlatform.windows) {
-  //   await mainWin();
-  // } else if (defaultTargetPlatform == TargetPlatform.macOS) {
-  //   await mainMac();
-  // } else {
-  //   throw UnsupportedError('Unsupported platform');
-  // }
 }

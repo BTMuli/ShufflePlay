@@ -20,16 +20,16 @@ class SPApp extends ConsumerWidget {
         break;
       case ThemeMode.light:
         brightness = Brightness.light;
-        break;
+        return MacosThemeData.light(accentColor: appStore.accentColor);
       case ThemeMode.dark:
         brightness = Brightness.dark;
-        break;
+        return MacosThemeData.dark(accentColor: appStore.accentColor);
     }
-    return MacosThemeData(
-      brightness: brightness,
-      accentColor: appStore.accentColor,
-      // fontFamily: 'SarasaGothic',
-    );
+    if (brightness == Brightness.light) {
+      return MacosThemeData.light(accentColor: appStore.accentColor);
+    } else {
+      return MacosThemeData.dark(accentColor: appStore.accentColor);
+    }
   }
 
   @override
@@ -43,7 +43,7 @@ class SPApp extends ConsumerWidget {
           themeMode: appConfigStore.themeMode,
           theme: getTheme(context, appConfigStore),
           color: appConfigStore.accentColor.color,
-          home: const AppNavWidget(),
+          home: AppNavWidget(),
         );
       },
     );
