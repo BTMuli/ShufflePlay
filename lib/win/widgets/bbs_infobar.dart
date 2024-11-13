@@ -3,7 +3,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 
 // Project imports:
 import '../../models/bbs/bbs_base_model.dart';
-import '../ui/sp_infobar.dart';
+import '../../shared/ui/sp_infobar.dart';
 
 /// 针对BBS的信息栏
 class BbsInfobar {

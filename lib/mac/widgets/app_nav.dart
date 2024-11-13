@@ -9,7 +9,8 @@ import 'package:macos_ui/macos_ui.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 // Project imports:
-import '../../store/app_config.dart';
+import '../pages/nap_anno.dart';
+import '../store/app_config.dart';
 
 class AppNavWidget extends ConsumerStatefulWidget {
   const AppNavWidget({super.key});
@@ -121,7 +122,7 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget>
   Widget getChild() {
     switch (curIndex) {
       case 0:
-        return Text('游戏公告');
+        return const NapAnnoPage();
       case 1:
         return Text('调频记录');
       case 2:

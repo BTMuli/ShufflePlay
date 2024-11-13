@@ -20,7 +20,7 @@ import '../../../../shared/database/user_nap.dart';
 import '../../../../shared/store/user_bbs.dart';
 import '../ui/sp_dialog.dart';
 import '../ui/sp_icon.dart';
-import '../ui/sp_infobar.dart';
+import '../../shared/ui/sp_infobar.dart';
 import '../ui/sp_progress.dart';
 
 class AppConfigUserWidget extends ConsumerStatefulWidget {

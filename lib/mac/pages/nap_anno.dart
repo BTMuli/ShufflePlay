@@ -1,27 +1,24 @@
-// Package imports:
-import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:macos_ui/macos_ui.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
-// Project imports:
 import '../../models/nap/anno/nap_anno_content_model.dart';
 import '../../models/nap/anno/nap_anno_list_model.dart';
 import '../../request/nap/nap_api_anno.dart';
-import '../ui/sp_icon.dart';
 import '../../shared/ui/sp_infobar.dart';
 import '../widgets/nap_anno_card.dart';
 
 /// 公告页面
 class NapAnnoPage extends StatefulWidget {
-  /// 构造函数
   const NapAnnoPage({super.key});
 
   @override
   State<NapAnnoPage> createState() => _NapAnnoPageState();
 }
 
-/// 公告页面状态
 class _NapAnnoPageState extends State<NapAnnoPage>
     with AutomaticKeepAliveClientMixin {
   /// 公告列表
@@ -36,11 +33,11 @@ class _NapAnnoPageState extends State<NapAnnoPage>
   /// api
   final SprNapApiAnno api = SprNapApiAnno();
 
-  /// tabIndex
-  int currentIndex = 0;
+  final controller = MacosTabController(initialIndex: 0, length: 2);
 
+  /// todo 改为true
   @override
-  bool get wantKeepAlive => true;
+  bool get wantKeepAlive => false;
 
   @override
   void initState() {
@@ -104,20 +101,14 @@ class _NapAnnoPageState extends State<NapAnnoPage>
   Future<void> showAnno(BuildContext context, int annoId) async {
     try {
       var content = annoContentList.firstWhere((e) => e.annId == annoId);
-      await showDialog(
+      await showMacosSheet(
         barrierDismissible: true,
-        dismissWithEsc: true,
         context: context,
         builder: (context) {
-          return ContentDialog(
-            constraints: BoxConstraints(
-              maxHeight: 480.h,
-              maxWidth: 800.w,
-              minHeight: 120.h,
-              minWidth: 240.w,
-            ),
-            title: Text(getTitle(content.title)),
-            content: SingleChildScrollView(
+          return MacosSheet(
+            insetPadding:
+                EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+            child: SingleChildScrollView(
               padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
               child: HtmlWidget(
                 getContent(content.content),
@@ -125,12 +116,6 @@ class _NapAnnoPageState extends State<NapAnnoPage>
                 onTapUrl: tryLaunchUrl,
               ),
             ),
-            actions: [
-              Button(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('关闭'),
-              ),
-            ],
           );
         },
       );
@@ -140,29 +125,33 @@ class _NapAnnoPageState extends State<NapAnnoPage>
     }
   }
 
-  /// 构建头部
-  Widget buildHeader(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-      child: Row(
-        children: [
-          Text('公告', style: FluentTheme.of(context).typography.title),
-          SizedBox(width: 8.w),
-          Tooltip(
-            message: '点击刷新',
-            child: IconButton(
-              onPressed: loadAnnoList,
-              icon: SPIcon(FluentIcons.refresh),
-            ),
-          )
-        ],
+  Widget buildTopLeading(BuildContext context) {
+    return MacosTooltip(
+      message: '隐藏/显示侧边栏',
+      useMousePosition: false,
+      child: MacosIconButton(
+        icon: MacosIcon(
+          MdiIcons.pageLayoutSidebarLeft,
+          color: MacosTheme.brightnessOf(context).resolve(
+            const Color.fromRGBO(0, 0, 0, 0.5),
+            const Color.fromRGBO(255, 255, 255, 0.5),
+          ),
+          size: 20.0,
+        ),
+        boxConstraints: const BoxConstraints(
+          minHeight: 20,
+          minWidth: 20,
+          maxWidth: 48,
+          maxHeight: 38,
+        ),
+        onPressed: MacosWindowScope.of(context).toggleSidebar,
       ),
     );
   }
 
   /// 构建列表
   Widget buildList(List<NapAnnoListModel> list, BuildContext context) {
-    if (list.isEmpty) return const Center(child: ProgressRing());
+    if (list.isEmpty) return const ProgressCircle();
     return GridView.builder(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
@@ -181,37 +170,33 @@ class _NapAnnoPageState extends State<NapAnnoPage>
     );
   }
 
-  /// 构建tab
-  Tab buildTab(BuildContext context, bool isGame) {
-    return Tab(
-      icon: currentIndex == (isGame ? 0 : 1)
-          ? Icon(FluentIcons.game)
-          : Icon(FluentIcons.calendar),
-      text: Text(isGame ? '游戏公告' : '活动公告'),
-      body: buildList(
-        annoList.where((e) => e.type == (isGame ? 3 : 4)).toList(),
-        context,
-      ),
-      selectedBackgroundColor: FluentTheme.of(context).accentColor,
-      backgroundColor: FluentTheme.of(context).accentColor.withOpacity(0.2),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return ScaffoldPage(
-      header: buildHeader(context),
-      content: TabView(
-        currentIndex: currentIndex,
-        closeButtonVisibility: CloseButtonVisibilityMode.never,
-        tabWidthBehavior: TabWidthBehavior.sizeToContent,
-        tabs: [buildTab(context, true), buildTab(context, false)],
-        onChanged: (index) {
-          currentIndex = index;
-          setState(() {});
-        },
+    return MacosScaffold(
+      toolBar: ToolBar(
+        title: const Text('游戏公告'),
+        titleWidth: 150.w,
+        leading: buildTopLeading(context),
       ),
+      children: [
+        ContentArea(
+          builder: (context, _) => Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+            child: MacosTabView(
+              controller: controller,
+              tabs: [
+                MacosTab(label: '游戏公告'),
+                MacosTab(label: '活动公告'),
+              ],
+              children: [
+                buildList(annoList.where((e) => e.type == 3).toList(), context),
+                buildList(annoList.where((e) => e.type == 4).toList(), context),
+              ],
+            ),
+          ),
+        )
+      ],
     );
   }
 }

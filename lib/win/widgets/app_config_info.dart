@@ -17,7 +17,7 @@ import '../../../../shared/tools/log_tool.dart';
 import '../../../../shared/utils/get_app_theme.dart';
 import '../store/app_config.dart';
 import '../ui/sp_icon.dart';
-import '../ui/sp_infobar.dart';
+import '../../shared/ui/sp_infobar.dart';
 import 'bbs_infobar.dart';
 
 class AppConfigInfoWidget extends ConsumerStatefulWidget {

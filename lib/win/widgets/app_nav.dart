@@ -26,7 +26,7 @@ import '../pages/nap_anno.dart';
 import '../pages/user_gacha.dart';
 import '../store/app_config.dart';
 import '../ui/sp_icon.dart';
-import '../ui/sp_infobar.dart';
+import '../../shared/ui/sp_infobar.dart';
 
 class AppNavWidget extends ConsumerStatefulWidget {
   const AppNavWidget({super.key});

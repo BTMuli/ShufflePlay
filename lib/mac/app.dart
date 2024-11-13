@@ -7,7 +7,7 @@ import 'package:macos_ui/macos_ui.dart';
 // Project imports:
 import 'models/ui_model.dart';
 import 'store/app_config.dart';
-import 'widgets/app/app_nav.dart';
+import 'widgets/app_nav.dart';
 
 class SPApp extends ConsumerWidget {
   const SPApp({super.key});
