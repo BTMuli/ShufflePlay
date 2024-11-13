@@ -2,8 +2,8 @@
 import 'package:dio/dio.dart';
 
 // Project imports:
-import '../../database/app/app_config.dart';
 import '../../models/bbs/bbs_base_model.dart';
+import '../../shared/database/app_config.dart';
 import '../core/client.dart';
 import 'bbs_api_login.dart';
 

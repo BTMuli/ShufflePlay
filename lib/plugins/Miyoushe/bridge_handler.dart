@@ -1,12 +1,12 @@
 // Project imports:
-import '../../database/app/app_config.dart';
 import '../../models/bbs/bbs_constant_enum.dart';
 import '../../models/bbs/bridge/bbs_bridge_model.dart';
 import '../../request/bbs/bbs_api_token.dart';
 import '../../request/core/gen_ds_header.dart';
-import '../../store/user/user_bbs.dart';
-import '../../tools/log_tool.dart';
-import '../../ui/sp_infobar.dart';
+import '../../shared/database/app_config.dart';
+import '../../shared/store/user_bbs.dart';
+import '../../shared/tools/log_tool.dart';
+import '../../win/ui/sp_infobar.dart';
 import 'miyoushe_client.dart';
 
 /// 处理JSBridge的消息

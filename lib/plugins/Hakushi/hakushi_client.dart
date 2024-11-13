@@ -2,10 +2,10 @@
 import 'package:dio/dio.dart';
 
 // Project imports:
-import '../../database/nap/nap_item_map.dart';
 import '../../models/database/nap/nap_item_map_model.dart';
 import '../../request/core/client.dart';
-import '../../tools/log_tool.dart';
+import '../../shared/database/nap_item_map.dart';
+import '../../shared/tools/log_tool.dart';
 import 'models/hakushi_model.dart';
 
 class SprPluginHakushi {

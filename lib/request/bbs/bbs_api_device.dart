@@ -5,12 +5,12 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 
 // Project imports:
-import '../../database/app/app_config.dart';
 import '../../models/bbs/bbs_base_model.dart';
 import '../../models/bbs/bbs_constant_enum.dart';
 import '../../models/bbs/device/bbs_device_model.dart';
 import '../../models/database/app/app_config_model.dart';
-import '../../utils/gen_random_str.dart';
+import '../../shared/database/app_config.dart';
+import '../../shared/utils/gen_random_str.dart';
 import '../core/client.dart';
 
 class SprBbsApiDevice {

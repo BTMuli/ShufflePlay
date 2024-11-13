@@ -2,12 +2,12 @@
 import 'package:dio/dio.dart';
 
 // Project imports:
-import '../../database/app/app_config.dart';
 import '../../models/bbs/bbs_base_model.dart';
 import '../../models/database/user/user_bbs_model.dart';
 import '../../models/database/user/user_nap_model.dart';
 import '../../models/nap/gacha/nap_gacha_model.dart';
 import '../../plugins/UIGF/models/uigf_enum.dart';
+import '../../shared/database/app_config.dart';
 import '../core/client.dart';
 
 class SprNapApiGacha {

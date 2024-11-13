@@ -18,7 +18,7 @@ import 'package:webview_windows/webview_windows.dart';
 import '../../models/bbs/bbs_base_model.dart';
 import '../../models/bbs/bbs_constant_enum.dart';
 import '../../models/bbs/bridge/bbs_bridge_model.dart';
-import '../../tools/log_tool.dart';
+import '../../shared/tools/log_tool.dart';
 import 'bridge_handler.dart';
 import 'miyoushe_webview.dart';
 

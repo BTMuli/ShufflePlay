@@ -8,8 +8,8 @@ import 'package:webview_windows/webview_windows.dart';
 
 // Project imports:
 import '../../models/bbs/bbs_base_model.dart';
-import '../../tools/log_tool.dart';
-import '../../ui/sp_infobar.dart';
+import '../../shared/tools/log_tool.dart';
+import '../../win/ui/sp_infobar.dart';
 import 'miyoushe_client.dart';
 
 class MiyousheWebview {

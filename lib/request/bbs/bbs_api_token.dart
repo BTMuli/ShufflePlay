@@ -2,11 +2,11 @@
 import 'package:dio/dio.dart';
 
 // Project imports:
-import '../../database/app/app_config.dart';
 import '../../models/bbs/bbs_base_model.dart';
 import '../../models/bbs/bbs_constant_enum.dart';
 import '../../models/bbs/token/bbs_token_model.dart';
 import '../../models/database/user/user_bbs_model.dart';
+import '../../shared/database/app_config.dart';
 import '../core/client.dart';
 import '../core/gen_ds_header.dart';
 

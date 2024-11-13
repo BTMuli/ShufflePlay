@@ -7,7 +7,7 @@ import 'package:crypto/crypto.dart';
 // Project imports:
 import '../../models/bbs/bbs_constant_enum.dart';
 import '../../models/database/app/app_config_model.dart';
-import '../../utils/gen_random_str.dart';
+import '../../shared/utils/gen_random_str.dart';
 
 /// 获取带有ds的请求头
 Map<String, String> getDsReqHeader(
