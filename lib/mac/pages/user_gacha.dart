@@ -1,10 +1,14 @@
 // Dart imports:
 import 'dart:convert';
 
+// Flutter imports:
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
 // Package imports:
-import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:macos_ui/macos_ui.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
@@ -27,8 +31,10 @@ import '../../shared/tools/file_tool.dart';
 import '../ui/sp_dialog.dart';
 import '../ui/sp_infobar.dart';
 import '../ui/sp_progress.dart';
-import '../widgets/user_gacha_view.dart';
+import '../widgets/app_top.dart';
+import '../widgets/user_gacha_list.dart';
 
+/// 调频记录
 class UserGachaPage extends ConsumerStatefulWidget {
   const UserGachaPage({super.key});
 
@@ -36,8 +42,7 @@ class UserGachaPage extends ConsumerStatefulWidget {
   ConsumerState<UserGachaPage> createState() => _UserGachaPageState();
 }
 
-class _UserGachaPageState extends ConsumerState<UserGachaPage>
-    with AutomaticKeepAliveClientMixin {
+class _UserGachaPageState extends ConsumerState<UserGachaPage> {
   /// uid列表
   List<String> uidList = [];
 
@@ -60,10 +65,10 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage>
   final SppUigfTool uigfTool = SppUigfTool();
 
   /// 进度条
-  SpProgressController progress = SpProgressController();
+  late SpProgressController progress = SpProgressController();
 
-  @override
-  bool get wantKeepAlive => true;
+  /// Tab控制器
+  final tab = MacosTabController(initialIndex: 0, length: 4);
 
   @override
   void initState() {
@@ -74,26 +79,23 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage>
     });
   }
 
+  /// 刷新用户数据
   Future<void> refreshData() async {
     uidList = await sqliteUser.getAllUid(check: true);
-    if (uidList.isNotEmpty) {
-      curUid = uidList.first;
-    } else {
-      curUid = null;
-    }
+    curUid = uidList.isNotEmpty ? uidList.first : null;
     if (mounted) setState(() {});
   }
 
+  /// 刷新元数据
   Future<void> refreshMetaData() async {
     await sqliteMap.preCheck();
     await hakushiApi.freshCharacter();
     await hakushiApi.freshWeapon();
     await hakushiApi.freshBangboo();
-    if (mounted) {
-      await SpInfobar.success(context, '刷新元数据成功');
-    }
+    if (mounted) await SpInfobar.success(context, '刷新元数据成功');
   }
 
+  /// 导入UIGF4Json
   Future<void> importUigf4Json() async {
     var filePath = await fileTool.selectFile(context: context);
     if (filePath == null) {
@@ -121,12 +123,7 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage>
       return;
     }
     if (!mounted) return;
-    progress = SpProgress.show(
-      context,
-      title: '导入数据',
-      text: '请稍后...',
-      onTaskbar: true,
-    );
+    progress = SpProgress.show(context, title: '导入数据', text: '请稍后...');
     var data = UigfModelFull.fromJson(fileJson);
     await sqliteUser.importUigf(data);
     progress.end();
@@ -136,7 +133,12 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage>
     }
   }
 
+  /// 导出UIGF4Json
   Future<void> exportUigf4Json() async {
+    if (curUid == null) {
+      if (mounted) await SpInfobar.warn(context, '未选择UID');
+      return;
+    }
     var check = await SpDialog.confirm(context, '是否导出当前UID数据？', 'UID: $curUid');
     if (check == null || !check) return;
     var data = await sqliteUser.exportUigf(uids: [curUid!]);
@@ -161,19 +163,29 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage>
     }
   }
 
+  /// 删除用户
+  Future<void> deleteUser() async {
+    if (curUid == null) {
+      if (mounted) await SpInfobar.warn(context, '未选择UID');
+      return;
+    }
+    var check = await SpDialog.confirm(context, '是否删除当前UID数据？', 'UID: $curUid');
+    if (check == null || !check) return;
+    await sqliteUser.deleteUser(curUid!);
+    await refreshData();
+    if (mounted) await SpInfobar.success(context, '删除成功');
+  }
+
   /// 尝试刷新用户调频数据
-  Future<void> tryRefreshUserGacha(
-    BuildContext context, {
-    bool isForce = false,
-  }) async {
+  Future<void> tryRefreshUserGacha({bool isForce = false}) async {
     var curUser = ref.read(userBbsStoreProvider).user;
     if (curUser == null) {
-      if (context.mounted) await SpInfobar.warn(context, '未登录');
+      if (mounted) await SpInfobar.warn(context, '未登录');
       return;
     }
     var curAccount = ref.read(userBbsStoreProvider).account;
     if (curAccount == null) {
-      if (context.mounted) await SpInfobar.warn(context, '未登录');
+      if (mounted) await SpInfobar.warn(context, '未登录');
       return;
     }
     var title = isForce ? '全量刷新用户调频数据？' : '增量刷新用户调频数据？';
@@ -182,7 +194,7 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage>
         '[${curAccount.regionName}]';
     var check = await SpDialog.confirm(context, title, text);
     if (check == null || !check) return;
-    if (context.mounted) {
+    if (mounted) {
       await refreshUserGacha(context, curUser, curAccount, isForce: isForce);
     }
   }
@@ -195,12 +207,7 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage>
     bool isForce = false,
   }) async {
     if (context.mounted) {
-      progress = SpProgress.show(
-        context,
-        title: '获取调频数据',
-        text: '请稍后...',
-        onTaskbar: true,
-      );
+      progress = SpProgress.show(context, title: '获取调频数据', text: '请稍后...');
     }
     var apiGacha = SprNapApiGacha();
     var apiToken = SprNapApiAccount();
@@ -269,138 +276,123 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage>
     await refreshData();
   }
 
-  Widget buildTopBar(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        Button(
-          onPressed: importUigf4Json,
-          child: const Text('导入'),
-        ),
-        SizedBox(width: 10.w),
-        Button(
-          onPressed: () async {
-            if (curUid == null) {
-              await SpInfobar.warn(context, '未选择UID');
-              return;
-            }
-            await exportUigf4Json();
-          },
-          child: const Text('导出'),
-        ),
-        SizedBox(width: 10.w),
-        Tooltip(
-          message: '长按全量刷新',
-          child: Button(
-            onPressed: () async => await tryRefreshUserGacha(context),
-            onLongPress: () async => await tryRefreshUserGacha(
-              context,
-              isForce: true,
-            ),
-            child: const Text('刷新'),
-          ),
-        ),
-        SizedBox(width: 10.w),
-        Button(
-          child: const Text('删除'),
-          onPressed: () async {
-            if (curUid == null) {
-              await SpInfobar.warn(context, '未选择UID');
-              return;
-            }
-            var check =
-                await SpDialog.confirm(context, '是否删除当前UID数据？', 'UID: $curUid');
-            if (check == null || !check) return;
-            await sqliteUser.deleteUser(curUid!);
-            await refreshData();
-            if (context.mounted) {
-              await SpInfobar.success(context, '删除成功');
-            }
-          },
-        ),
-        SizedBox(width: 10.w),
-        IconButton(
-          icon: const Icon(FluentIcons.database_refresh),
-          onPressed: refreshMetaData,
-        ),
-      ],
-    );
+  List<ToolBarIconButton> buildActions(BuildContext context) {
+    return [
+      ToolBarIconButton(
+        label: '导入',
+        icon: MacosIcon(CupertinoIcons.arrow_down_doc),
+        showLabel: true,
+        onPressed: importUigf4Json,
+      ),
+      ToolBarIconButton(
+        label: '导出',
+        icon: MacosIcon(CupertinoIcons.arrow_up_doc),
+        showLabel: true,
+        onPressed: exportUigf4Json,
+      ),
+      ToolBarIconButton(
+        label: '刷新',
+        icon: MacosIcon(CupertinoIcons.arrow_clockwise),
+        showLabel: true,
+        onPressed: tryRefreshUserGacha,
+      ),
+      ToolBarIconButton(
+        label: '全量刷新',
+        icon: MacosIcon(CupertinoIcons.arrow_clockwise_circle),
+        showLabel: true,
+        onPressed: () async => await tryRefreshUserGacha(isForce: true),
+      ),
+      ToolBarIconButton(
+        label: '刷新元数据',
+        icon: MacosIcon(CupertinoIcons.arrow_2_circlepath),
+        showLabel: true,
+        onPressed: refreshMetaData,
+      ),
+      ToolBarIconButton(
+        label: '删除',
+        icon: MacosIcon(CupertinoIcons.trash),
+        showLabel: true,
+        onPressed: deleteUser,
+      ),
+    ];
+  }
+
+  MacosPopupMenuItem<String> buildUidSelectorItem(String uid) {
+    return MacosPopupMenuItem<String>(value: uid, child: Text(uid));
   }
 
   Widget buildUidSelector(BuildContext context) {
     if (uidList.isEmpty) return const SizedBox.shrink();
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
         const Text('UID:'),
         SizedBox(width: 10.w),
-        DropDownButton(
-          title: Text(curUid ?? '请选择'),
-          items: [
-            for (var uid in uidList)
-              MenuFlyoutItem(
-                text: Text(uid),
-                onPressed: () async {
-                  if (curUid == uid) return;
-                  if (context.mounted) {
-                    curUid = uid;
-                    setState(() {});
-                    await refreshData();
-                  }
-                },
-              ),
-          ],
+        MacosPopupButton<String>(
+          items: uidList.map(buildUidSelectorItem).toList(),
+          onChanged: (String? value) {
+            curUid = value;
+            if (mounted) setState(() {});
+          },
+          style: TextStyle(height: 1.5),
+          hint: Text(curUid ?? '选择UID'),
         ),
         SizedBox(width: 10.w),
         Text(
           '当前时区: ${DateTime.now().timeZoneName}'
           '(UTC${DateTime.now().timeZoneOffset.inHours})',
-        ),
+        )
       ],
     );
   }
 
-  /// 构建头部
-  Widget buildHeader() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 10.h),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          SizedBox(width: 10.w),
-          const Icon(FluentIcons.auto_enhance_on),
-          SizedBox(width: 10.w),
-          Text('调频记录', style: TextStyle(fontSize: 20.sp)),
-          SizedBox(width: 10.w),
-          buildUidSelector(context),
-          const Spacer(),
-          buildTopBar(context),
-          SizedBox(width: 10.w),
-        ],
+  Widget buildTitle(BuildContext context) {
+    return Row(children: [
+      SizedBox(
+        width: 60,
+        child: Text('调频记录', style: MacosTheme.of(context).typography.headline),
       ),
+      buildUidSelector(context),
+    ]);
+  }
+
+  Widget buildContent() {
+    return MacosTabView(
+      controller: tab,
+      tabs: [
+        MacosTab(label: '常驻'),
+        MacosTab(label: '角色UP'),
+        MacosTab(label: '音擎UP'),
+        MacosTab(label: '邦布'),
+      ],
+      children: [
+        UserGachaList(curUid!, UigfNapPoolType.normal),
+        UserGachaList(curUid!, UigfNapPoolType.upC),
+        UserGachaList(curUid!, UigfNapPoolType.upW),
+        UserGachaList(curUid!, UigfNapPoolType.bond),
+      ],
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
-    return ScaffoldPage(
-      header: buildHeader(),
-      content: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24),
-        child: curUid == null
-            ? const Center(child: Text('暂无数据'))
-            : Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(child: UserGachaViewWidget(selectedUid: curUid!)),
-                ],
-              ),
+    return MacosScaffold(
+      toolBar: ToolBar(
+        title: buildTitle(context),
+        titleWidth: 600,
+        leading: buildTopLeading(context),
+        actions: buildActions(context),
       ),
+      children: [
+        ContentArea(
+          builder: (_, __) => Padding(
+            padding: EdgeInsets.all(8),
+            child: curUid == null
+                ? Text('暂无数据', style: TextStyle(color: Colors.white))
+                : buildContent(),
+          ),
+        )
+      ],
     );
   }
 }

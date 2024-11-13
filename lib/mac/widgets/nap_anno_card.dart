@@ -1,10 +1,10 @@
 // Flutter imports:
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 // Project imports:
 import '../../models/nap/anno/nap_anno_list_model.dart';
@@ -44,7 +44,7 @@ class NapAnnoCardWidget extends StatelessWidget {
           ),
           fit: BoxFit.contain,
           errorWidget: (context, url, error) => Center(
-            child: Icon(MdiIcons.imageOff),
+            child: Icon(CupertinoIcons.exclamationmark_triangle),
           ),
         ),
       ),

@@ -10,6 +10,7 @@ import 'package:macos_ui/macos_ui.dart';
 // Project imports:
 import '../../models/bbs/bbs_base_model.dart';
 import '../models/ui_model.dart';
+import 'sp_icon.dart';
 
 class SpInfoBarType {
   /// severity
@@ -36,11 +37,7 @@ class SpInfoBarType {
       builder: (context) {
         return MacosAlertDialog(
           title: MacosIcon(severity.icon, color: severity.color),
-          appIcon: Image.asset(
-            'assets/images/ShufflePlayMini.png',
-            width: 24,
-            height: 24,
-          ),
+          appIcon: const SpAppIcon(),
           message: Text(message),
           primaryButton: PushButton(
             controlSize: ControlSize.large,

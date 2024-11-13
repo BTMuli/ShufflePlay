@@ -1,8 +1,9 @@
 // Flutter imports:
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 // Package imports:
-import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:macos_ui/macos_ui.dart';
@@ -10,6 +11,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 // Project imports:
 import '../pages/nap_anno.dart';
+import '../pages/user_gacha.dart';
 import '../store/app_config.dart';
 
 class AppNavWidget extends ConsumerStatefulWidget {
@@ -19,16 +21,19 @@ class AppNavWidget extends ConsumerStatefulWidget {
   ConsumerState<AppNavWidget> createState() => _AppNavWidgetState();
 }
 
-class _AppNavWidgetState extends ConsumerState<AppNavWidget>
-    with AutomaticKeepAliveClientMixin {
+class _AppNavWidgetState extends ConsumerState<AppNavWidget> {
   int curIndex = 0;
 
   ThemeMode get curThemeMode => ref.watch(appConfigStoreProvider).themeMode;
 
   PackageInfo? packageInfo;
 
-  @override
-  bool get wantKeepAlive => false;
+  final pages = [
+    NapAnnoPage(),
+    UserGachaPage(),
+    if (kDebugMode) Text('测试页'),
+    Text('设置'),
+  ];
 
   @override
   void initState() {
@@ -61,13 +66,20 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget>
 
   List<SidebarItem> buildSidebarItems() {
     return [
-      SidebarItem(leading: Icon(FluentIcons.home), label: Text('游戏公告')),
       SidebarItem(
-        leading: Icon(FluentIcons.auto_enhance_on),
+        leading: Icon(CupertinoIcons.news),
+        label: Text('游戏公告'),
+      ),
+      SidebarItem(
+        leading: Icon(CupertinoIcons.music_note),
         label: Text('调频记录'),
       ),
       if (kDebugMode)
-        SidebarItem(leading: Icon(FluentIcons.test_beaker), label: Text('测试页'))
+        SidebarItem(leading: Icon(CupertinoIcons.wrench), label: Text('测试页')),
+      SidebarItem(
+        leading: Icon(CupertinoIcons.settings),
+        label: Text('设置'),
+      ),
     ];
   }
 
@@ -119,22 +131,8 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget>
     );
   }
 
-  Widget getChild() {
-    switch (curIndex) {
-      case 0:
-        return const NapAnnoPage();
-      case 1:
-        return Text('调频记录');
-      case 2:
-        return Text('测试页');
-      default:
-        return SizedBox();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     return PlatformMenuBar(
       menus: defaultTargetPlatform == TargetPlatform.macOS ? buildMenus() : [],
       child: MacosWindow(
@@ -146,7 +144,7 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget>
           bottom: buildSidebarBottom(context),
         ),
         backgroundColor: Colors.transparent,
-        child: getChild(),
+        child: pages[curIndex],
       ),
     );
   }

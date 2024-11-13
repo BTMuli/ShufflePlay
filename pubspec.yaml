@@ -48,7 +48,6 @@ dependencies:
   json_schema: ^5.2.0
   logger: ^2.4.0
   macos_ui: ^2.0.9
-  material_design_icons_flutter: ^7.0.7296
   msvcredist:
     git:
       url: https://github.com/insertjokehere/flutter_msvcredist.git

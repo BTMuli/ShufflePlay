@@ -5,7 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:macos_ui/macos_ui.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 // Project imports:
@@ -13,6 +12,7 @@ import '../../models/nap/anno/nap_anno_content_model.dart';
 import '../../models/nap/anno/nap_anno_list_model.dart';
 import '../../request/nap/nap_api_anno.dart';
 import '../ui/sp_infobar.dart';
+import '../widgets/app_top.dart';
 import '../widgets/nap_anno_card.dart';
 
 /// 公告页面
@@ -23,8 +23,7 @@ class NapAnnoPage extends StatefulWidget {
   State<NapAnnoPage> createState() => _NapAnnoPageState();
 }
 
-class _NapAnnoPageState extends State<NapAnnoPage>
-    with AutomaticKeepAliveClientMixin {
+class _NapAnnoPageState extends State<NapAnnoPage> {
   /// 公告列表
   List<NapAnnoListModel> annoList = [];
 
@@ -39,10 +38,6 @@ class _NapAnnoPageState extends State<NapAnnoPage>
 
   final controller = MacosTabController(initialIndex: 0, length: 2);
 
-  /// todo 改为true
-  @override
-  bool get wantKeepAlive => false;
-
   @override
   void initState() {
     super.initState();
@@ -50,7 +45,7 @@ class _NapAnnoPageState extends State<NapAnnoPage>
   }
 
   /// 加载公告列表
-  Future<void> loadAnnoList({BuildContext? ctx}) async {
+  Future<void> loadAnnoList({BuildContext? ctx, bool alert = false}) async {
     BuildContext context = ctx ?? this.context;
     annoList.clear();
     annoContentList.clear();
@@ -70,8 +65,8 @@ class _NapAnnoPageState extends State<NapAnnoPage>
     }
     var contentData = contentResp.data as NapAnnoContentModelData;
     annoContentList = contentData.list;
-    setState(() {});
-    if (context.mounted) await SpInfobar.success(context, '公告加载成功');
+    if (mounted) setState(() {});
+    if (context.mounted && alert) await SpInfobar.success(context, '公告加载成功');
   }
 
   /// 获取标题
@@ -141,7 +136,7 @@ class _NapAnnoPageState extends State<NapAnnoPage>
                 MacosIconButton(
                   onPressed: () => Navigator.of(context).pop(),
                   icon: MacosIcon(
-                    MdiIcons.close,
+                    CupertinoIcons.clear,
                     color: MacosTheme.brightnessOf(context).resolve(
                       const Color.fromRGBO(0, 0, 0, 0.5),
                       const Color.fromRGBO(255, 255, 255, 0.5),
@@ -160,38 +155,14 @@ class _NapAnnoPageState extends State<NapAnnoPage>
     }
   }
 
-  Widget buildTitle() {
+  Widget buildTitle(BuildContext context) {
     return Row(children: [
-      Text('游戏公告', style: MacosTheme.of(context).typography.largeTitle),
+      Text('游戏公告', style: MacosTheme.of(context).typography.headline),
       MacosIconButton(
         icon: MacosIcon(CupertinoIcons.refresh),
-        onPressed: loadAnnoList,
+        onPressed: () async => await loadAnnoList(ctx: context, alert: true),
       ),
     ]);
-  }
-
-  Widget buildTopLeading(BuildContext context) {
-    return MacosTooltip(
-      message: '隐藏/显示侧边栏',
-      useMousePosition: false,
-      child: MacosIconButton(
-        icon: MacosIcon(
-          CupertinoIcons.sidebar_left,
-          color: MacosTheme.brightnessOf(context).resolve(
-            const Color.fromRGBO(0, 0, 0, 0.5),
-            const Color.fromRGBO(255, 255, 255, 0.5),
-          ),
-          size: 20.0,
-        ),
-        boxConstraints: const BoxConstraints(
-          minHeight: 20,
-          minWidth: 20,
-          maxWidth: 48,
-          maxHeight: 38,
-        ),
-        onPressed: MacosWindowScope.of(context).toggleSidebar,
-      ),
-    );
   }
 
   /// 构建列表
@@ -217,16 +188,15 @@ class _NapAnnoPageState extends State<NapAnnoPage>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     return MacosScaffold(
       toolBar: ToolBar(
-        title: buildTitle(),
+        title: buildTitle(context),
         titleWidth: 150.w,
         leading: buildTopLeading(context),
       ),
       children: [
         ContentArea(
-          builder: (context, _) => Padding(
+          builder: (_, __) => Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
             child: MacosTabView(
               controller: controller,

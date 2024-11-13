@@ -1,4 +1,5 @@
 // Flutter imports:
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 
 // Package imports:
@@ -9,9 +10,6 @@ import 'package:webview_windows/webview_windows.dart';
 
 // Project imports:
 import '../ui/sp_icon.dart';
-
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart'
-    as mdi;
 
 class AppConfigDeviceWidget extends StatefulWidget {
   const AppConfigDeviceWidget({super.key});
@@ -60,7 +58,7 @@ class _AppConfigDeviceWidgetState extends State<AppConfigDeviceWidget> {
   /// 构建设备信息(macos)
   Widget buildOSInfoMac(MacOsDeviceInfo dim) {
     return ListTile(
-      leading: Icon(mdi.MdiIcons.apple),
+      leading: Icon(CupertinoIcons.desktopcomputer),
       title: const Text('MacOS'),
       subtitle:
           Text('${dim.majorVersion}.${dim.minorVersion}.${dim.patchVersion}'),
@@ -70,7 +68,7 @@ class _AppConfigDeviceWidgetState extends State<AppConfigDeviceWidget> {
   /// 构建设备信息(Windows)
   Widget buildDeviceInfoWin(WindowsDeviceInfo diw) {
     return ListTile(
-      leading: Icon(mdi.MdiIcons.microsoftWindows),
+      leading: Icon(CupertinoIcons.desktopcomputer),
       title: Text('设备 ${diw.computerName} ${diw.productId}'),
       subtitle: Text(
         '标识符 ${diw.deviceId.substring(1, diw.deviceId.length - 1)}',
@@ -108,7 +106,7 @@ class _AppConfigDeviceWidgetState extends State<AppConfigDeviceWidget> {
     }
     if (defaultTargetPlatform == TargetPlatform.windows) {
       return Expander(
-        leading: Icon(mdi.MdiIcons.microsoftWindows),
+        leading: Icon(CupertinoIcons.desktopcomputer),
         header: Text(deviceInfoWin!.productName),
         content: Column(
           children: [
@@ -119,7 +117,7 @@ class _AppConfigDeviceWidgetState extends State<AppConfigDeviceWidget> {
       );
     }
     return Expander(
-        leading: Icon(mdi.MdiIcons.appleIcloud),
+        leading: Icon(CupertinoIcons.desktopcomputer),
         header: Text(deviceInfoMac!.computerName),
         content: buildOSInfoMac(deviceInfoMac!));
   }
