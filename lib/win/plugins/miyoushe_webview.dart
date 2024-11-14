@@ -43,7 +43,7 @@ class MysControllerWin extends ChangeNotifier implements MiyousheController {
   @override
   late double width;
 
-  late MysWebviewWin webview;
+  WebviewController webview = WebviewController();
 
   @override
   Future<void> initialize(
@@ -58,20 +58,15 @@ class MysControllerWin extends ChangeNotifier implements MiyousheController {
     this.height = height ?? 600;
     this.title = title ?? '米游社';
     this.userAgent = userAgent ?? bbsUaMobile;
-    webview = MysWebviewWin._();
     routeStack = [url];
-    try {
-      await webview.initController(this);
-    } catch (e) {
-      SPLogTool.error('[Miyoushe] Fail to initialize controller: $e');
-    }
-    notifyListeners();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    webview.dispose();
+    await webview.initialize();
+    await loadJSBridge();
+    webview.webMessage.listen(handleMessage);
+    await webview.setUserAgent(this.userAgent);
+    await webview.loadUrl(url);
+    await loadJSBridge();
+    await webview.setBackgroundColor(Colors.transparent);
+    await webview.setPopupWindowPolicy(WebviewPopupWindowPolicy.deny);
     notifyListeners();
   }
 
@@ -79,11 +74,12 @@ class MysControllerWin extends ChangeNotifier implements MiyousheController {
   Future<void> callback(String cb, dynamic data) async {
     BBSResp resp = BBSResp.success(data: data);
     SPLogTool.debug('[Miyoushe] Callback: $cb, $resp');
-    await executeScript('javascript:mhyWebBridge($cb, $resp)');
+    await executeScript('javascript:mhyWebBridge("$cb", $resp)');
   }
 
   @override
   Future<void> handleMessage(dynamic message) async {
+    SPLogTool.debug('[Miyoushe] Handle message: $message');
     if (message is! String) return;
     try {
       message = jsonDecode(message);
@@ -103,8 +99,8 @@ class MysControllerWin extends ChangeNotifier implements MiyousheController {
     var bridgeJS = '''javascript:(function() {
       if(window.MiHoYoJSInterface) return;
       window.MiHoYoJSInterface = {
-        postMessage: function(arg) => window.chrome.webview.postMessage(arg),
-        closePage: function() { this.postMessage('{"method":"closePage"}') },
+        postMessage: (arg) => window.chrome.webview.postMessage(arg),
+        closePage: () => this.postMessage('{"method":"closePage"}'),
       };
     })();''';
     await executeScript(bridgeJS);
@@ -112,17 +108,17 @@ class MysControllerWin extends ChangeNotifier implements MiyousheController {
 
   @override
   Future<void> executeScript(String script) async {
-    await webview.webview.executeScript(script);
+    await webview.executeScript(script);
   }
 
   @override
   Future<void> loadUrl(String url) async {
-    await webview.webview.loadUrl(url);
+    await webview.loadUrl(url);
   }
 
-  @override
   Future<void> reload() async {
     await webview.reload();
+    await loadJSBridge();
   }
 
   @override
@@ -143,7 +139,7 @@ class MysControllerWin extends ChangeNotifier implements MiyousheController {
               if (kDebugMode)
                 IconButton(
                   icon: const Icon(Icons.developer_mode),
-                  onPressed: () async => await webview.openDevTools(),
+                  onPressed: webview.openDevTools,
                 ),
               IconButton(
                 icon: const Icon(FluentIcons.chrome_close),
@@ -161,45 +157,9 @@ class MysControllerWin extends ChangeNotifier implements MiyousheController {
   Future<void> callbackNull(String cb) async => await callback(cb, null);
 
   @override
-  Future<void> close() async => Navigator.pop(context);
-}
-
-class MysWebviewWin implements MiyousheWebview {
-  MysWebviewWin._();
-
-  late WebviewController webview = WebviewController();
-
-  @override
-  Future<void> addListener(void Function(dynamic event) callback) async {
-    webview.webMessage.listen(callback);
-  }
-
-  @override
-  Future<void> initController(MiyousheController controller) async {
-    await webview.initialize();
-    webview.webMessage.listen(controller.handleMessage);
-    await controller.loadJSBridge();
-    await webview.setUserAgent(controller.userAgent);
-    await webview.loadUrl(controller.url);
-    await controller.loadJSBridge();
-    await webview.setBackgroundColor(Colors.transparent);
-    await webview.setPopupWindowPolicy(WebviewPopupWindowPolicy.deny);
-    SPLogTool.debug('[Miyoushe] Initialize webview: ${controller.url}');
-  }
-
-  @override
-  Future<void> reload() async {
-    await webview.reload();
-  }
-
-  @override
-  Future<void> openDevTools() async {
-    await webview.openDevTools();
-  }
-
-  @override
-  Future<void> dispose() async {
+  Future<void> close() async {
     await webview.dispose();
+    if (context.mounted) Navigator.of(context).pop();
   }
 }
 
@@ -272,9 +232,15 @@ class _MysClientWinState extends ConsumerState<MysClientWin> {
   }
 
   @override
+  void dispose() {
+    widget.controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Webview(
-      widget.controller.webview.webview,
+      widget.controller.webview,
       width: widget.controller.width,
       height: widget.controller.height,
     );

@@ -2,18 +2,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-abstract class MiyousheWebview {
-  Future<void> addListener(void Function(dynamic event) callback);
-
-  Future<void> dispose();
-
-  Future<void> initController(MiyousheController controller);
-
-  Future<void> openDevTools();
-
-  Future<void> reload();
-}
-
 abstract class MiyousheController extends ChangeNotifier {
   late BuildContext context;
   late double height;
@@ -43,8 +31,6 @@ abstract class MiyousheController extends ChangeNotifier {
   Future<void> loadJSBridge();
 
   Future<void> loadUrl(String url);
-
-  Future<void> reload();
 
   Future<void> show(BuildContext context);
 

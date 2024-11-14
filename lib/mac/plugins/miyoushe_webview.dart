@@ -43,7 +43,7 @@ class MysControllerMac extends ChangeNotifier implements MiyousheController {
   @override
   late double width;
 
-  late MysWebviewMac webview;
+  late WebViewController webview;
 
   @override
   Future<void> initialize(
@@ -58,19 +58,24 @@ class MysControllerMac extends ChangeNotifier implements MiyousheController {
     this.height = height ?? 600;
     this.title = title ?? '米游社';
     this.userAgent = userAgent ?? bbsUaMobile;
-    webview = MysWebviewMac._();
     routeStack = [url];
-    try {
-      await webview.initController(this);
-    } catch (e) {
-      SPLogTool.error('[Miyoushe] Failed to initialize controller: $e');
-    }
+    await webview.setJavaScriptMode(JavaScriptMode.unrestricted);
+    await webview.setUserAgent(userAgent);
+    await webview.addJavaScriptChannel(
+      'MiHoYoJSInterface',
+      onMessageReceived: (message) => {
+        SPLogTool.debug('[Miyoushe] Received message: $message'),
+        handleMessage(message),
+      },
+    );
+    await webview.loadRequest(Uri.parse('about:blank'));
+    await webview.loadRequest(Uri.parse(url));
   }
 
   @override
   Future<void> callback(String cb, dynamic data) async {
     BBSResp resp = BBSResp.success(data: data);
-    await executeScript('javascript:mhyWebBridge($cb, $resp)');
+    await executeScript('javascript:mhyWebBridge("$cb", $resp)');
   }
 
   @override
@@ -81,7 +86,7 @@ class MysControllerMac extends ChangeNotifier implements MiyousheController {
 
   @override
   Future<void> executeScript(String script) async {
-    await webview.webview.runJavaScript(script);
+    await webview.runJavaScript(script);
   }
 
   @override
@@ -102,12 +107,7 @@ class MysControllerMac extends ChangeNotifier implements MiyousheController {
 
   @override
   Future<void> loadUrl(String url) async {
-    await webview.webview.loadRequest(Uri.parse(url));
-  }
-
-  @override
-  Future<void> reload() async {
-    await webview.reload();
+    await webview.loadRequest(Uri.parse(url));
   }
 
   @override
@@ -128,7 +128,7 @@ class MysControllerMac extends ChangeNotifier implements MiyousheController {
                 Text(title),
                 MacosIconButton(
                   icon: MacosIcon(Icons.refresh),
-                  onPressed: reload,
+                  onPressed: webview.reload,
                 ),
                 MacosIconButton(
                   icon: MacosIcon(Icons.clear),
@@ -146,54 +146,6 @@ class MysControllerMac extends ChangeNotifier implements MiyousheController {
   @override
   Future<void> loadJSBridge() async {
     SPLogTool.debug('[Miyoushe] Load JS bridge');
-  }
-}
-
-class MysWebviewMac implements MiyousheWebview {
-  MysWebviewMac._();
-
-  late WebViewController webview = WebViewController();
-
-  @override
-  Future<void> addListener(void Function(dynamic event) callback) async {
-    await webview.addJavaScriptChannel(
-      'MiHoYoJSInterface',
-      onMessageReceived: (message) => {
-        SPLogTool.debug('[Miyoushe] Received message: $message'),
-        callback(message),
-      },
-    );
-  }
-
-  @override
-  Future<void> dispose() async {
-    SPLogTool.debug('[Miyoushe] Disposing webview');
-  }
-
-  @override
-  Future<void> initController(MiyousheController controller) async {
-    await webview.setJavaScriptMode(JavaScriptMode.unrestricted);
-    await webview.setUserAgent(controller.userAgent);
-    await webview.addJavaScriptChannel(
-      'MiHoYoJSInterface',
-      onMessageReceived: (message) => {
-        SPLogTool.debug('[Miyoushe] Received message: $message'),
-        controller.handleMessage(message),
-      },
-    );
-    await webview.loadRequest(Uri.parse('about:blank'));
-    await webview.loadRequest(Uri.parse(controller.url));
-    SPLogTool.debug('[Miyoushe] Initialized controller');
-  }
-
-  @override
-  Future<void> openDevTools() async {
-    SPLogTool.debug('[Miyoushe] Open dev tools');
-  }
-
-  @override
-  Future<void> reload() async {
-    await webview.reload();
   }
 }
 
@@ -258,7 +210,13 @@ class _MysClientMacState extends ConsumerState<MysClientMac> {
   }
 
   @override
+  void dispose() {
+    widget.controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return WebViewWidget(controller: widget.controller.webview.webview);
+    return WebViewWidget(controller: widget.controller.webview);
   }
 }

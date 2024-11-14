@@ -6,7 +6,6 @@ import '../../request/core/gen_ds_header.dart';
 import '../../shared/database/app_config.dart';
 import '../../shared/store/user_bbs.dart';
 import '../../shared/tools/log_tool.dart';
-import '../../win/ui/sp_infobar.dart';
 import 'miyoushe_webview.dart';
 
 /// 处理JSBridge的消息
@@ -62,12 +61,6 @@ Future<void> handleBridgeMessage(
         '[Miyoushe] Unknown method: ${data.method}\n'
         'payload: ${data.payload}',
       );
-      if (controller.context.mounted) {
-        await SpInfobar.warn(
-          controller.context,
-          'Unknown method: ${data.method}',
-        );
-      }
       break;
   }
 }
@@ -235,7 +228,7 @@ Future<void> handlePushPage(
     arg.payload as Map<String, dynamic>,
   );
   if (!data.page.startsWith('http')) {
-    await SpInfobar.warn(controller.context, 'Invalid page: ${data.page}');
+    SPLogTool.warn('[Miyoushe] Invalid page: ${data.page}');
     return;
   }
   SPLogTool.debug('[Miyoushe] Push page: ${data.page}');
