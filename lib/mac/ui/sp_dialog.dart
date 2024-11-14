@@ -1,5 +1,5 @@
 // Flutter imports:
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 // Package imports:
@@ -76,7 +76,7 @@ class SpDialog {
               const SizedBox(width: 8),
               if (copy)
                 MacosIconButton(
-                  icon: const Icon(CupertinoIcons.doc_on_clipboard),
+                  icon: const Icon(Icons.copy),
                   onPressed: () async {
                     var data = await Clipboard.getData(Clipboard.kTextPlain);
                     if (data != null) input.text = data.text!;

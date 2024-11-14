@@ -1,5 +1,5 @@
 // Flutter imports:
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -136,7 +136,7 @@ class _NapAnnoPageState extends State<NapAnnoPage> {
                 MacosIconButton(
                   onPressed: () => Navigator.of(context).pop(),
                   icon: MacosIcon(
-                    CupertinoIcons.clear,
+                    Icons.close,
                     color: MacosTheme.brightnessOf(context).resolve(
                       const Color.fromRGBO(0, 0, 0, 0.5),
                       const Color.fromRGBO(255, 255, 255, 0.5),
@@ -159,7 +159,7 @@ class _NapAnnoPageState extends State<NapAnnoPage> {
     return Row(children: [
       Text('游戏公告', style: MacosTheme.of(context).typography.headline),
       MacosIconButton(
-        icon: MacosIcon(CupertinoIcons.refresh),
+        icon: MacosIcon(Icons.refresh),
         onPressed: () async => await loadAnnoList(ctx: context, alert: true),
       ),
     ]);

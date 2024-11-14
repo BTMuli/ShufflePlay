@@ -65,9 +65,20 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget>
   /// 文件工具
   final SPFileTool fileTool = SPFileTool();
 
+  /// 窗口管理
+  bool isOnTop = false;
+
   /// 测试的时候置为false
   @override
   bool get wantKeepAlive => false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      isOnTop = await windowManager.isAlwaysOnTop();
+    });
+  }
 
   @override
   void dispose() {
@@ -117,9 +128,9 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget>
 
   /// 改变置顶状态
   Future<void> changeAlwaysOnTop() async {
-    var isAlwaysOnTop = await windowManager.isAlwaysOnTop();
-    await windowManager.setAlwaysOnTop(!isAlwaysOnTop);
-    var str = isAlwaysOnTop ? '取消置顶' : '置顶';
+    isOnTop = !isOnTop;
+    await windowManager.setAlwaysOnTop(isOnTop);
+    var str = isOnTop ? '已置顶' : '已取消置顶';
     if (mounted) await SpInfobar.success(context, '$str成功');
   }
 
@@ -187,8 +198,10 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget>
             onPressed: resetWindowSize,
           ),
           MenuFlyoutItem(
-            leading: const Icon(FluentIcons.pinned_solid),
-            text: const Text('窗口置顶/取消置顶'),
+            leading: isOnTop
+                ? const Icon(FluentIcons.pinned_fill)
+                : const Icon(FluentIcons.pin),
+            text: isOnTop ? const Text('取消置顶') : const Text('置顶'),
             onPressed: changeAlwaysOnTop,
           ),
         ],

@@ -25,6 +25,7 @@ import '../../shared/database/user_gacha.dart';
 import '../../shared/store/user_bbs.dart';
 import '../../shared/tools/file_tool.dart';
 import '../ui/sp_dialog.dart';
+import '../ui/sp_icon.dart';
 import '../ui/sp_infobar.dart';
 import '../ui/sp_progress.dart';
 import '../widgets/user_gacha_view.dart';
@@ -137,6 +138,10 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage>
   }
 
   Future<void> exportUigf4Json() async {
+    if (curUid == null) {
+      if (mounted) await SpInfobar.warn(context, '未选择UID');
+      return;
+    }
     var check = await SpDialog.confirm(context, '是否导出当前UID数据？', 'UID: $curUid');
     if (check == null || !check) return;
     var data = await sqliteUser.exportUigf(uids: [curUid!]);
@@ -269,59 +274,58 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage>
     await refreshData();
   }
 
+  /// 删除
+  Future<void> delete() async {
+    if (curUid == null) {
+      if (mounted) await SpInfobar.warn(context, '未选择UID');
+      return;
+    }
+    var check = await SpDialog.confirm(context, '是否删除当前UID数据？', 'UID: $curUid');
+    if (check == null || !check) return;
+    await sqliteUser.deleteUser(curUid!);
+    await refreshData();
+    if (mounted) await SpInfobar.success(context, '删除成功');
+  }
+
   Widget buildTopBar(BuildContext context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        Button(
-          onPressed: importUigf4Json,
-          child: const Text('导入'),
-        ),
-        SizedBox(width: 10.w),
-        Button(
-          onPressed: () async {
-            if (curUid == null) {
-              await SpInfobar.warn(context, '未选择UID');
-              return;
-            }
-            await exportUigf4Json();
-          },
-          child: const Text('导出'),
-        ),
-        SizedBox(width: 10.w),
         Tooltip(
-          message: '长按全量刷新',
-          child: Button(
+          message: '导入UIGF数据',
+          child: IconButton(
+            icon: SPIcon(FluentIcons.import),
+            onPressed: importUigf4Json,
+          ),
+        ),
+        Tooltip(
+          message: '导出UIGF数据',
+          child: IconButton(
+            icon: SPIcon(FluentIcons.export),
+            onPressed: exportUigf4Json,
+          ),
+        ),
+        Tooltip(
+          message: '增量刷新（长按全量刷新）',
+          child: IconButton(
             onPressed: () async => await tryRefreshUserGacha(context),
             onLongPress: () async => await tryRefreshUserGacha(
               context,
               isForce: true,
             ),
-            child: const Text('刷新'),
+            icon: SPIcon(FluentIcons.refresh),
           ),
         ),
-        SizedBox(width: 10.w),
-        Button(
-          child: const Text('删除'),
-          onPressed: () async {
-            if (curUid == null) {
-              await SpInfobar.warn(context, '未选择UID');
-              return;
-            }
-            var check =
-                await SpDialog.confirm(context, '是否删除当前UID数据？', 'UID: $curUid');
-            if (check == null || !check) return;
-            await sqliteUser.deleteUser(curUid!);
-            await refreshData();
-            if (context.mounted) {
-              await SpInfobar.success(context, '删除成功');
-            }
-          },
+        Tooltip(
+          message: '删除',
+          child: IconButton(
+            icon: SPIcon(FluentIcons.delete),
+            onPressed: delete,
+          ),
         ),
-        SizedBox(width: 10.w),
         IconButton(
-          icon: const Icon(FluentIcons.database_refresh),
+          icon: SPIcon(FluentIcons.database_refresh),
           onPressed: refreshMetaData,
         ),
       ],

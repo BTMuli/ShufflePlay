@@ -19,6 +19,22 @@ class _UserGachaViewWidgetState extends State<UserGachaViewWidget> {
   /// selectedTab
   int selectedTab = 0;
 
+  Tab buildTab(UigfNapPoolType pool) {
+    return Tab(
+      text: Text(pool.label),
+      body: UserGachaList(
+        selectedUid: widget.selectedUid,
+        poolType: pool,
+      ),
+      icon: selectedTab == pool.index
+          ? const Icon(FluentIcons.giftbox_open)
+          : const Icon(FluentIcons.giftbox),
+      selectedBackgroundColor: FluentTheme.of(context).accentColor,
+      backgroundColor: FluentTheme.of(context).accentColor.withOpacity(0.2),
+      semanticLabel: pool.label,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     const tabList = [
@@ -31,24 +47,10 @@ class _UserGachaViewWidgetState extends State<UserGachaViewWidget> {
       closeButtonVisibility: CloseButtonVisibilityMode.never,
       tabWidthBehavior: TabWidthBehavior.sizeToContent,
       currentIndex: selectedTab,
-      tabs: [
-        for (var pool in tabList)
-          Tab(
-            text: Text(pool.label),
-            body: UserGachaList(
-              selectedUid: widget.selectedUid,
-              poolType: pool,
-            ),
-            icon: selectedTab == tabList.indexOf(pool)
-                ? const Icon(FluentIcons.giftbox_open)
-                : const Icon(FluentIcons.giftbox),
-            selectedBackgroundColor: FluentTheme.of(context).accentColor,
-          ),
-      ],
+      tabs: tabList.map(buildTab).toList(),
       onChanged: (index) {
-        setState(() {
-          selectedTab = index;
-        });
+        selectedTab = index;
+        if (context.mounted) setState(() {});
       },
     );
   }

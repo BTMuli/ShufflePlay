@@ -1,5 +1,4 @@
 // Flutter imports:
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -17,6 +16,7 @@ import '../../../../shared/tools/log_tool.dart';
 import '../../../../shared/utils/get_app_theme.dart';
 import '../models/ui_model.dart';
 import '../store/app_config.dart';
+import '../ui/sp_icon.dart';
 import '../ui/sp_infobar.dart';
 
 class AppConfigInfoWidget extends ConsumerStatefulWidget {
@@ -93,7 +93,7 @@ class _AppConfigInfoWidgetState extends ConsumerState<AppConfigInfoWidget> {
       title: const Text('ShufflePlay'),
       subtitle: Text('版本: ${packageInfo!.version}+${packageInfo!.buildNumber}'),
       trailing: MacosIconButton(
-        icon: const MacosIcon(CupertinoIcons.link),
+        icon: const MacosIcon(Icons.explore),
         onPressed: () async {
           await launchUrlString('https://github.com/BTMuli/ShufflePlay');
         },
@@ -104,11 +104,11 @@ class _AppConfigInfoWidgetState extends ConsumerState<AppConfigInfoWidget> {
   /// 构建设备信息
   Widget buildDeviceInfo() {
     return ListTile(
-      leading: const Icon(CupertinoIcons.device_laptop),
+      leading: const Icon(Icons.fingerprint),
       title: Text('设备指纹 ${deviceLocal!.deviceFp}'),
       subtitle: Text('设备信息 ${deviceLocal!.deviceName}(${deviceLocal!.model})'),
       trailing: MacosIconButton(
-        icon: const MacosIcon(CupertinoIcons.arrow_clockwise),
+        icon: const MacosIcon(Icons.refresh),
         onPressed: refreshDevice,
       ),
     );
@@ -142,7 +142,7 @@ class _AppConfigInfoWidgetState extends ConsumerState<AppConfigInfoWidget> {
   /// 构建主题色信息
   Widget buildAccentColorInfo() {
     return ListTile(
-      leading: const Icon(CupertinoIcons.color_filter),
+      leading: const Icon(Icons.color_lens),
       title: const Text('主题色'),
       subtitle: Text(
         curAccentColor.color.value.toRadixString(16),
@@ -176,11 +176,11 @@ class _AppConfigInfoWidgetState extends ConsumerState<AppConfigInfoWidget> {
   /// 构建日志信息
   Widget buildLogInfo() {
     return ListTile(
-      leading: const MacosIcon(CupertinoIcons.info),
+      leading: const MacosIcon(Icons.folder_special),
       title: const Text('日志'),
       subtitle: Text(logTool.logDir),
       trailing: IconButton(
-        icon: const MacosIcon(CupertinoIcons.folder),
+        icon: const MacosIcon(Icons.open_in_browser),
         onPressed: logTool.openLogDir,
       ),
     );
@@ -190,7 +190,7 @@ class _AppConfigInfoWidgetState extends ConsumerState<AppConfigInfoWidget> {
   Widget build(BuildContext context) {
     return ExpansionTile(
       initiallyExpanded: true,
-      leading: const Icon(CupertinoIcons.info),
+      leading: const SpAppIcon(),
       title: const Text('应用信息'),
       children: [
         if (packageInfo != null) buildAppInfo(),

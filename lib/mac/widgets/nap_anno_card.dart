@@ -1,5 +1,4 @@
 // Flutter imports:
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 // Package imports:
@@ -44,7 +43,7 @@ class NapAnnoCardWidget extends StatelessWidget {
           ),
           fit: BoxFit.contain,
           errorWidget: (context, url, error) => Center(
-            child: Icon(CupertinoIcons.exclamationmark_triangle),
+            child: Icon(Icons.error),
           ),
         ),
       ),

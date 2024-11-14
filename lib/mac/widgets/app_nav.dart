@@ -1,5 +1,4 @@
 // Flutter imports:
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -113,16 +112,16 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget> {
   List<SidebarItem> buildSidebarItems() {
     return [
       SidebarItem(
-        leading: Icon(CupertinoIcons.news),
+        leading: Icon(Icons.announcement),
         label: Text('公告'),
       ),
       SidebarItem(
-        leading: Icon(CupertinoIcons.music_note),
+        leading: Icon(Icons.music_note),
         label: Text('调频记录'),
       ),
       if (kDebugMode)
         SidebarItem(
-          leading: Icon(CupertinoIcons.wrench),
+          leading: Icon(Icons.developer_board),
           label: Text('测试页'),
         ),
     ];
@@ -160,12 +159,12 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget> {
               .setThemeMode(themeConfig.next),
         ),
         MacosIconButton(
-          icon: MacosIcon(CupertinoIcons.arrow_clockwise),
+          icon: MacosIcon(Icons.reset_tv),
           onPressed: resetWindowSize,
         ),
         if (account != null && user != null)
           MacosIconButton(
-            icon: MacosIcon(CupertinoIcons.gift),
+            icon: MacosIcon(Icons.wallet_giftcard),
             onPressed: createSign,
           ),
       ],

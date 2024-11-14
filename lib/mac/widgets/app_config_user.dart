@@ -1,5 +1,4 @@
 // Flutter imports:
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -192,7 +191,7 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         MacosIconButton(
-          icon: const MacosIcon(CupertinoIcons.refresh),
+          icon: const MacosIcon(Icons.refresh),
           onPressed: () async {
             var check = await SpDialog.confirm(
               context,
@@ -205,7 +204,7 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
         ),
         SizedBox(width: 8.w),
         MacosIconButton(
-          icon: const MacosIcon(CupertinoIcons.delete),
+          icon: const MacosIcon(Icons.delete),
           onPressed: () async {
             var check = await SpDialog.confirm(
               context,
@@ -225,8 +224,8 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
     return ExpansionTile(
       initiallyExpanded: uids.isEmpty,
       leading: uids.isEmpty
-          ? const MacosIcon(CupertinoIcons.person)
-          : const MacosIcon(CupertinoIcons.person_fill),
+          ? const MacosIcon(Icons.person)
+          : const MacosIcon(Icons.person_off),
       title: user?.brief?.username.isNotEmpty ?? false
           ? Text('${user?.brief?.username}（${user?.uid}）')
           : Text(user?.uid ?? '未登录'),
@@ -245,7 +244,7 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
                       ),
                     ),
                   )
-                : const MacosIcon(CupertinoIcons.person),
+                : const MacosIcon(Icons.person),
             title: Text(user.brief?.username.isNotEmpty ?? false
                 ? '${user.brief?.username}（${user.uid}）'
                 : user.uid),
@@ -261,14 +260,14 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
             },
           ),
         ListTile(
-          leading: const MacosIcon(CupertinoIcons.add),
+          leading: const MacosIcon(Icons.person_add),
           title: const Text('添加用户（通过cookie）'),
           onTap: addUserByCookie,
           trailing: kDebugMode
               ? Tooltip(
                   message: '短信验证码登录',
                   child: IconButton(
-                    icon: const MacosIcon(CupertinoIcons.phone),
+                    icon: const MacosIcon(Icons.phone),
                     onPressed: () async {
                       if (context.mounted) {
                         await SpInfobar.warn(context, '暂未实现');

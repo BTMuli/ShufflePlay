@@ -1,7 +1,3 @@
-// Flutter imports:
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
-
 // Package imports:
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:fluent_ui/fluent_ui.dart';
@@ -19,11 +15,8 @@ class AppConfigDeviceWidget extends StatefulWidget {
 }
 
 class _AppConfigDeviceWidgetState extends State<AppConfigDeviceWidget> {
-  /// 设备信息(Windows)
-  WindowsDeviceInfo? deviceInfoWin;
-
-  /// 设备信息(macos)
-  MacOsDeviceInfo? deviceInfoMac;
+  /// 设备信息
+  WindowsDeviceInfo? deviceInfo;
 
   /// webview version
   String? webviewVersion;
@@ -32,18 +25,14 @@ class _AppConfigDeviceWidgetState extends State<AppConfigDeviceWidget> {
   void initState() {
     super.initState();
     Future.microtask(() async {
-      if (defaultTargetPlatform == TargetPlatform.windows) {
-        deviceInfoWin = await DeviceInfoPlugin().windowsInfo;
-        webviewVersion = await WebviewController.getWebViewVersion();
-      } else if (defaultTargetPlatform == TargetPlatform.macOS) {
-        deviceInfoMac = await DeviceInfoPlugin().macOsInfo;
-      }
+      deviceInfo = await DeviceInfoPlugin().windowsInfo;
+      webviewVersion = await WebviewController.getWebViewVersion();
       if (mounted) setState(() {});
     });
   }
 
-  /// 构建设备信息(Windows)
-  Widget buildOSInfoWin(WindowsDeviceInfo diw) {
+  /// 构建设备信息
+  Widget buildOSInfo(WindowsDeviceInfo diw) {
     return ListTile(
       leading: const Icon(FluentIcons.desktop_flow),
       title: const Text('操作系统'),
@@ -55,20 +44,10 @@ class _AppConfigDeviceWidgetState extends State<AppConfigDeviceWidget> {
     );
   }
 
-  /// 构建设备信息(macos)
-  Widget buildOSInfoMac(MacOsDeviceInfo dim) {
+  /// 构建设备信息
+  Widget buildDeviceInfo(WindowsDeviceInfo diw) {
     return ListTile(
-      leading: Icon(CupertinoIcons.desktopcomputer),
-      title: const Text('MacOS'),
-      subtitle:
-          Text('${dim.majorVersion}.${dim.minorVersion}.${dim.patchVersion}'),
-    );
-  }
-
-  /// 构建设备信息(Windows)
-  Widget buildDeviceInfoWin(WindowsDeviceInfo diw) {
-    return ListTile(
-      leading: Icon(CupertinoIcons.desktopcomputer),
+      leading: Icon(FluentIcons.devices2),
       title: Text('设备 ${diw.computerName} ${diw.productId}'),
       subtitle: Text(
         '标识符 ${diw.deviceId.substring(1, diw.deviceId.length - 1)}',
@@ -95,30 +74,18 @@ class _AppConfigDeviceWidgetState extends State<AppConfigDeviceWidget> {
 
   @override
   Widget build(BuildContext context) {
-    if ((defaultTargetPlatform == TargetPlatform.windows &&
-            deviceInfoWin == null) ||
-        (defaultTargetPlatform == TargetPlatform.macOS &&
-            deviceInfoMac == null)) {
+    if (deviceInfo == null) {
       return ListTile(
         leading: const Icon(FluentIcons.error),
         title: const Text('无法获取设备信息'),
       );
     }
-    if (defaultTargetPlatform == TargetPlatform.windows) {
-      return Expander(
-        leading: Icon(CupertinoIcons.desktopcomputer),
-        header: Text(deviceInfoWin!.productName),
-        content: Column(
-          children: [
-            buildOSInfoWin(deviceInfoWin!),
-            buildWebviewInfo(),
-          ],
-        ),
-      );
-    }
     return Expander(
-        leading: Icon(CupertinoIcons.desktopcomputer),
-        header: Text(deviceInfoMac!.computerName),
-        content: buildOSInfoMac(deviceInfoMac!));
+      leading: Icon(FluentIcons.devices2),
+      header: Text(deviceInfo!.productName),
+      content: Column(
+        children: [buildOSInfo(deviceInfo!), buildWebviewInfo()],
+      ),
+    );
   }
 }

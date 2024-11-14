@@ -2,7 +2,6 @@
 import 'dart:convert';
 
 // Flutter imports:
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 // Package imports:
@@ -280,37 +279,37 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage> {
     return [
       ToolBarIconButton(
         label: '导入',
-        icon: MacosIcon(CupertinoIcons.arrow_down_doc),
+        icon: MacosIcon(Icons.file_download),
         showLabel: true,
         onPressed: importUigf4Json,
       ),
       ToolBarIconButton(
         label: '导出',
-        icon: MacosIcon(CupertinoIcons.arrow_up_doc),
+        icon: MacosIcon(Icons.file_upload),
         showLabel: true,
         onPressed: exportUigf4Json,
       ),
       ToolBarIconButton(
         label: '刷新',
-        icon: MacosIcon(CupertinoIcons.arrow_clockwise),
+        icon: MacosIcon(Icons.refresh),
         showLabel: true,
         onPressed: tryRefreshUserGacha,
       ),
       ToolBarIconButton(
         label: '全量刷新',
-        icon: MacosIcon(CupertinoIcons.arrow_clockwise_circle),
+        icon: MacosIcon(Icons.cloud_download),
         showLabel: true,
         onPressed: () async => await tryRefreshUserGacha(isForce: true),
       ),
       ToolBarIconButton(
         label: '刷新元数据',
-        icon: MacosIcon(CupertinoIcons.arrow_2_circlepath),
+        icon: MacosIcon(Icons.dataset_outlined),
         showLabel: true,
         onPressed: refreshMetaData,
       ),
       ToolBarIconButton(
         label: '删除',
-        icon: MacosIcon(CupertinoIcons.trash),
+        icon: MacosIcon(Icons.delete_forever),
         showLabel: true,
         onPressed: deleteUser,
       ),

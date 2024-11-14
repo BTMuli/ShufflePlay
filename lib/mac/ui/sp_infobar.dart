@@ -2,7 +2,7 @@
 import 'dart:async';
 
 // Flutter imports:
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:macos_ui/macos_ui.dart';

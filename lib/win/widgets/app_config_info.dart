@@ -1,5 +1,4 @@
 // Flutter imports:
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 
 // Package imports:
@@ -93,7 +92,7 @@ class _AppConfigInfoWidgetState extends ConsumerState<AppConfigInfoWidget> {
       title: const Text('ShufflePlay'),
       subtitle: Text('版本: ${packageInfo!.version}+${packageInfo!.buildNumber}'),
       trailing: IconButton(
-        icon: SPIcon(CupertinoIcons.link),
+        icon: SPIcon(FluentIcons.edge_logo),
         onPressed: () async {
           await launchUrlString('https://github.com/BTMuli/ShufflePlay');
         },
@@ -124,8 +123,7 @@ class _AppConfigInfoWidgetState extends ConsumerState<AppConfigInfoWidget> {
           .read(appConfigStoreProvider.notifier)
           .setThemeMode(theme.cur),
       selected: curThemeMode == theme.cur,
-      trailing:
-          curThemeMode == theme.cur ? Icon(CupertinoIcons.check_mark) : null,
+      trailing: curThemeMode == theme.cur ? Icon(FluentIcons.check_mark) : null,
     );
   }
 
