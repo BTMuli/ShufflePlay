@@ -39,6 +39,7 @@ class SpDialog {
           secondaryButton: PushButton(
             onPressed: () => Navigator.of(context).pop(false),
             controlSize: ControlSize.large,
+            secondary: true,
             child: const Text('取消'),
           ),
         );
@@ -92,6 +93,7 @@ class SpDialog {
           secondaryButton: PushButton(
             onPressed: () => Navigator.of(context).pop(),
             controlSize: ControlSize.large,
+            secondary: true,
             child: const Text('取消'),
           ),
         );

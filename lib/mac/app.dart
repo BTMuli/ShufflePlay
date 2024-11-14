@@ -1,5 +1,5 @@
 // Package imports:
-import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:macos_ui/macos_ui.dart';
@@ -9,8 +9,18 @@ import 'models/ui_model.dart';
 import 'store/app_config.dart';
 import 'widgets/app_nav.dart';
 
-class SPApp extends ConsumerWidget {
+class SPApp extends ConsumerStatefulWidget {
   const SPApp({super.key});
+
+  @override
+  ConsumerState<SPApp> createState() => _SPAppState();
+}
+
+class _SPAppState extends ConsumerState<SPApp> {
+  AccentColor get curAccentColor =>
+      ref.watch(appConfigStoreProvider).accentColor;
+
+  ThemeMode get curThemeMode => ref.watch(appConfigStoreProvider).themeMode;
 
   MacosThemeData getTheme(BuildContext context, SpAppConfigStore appStore) {
     Brightness brightness;
@@ -33,16 +43,15 @@ class SPApp extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    var appConfigStore = ref.watch(appConfigStoreProvider);
+  Widget build(BuildContext context) {
     return ScreenUtilInit(
       designSize: const Size(1280, 720),
       builder: (_, child) {
         return MacosApp(
           title: 'ShufflePlay',
-          themeMode: appConfigStore.themeMode,
-          theme: getTheme(context, appConfigStore),
-          color: appConfigStore.accentColor.color,
+          themeMode: curThemeMode,
+          theme: getTheme(context, ref.watch(appConfigStoreProvider)),
+          color: curAccentColor.color,
           home: AppNavWidget(),
         );
       },

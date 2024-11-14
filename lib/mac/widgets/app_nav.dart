@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:macos_ui/macos_ui.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import 'package:window_manager/window_manager.dart';
 
 // Project imports:
@@ -15,11 +16,15 @@ import '../../models/database/user/user_nap_model.dart';
 import '../../shared/store/user_bbs.dart';
 import '../../shared/tools/file_tool.dart';
 import '../../shared/utils/get_app_theme.dart';
+import '../models/ui_model.dart';
 import '../pages/nap_anno.dart';
 import '../pages/user_gacha.dart';
 import '../plugins/miyoushe_webview.dart';
 import '../store/app_config.dart';
 import '../ui/sp_infobar.dart';
+import 'app_config_device.dart';
+import 'app_config_info.dart';
+import 'app_config_user.dart';
 
 class AppNavWidget extends ConsumerStatefulWidget {
   const AppNavWidget({super.key});
@@ -44,11 +49,7 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget> {
   UserBBSModel? get user => ref.watch(userBbsStoreProvider).user;
 
   SpAppThemeConfig get themeConfig => getThemeConfig(curThemeMode);
-  final pages = [
-    NapAnnoPage(),
-    UserGachaPage(),
-    if (kDebugMode) Text('测试页'),
-  ];
+  final pages = [NapAnnoPage(), UserGachaPage()];
 
   @override
   void initState() {
@@ -80,11 +81,7 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget> {
   /// 签到
   Future<void> createSign() async {
     if (mounted) {
-      controller = await MysClientMac.createSign(
-        context,
-        width: 400.w,
-        height: 600.h,
-      );
+      controller = await MysClientMac.createSign(context, width: 400);
       if (mounted) await controller.show(context);
     }
   }
@@ -114,16 +111,13 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget> {
       SidebarItem(
         leading: Icon(Icons.announcement),
         label: Text('公告'),
+        selectedColor: curColor.color,
       ),
       SidebarItem(
         leading: Icon(Icons.music_note),
         label: Text('调频记录'),
+        selectedColor: curColor.color,
       ),
-      if (kDebugMode)
-        SidebarItem(
-          leading: Icon(Icons.developer_board),
-          label: Text('测试页'),
-        ),
     ];
   }
 
@@ -135,7 +129,7 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget> {
       children: [
         Text(
           'ShufflePlay',
-          style: MacosTheme.of(context).typography.largeTitle,
+          style: MacosTheme.of(context).typography.headline,
         ),
         if (packageInfo != null)
           Text(
@@ -223,12 +217,29 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget> {
         ),
         disableWallpaperTinting: true,
         endSidebar: Sidebar(
-          top: Text('设置', style: MacosTheme.of(context).typography.largeTitle),
+          top: Column(
+            children: [
+              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Text('设置', style: MacosTheme.of(context).typography.largeTitle),
+                MacosIconButton(
+                  icon: const MacosIcon(Icons.explore),
+                  onPressed: () async {
+                    await launchUrlString(
+                        'https://github.com/BTMuli/ShufflePlay');
+                  },
+                )
+              ]),
+              AppConfigDeviceWidget(),
+              AppConfigInfoWidget(),
+              AppConfigUserWidget(),
+            ],
+          ),
           minWidth: 150.w,
           builder: buildSidebarEnd,
           isResizable: false,
           shownByDefault: false,
           topOffset: 10.0,
+          bottom: buildSidebarBottom(context),
         ),
         child: pages[curIndex],
       ),

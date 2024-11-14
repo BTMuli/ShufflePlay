@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:macos_ui/macos_ui.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
 // Project imports:
 import '../../../../models/bbs/device/bbs_device_model.dart';
@@ -16,7 +15,7 @@ import '../../../../shared/tools/log_tool.dart';
 import '../../../../shared/utils/get_app_theme.dart';
 import '../models/ui_model.dart';
 import '../store/app_config.dart';
-import '../ui/sp_icon.dart';
+import '../ui/sp_dialog.dart';
 import '../ui/sp_infobar.dart';
 
 class AppConfigInfoWidget extends ConsumerStatefulWidget {
@@ -40,6 +39,8 @@ class _AppConfigInfoWidgetState extends ConsumerState<AppConfigInfoWidget> {
   /// 当前主题
   ThemeMode get curThemeMode => ref.watch(appConfigStoreProvider).themeMode;
 
+  SpAppThemeConfig get curTheme => getThemeConfig(curThemeMode);
+
   /// 设备指纹
   AppConfigModelDevice? get deviceLocal =>
       ref.watch(appConfigStoreProvider).device;
@@ -59,6 +60,12 @@ class _AppConfigInfoWidgetState extends ConsumerState<AppConfigInfoWidget> {
 
   /// 刷新设备信息
   Future<void> refreshDevice() async {
+    var check = await SpDialog.confirm(
+      context,
+      '是否刷新设备指纹？',
+      '当前设备指纹：${deviceLocal!.deviceFp}',
+    );
+    if (check == null || !check) return;
     var resp = await apiDevice.getDeviceFp();
     if (resp.retcode != 0) {
       if (mounted) await SpInfobar.bbs(context, resp);
@@ -87,117 +94,105 @@ class _AppConfigInfoWidgetState extends ConsumerState<AppConfigInfoWidget> {
 
   /// 构建应用信息
   Widget buildAppInfo() {
-    return ListTile(
+    return MacosListTile(
       leading: Image.asset('assets/images/ShufflePlayMini.png',
           width: 24, height: 24),
       title: const Text('ShufflePlay'),
       subtitle: Text('版本: ${packageInfo!.version}+${packageInfo!.buildNumber}'),
-      trailing: MacosIconButton(
-        icon: const MacosIcon(Icons.explore),
-        onPressed: () async {
-          await launchUrlString('https://github.com/BTMuli/ShufflePlay');
-        },
-      ),
     );
   }
 
   /// 构建设备信息
   Widget buildDeviceInfo() {
-    return ListTile(
+    return MacosListTile(
       leading: const Icon(Icons.fingerprint),
-      title: Text('设备指纹 ${deviceLocal!.deviceFp}'),
-      subtitle: Text('设备信息 ${deviceLocal!.deviceName}(${deviceLocal!.model})'),
-      trailing: MacosIconButton(
-        icon: const MacosIcon(Icons.refresh),
-        onPressed: refreshDevice,
-      ),
+      title: Text('设备指纹'),
+      subtitle: Text(deviceLocal!.deviceFp),
+      onClick: refreshDevice,
     );
   }
 
   /// 构建主题项
   MacosPopupMenuItem<ThemeMode> buildThemeItem(SpAppThemeConfig theme) {
-    return MacosPopupMenuItem(
+    return MacosPopupMenuItem<ThemeMode>(
       onTap: () async =>
           await ref.read(appConfigStoreProvider).setThemeMode(theme.cur),
+      value: theme.cur,
       child: Text(theme.label),
     );
   }
 
   /// 构建主题信息
   Widget buildThemeInfo() {
-    var themes = getThemeModeConfigList();
     var curTheme = getThemeConfig(curThemeMode);
-    return ListTile(
+    return MacosListTile(
       leading: Icon(curTheme.icon),
       title: const Text('应用主题'),
       subtitle: Text('当前：${curTheme.label}'),
-      trailing: MacosPopupButton<ThemeMode>(
-        hint: Text(curTheme.label),
-        items: themes.map(buildThemeItem).toList(),
-        onChanged: (val) {},
-      ),
     );
   }
 
   /// 构建主题色信息
   Widget buildAccentColorInfo() {
-    return ListTile(
+    return MacosListTile(
       leading: const Icon(Icons.color_lens),
       title: const Text('主题色'),
       subtitle: Text(
         curAccentColor.color.value.toRadixString(16),
         style: TextStyle(color: Color(curAccentColor.color.value)),
       ),
-      trailing: MacosPopupButton(
-        hint: Container(
-          decoration: BoxDecoration(
-            color: Color(curAccentColor.color.value),
-            borderRadius: BorderRadius.circular(4),
-          ),
-          width: 32,
-          height: 32,
-        ),
-        items: getAccentColors().map(buildColorItem).toList(),
-        onChanged: (value) {},
-      ),
     );
   }
 
   /// 构建主题色切换的Flyout
-  MacosPopupMenuItem buildColorItem(AccentColor color) {
+  MacosPopupMenuItem<AccentColor> buildColorItem(AccentColor color) {
     return MacosPopupMenuItem(
       onTap: () async {
         await ref.read(appConfigStoreProvider.notifier).setAccentColor(color);
       },
+      value: color,
       child: Container(color: color.color, width: 32, height: 32),
     );
   }
 
   /// 构建日志信息
   Widget buildLogInfo() {
-    return ListTile(
+    return MacosListTile(
       leading: const MacosIcon(Icons.folder_special),
       title: const Text('日志'),
-      subtitle: Text(logTool.logDir),
-      trailing: IconButton(
-        icon: const MacosIcon(Icons.open_in_browser),
-        onPressed: logTool.openLogDir,
-      ),
+      onClick: logTool.openLogDir,
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return ExpansionTile(
-      initiallyExpanded: true,
-      leading: const SpAppIcon(),
-      title: const Text('应用信息'),
+    var themes = getThemeModeConfigList();
+    return Column(
       children: [
         if (packageInfo != null) buildAppInfo(),
         if (deviceLocal != null) buildDeviceInfo(),
         buildThemeInfo(),
+        MacosPopupButton<ThemeMode>(
+          hint: Text(curTheme.label),
+          items: themes.map(buildThemeItem).toList(),
+          value: curThemeMode,
+          onChanged: (val) {},
+        ),
         buildAccentColorInfo(),
-        if (defaultTargetPlatform == TargetPlatform.windows) buildLogInfo(),
+        MacosPopupButton<AccentColor>(
+          hint: Container(
+            decoration: BoxDecoration(
+              color: Color(curAccentColor.color.value),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            width: 32,
+            height: 32,
+          ),
+          items: getAccentColors().map(buildColorItem).toList(),
+          onChanged: (value) {},
+          value: curAccentColor,
+        ),
+        if (defaultTargetPlatform == TargetPlatform.macOS) buildLogInfo(),
       ],
     );
   }

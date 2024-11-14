@@ -1,9 +1,7 @@
 // Flutter imports:
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 // Package imports:
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:macos_ui/macos_ui.dart';
@@ -221,62 +219,33 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return ExpansionTile(
-      initiallyExpanded: uids.isEmpty,
-      leading: uids.isEmpty
-          ? const MacosIcon(Icons.person)
-          : const MacosIcon(Icons.person_off),
-      title: user?.brief?.username.isNotEmpty ?? false
-          ? Text('${user?.brief?.username}（${user?.uid}）')
-          : Text(user?.uid ?? '未登录'),
+    if (uids.isEmpty) {
+      return MacosListTile(
+        title: Text('未登录'),
+        subtitle: const Text('请添加用户'),
+        onClick: addUserByCookie,
+      );
+    }
+    return Column(
       children: <Widget>[
-        for (final UserBBSModel user in users)
-          ListTile(
-            leading: user.brief?.avatar != null
-                ? SizedBox(
-                    width: 32.sp,
-                    height: 32.sp,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(16.sp),
-                      child: CachedNetworkImage(
-                        imageUrl: user.brief!.avatar,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  )
-                : const MacosIcon(Icons.person),
-            title: Text(user.brief?.username.isNotEmpty ?? false
-                ? '${user.brief?.username}（${user.uid}）'
-                : user.uid),
-            subtitle: Text(user.brief?.sign ?? '暂无签名'),
-            trailing: buildUserTrailing(user),
-            selected: user.uid == uid,
-            onTap: () {
-              if (uid == null || uid == user.uid) {
+        MacosListTile(
+          leading: const MacosIcon(Icons.person_add),
+          title: Text('添加用户（通过cookie）'),
+          onClick: addUserByCookie,
+        ),
+        for (final String uid in uids)
+          MacosListTile(
+            title: Text(uid),
+            subtitle: Text(uid == this.uid ? '当前用户' : '点击切换用户'),
+            onClick: () async {
+              if (uid == this.uid) {
                 return;
               }
-              ref.read(userBbsStoreProvider).switchUser(user.uid);
-              setState(() {});
+              await ref.read(userBbsStoreProvider).switchUser(uid);
+              if (context.mounted) setState(() {});
+              if (context.mounted) await SpInfobar.success(context, '切换用户成功');
             },
           ),
-        ListTile(
-          leading: const MacosIcon(Icons.person_add),
-          title: const Text('添加用户（通过cookie）'),
-          onTap: addUserByCookie,
-          trailing: kDebugMode
-              ? Tooltip(
-                  message: '短信验证码登录',
-                  child: IconButton(
-                    icon: const MacosIcon(Icons.phone),
-                    onPressed: () async {
-                      if (context.mounted) {
-                        await SpInfobar.warn(context, '暂未实现');
-                      }
-                    },
-                  ),
-                )
-              : null,
-        )
       ],
     );
   }

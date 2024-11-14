@@ -30,7 +30,7 @@ class _AppConfigDeviceWidgetState extends State<AppConfigDeviceWidget> {
 
   /// 构建设备信息
   Widget buildOSInfo(MacOsDeviceInfo dim) {
-    return ListTile(
+    return MacosListTile(
       leading: const MacosIcon(Icons.desktop_mac),
       title: const Text('MacOS'),
       subtitle:
@@ -41,15 +41,11 @@ class _AppConfigDeviceWidgetState extends State<AppConfigDeviceWidget> {
   @override
   Widget build(BuildContext context) {
     if (deviceInfo == null) {
-      return const ListTile(
+      return const MacosListTile(
         leading: Icon(Icons.clear),
         title: Text('无法获取设备信息'),
       );
     }
-    return ExpansionTile(
-      leading: const Icon(Icons.devices),
-      title: Text(deviceInfo!.computerName),
-      children: [buildOSInfo(deviceInfo!)],
-    );
+    return buildOSInfo(deviceInfo!);
   }
 }

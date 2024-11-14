@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:macos_ui/macos_ui.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
@@ -313,6 +312,7 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage> {
         showLabel: true,
         onPressed: deleteUser,
       ),
+      buildTopTrailing(context),
     ];
   }
 
@@ -326,7 +326,7 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage> {
       mainAxisSize: MainAxisSize.min,
       children: [
         const Text('UID:'),
-        SizedBox(width: 10.w),
+        SizedBox(width: 10),
         MacosPopupButton<String>(
           items: uidList.map(buildUidSelectorItem).toList(),
           onChanged: (String? value) {
@@ -335,7 +335,7 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage> {
           },
           hint: Text(curUid ?? '选择UID'),
         ),
-        SizedBox(width: 10.w),
+        SizedBox(width: 10),
         Text(
           '当前时区: ${DateTime.now().timeZoneName}'
           '(UTC${DateTime.now().timeZoneOffset.inHours})',
@@ -377,7 +377,7 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage> {
     return MacosScaffold(
       toolBar: ToolBar(
         title: buildTitle(context),
-        titleWidth: 600,
+        titleWidth: 500,
         leading: buildTopLeading(context),
         actions: buildActions(context),
       ),

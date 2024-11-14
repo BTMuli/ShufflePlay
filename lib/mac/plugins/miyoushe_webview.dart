@@ -43,7 +43,10 @@ class MysControllerMac extends ChangeNotifier implements MiyousheController {
   @override
   late double width;
 
-  late WebViewController webview;
+  late WebViewController webview =
+      WebViewController(onPermissionRequest: (request) {
+    SPLogTool.debug('[Miyoushe] Permission request: $request');
+  });
 
   @override
   Future<void> initialize(
@@ -60,12 +63,12 @@ class MysControllerMac extends ChangeNotifier implements MiyousheController {
     this.userAgent = userAgent ?? bbsUaMobile;
     routeStack = [url];
     await webview.setJavaScriptMode(JavaScriptMode.unrestricted);
-    await webview.setUserAgent(userAgent);
+    await webview.setUserAgent(this.userAgent);
     await webview.addJavaScriptChannel(
       'MiHoYoJSInterface',
-      onMessageReceived: (message) => {
-        SPLogTool.debug('[Miyoushe] Received message: $message'),
-        handleMessage(message),
+      onMessageReceived: (res) => {
+        SPLogTool.debug('[Miyoushe] Received message: ${res.message}'),
+        handleMessage(res.message),
       },
     );
     await webview.loadRequest(Uri.parse('about:blank'));
@@ -118,12 +121,15 @@ class MysControllerMac extends ChangeNotifier implements MiyousheController {
       builder: (_) => MacosSheet(
         insetPadding: EdgeInsets.symmetric(
           horizontal: (1280.w - width) / 2,
-          vertical: (720.h - height - 40.h) / 2,
+          vertical: 60.h,
         ),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisSize: MainAxisSize.max,
           children: [
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.max,
               children: [
                 Text(title),
                 MacosIconButton(
@@ -217,6 +223,11 @@ class _MysClientMacState extends ConsumerState<MysClientMac> {
 
   @override
   Widget build(BuildContext context) {
-    return WebViewWidget(controller: widget.controller.webview);
+    return Flexible(
+      fit: FlexFit.tight,
+      child: WebViewWidget(
+        controller: widget.controller.webview,
+      ),
+    );
   }
 }
