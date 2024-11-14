@@ -1,51 +1,51 @@
 // Dart imports:
-import 'dart:async';
 import 'dart:convert';
 
 // Flutter imports:
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart' as material;
-import 'package:flutter/services.dart';
+import 'package:flutter/material.dart' show Icons;
 
 // Package imports:
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_windows/webview_windows.dart';
 
 // Project imports:
 import '../../models/bbs/bbs_base_model.dart';
 import '../../models/bbs/bbs_constant_enum.dart';
 import '../../models/bbs/bridge/bbs_bridge_model.dart';
+import '../../plugins/Miyoushe/bridge_handler.dart';
+import '../../plugins/Miyoushe/miyoushe_webview.dart';
 import '../../shared/tools/log_tool.dart';
-import 'bridge_handler.dart';
-import 'miyoushe_webview.dart';
 
-class MiyousheController extends ChangeNotifier {
-  late WidgetRef? ref;
-
+class MysControllerWin extends ChangeNotifier implements MiyousheController {
+  @override
   late BuildContext context;
 
-  /// 窗口链接
-  late String url;
-
-  /// 窗口宽度
-  late double width;
-
-  /// 窗口高度
+  @override
   late double height;
 
-  /// 窗口标题
-  late String title;
+  @override
+  late WidgetRef? ref;
 
-  /// 窗口userAgent
-  late String userAgent;
-
+  @override
   List<String> routeStack = [];
 
-  late MiyousheWebview webview;
+  @override
+  late String title;
 
+  @override
+  late String url;
+
+  @override
+  late String userAgent;
+
+  @override
+  late double width;
+
+  late MysWebviewWin webview;
+
+  @override
   Future<void> initialize(
     String url, {
     String? title,
@@ -54,16 +54,16 @@ class MiyousheController extends ChangeNotifier {
     String? userAgent,
   }) async {
     this.url = url;
-    this.width = width ?? 400.sp;
-    this.height = height ?? 600.sp;
+    this.width = width ?? 400;
+    this.height = height ?? 600;
     this.title = title ?? '米游社';
     this.userAgent = userAgent ?? bbsUaMobile;
-    webview = MiyousheWebview();
+    webview = MysWebviewWin._();
     routeStack = [url];
     try {
       await webview.initController(this);
-    } on PlatformException catch (e) {
-      SPLogTool.warn('[Miyoushe] Fail to initialize webview: ${e.message}');
+    } catch (e) {
+      SPLogTool.error('[Miyoushe] Fail to initialize controller: $e');
     }
     notifyListeners();
   }
@@ -75,22 +75,14 @@ class MiyousheController extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// 执行脚本
-  Future<dynamic> executeScript(String script) async {
-    return await webview.executeScript(script);
-  }
-
-  /// callback null
-  Future<void> callbackNull(String cb) async => await callback(cb, null);
-
-  /// callback
+  @override
   Future<void> callback(String cb, dynamic data) async {
     BBSResp resp = BBSResp.success(data: data);
     SPLogTool.debug('[Miyoushe] Callback: $cb, $resp');
-    await webview.callback(cb, resp);
+    await executeScript('javascript:mhyWebBridge($cb, $resp)');
   }
 
-  /// 处理消息
+  @override
   Future<void> handleMessage(dynamic message) async {
     if (message is! String) return;
     try {
@@ -106,12 +98,34 @@ class MiyousheController extends ChangeNotifier {
     await handleBridgeMessage(bridgeData, this);
   }
 
-  /// 刷新
-  Future<void> reload() async {
-    await webview.reload();
-    await webview.loadJSBridge();
+  @override
+  Future<void> loadJSBridge() async {
+    var bridgeJS = '''javascript:(function() {
+      if(window.MiHoYoJSInterface) return;
+      window.MiHoYoJSInterface = {
+        postMessage: function(arg) => window.chrome.webview.postMessage(arg),
+        closePage: function() { this.postMessage('{"method":"closePage"}') },
+      };
+    })();''';
+    await executeScript(bridgeJS);
   }
 
+  @override
+  Future<void> executeScript(String script) async {
+    await webview.webview.executeScript(script);
+  }
+
+  @override
+  Future<void> loadUrl(String url) async {
+    await webview.webview.loadUrl(url);
+  }
+
+  @override
+  Future<void> reload() async {
+    await webview.reload();
+  }
+
+  @override
   Future<void> show(BuildContext context) async {
     this.context = context;
     if (context.mounted) {
@@ -128,8 +142,8 @@ class MiyousheController extends ChangeNotifier {
               ),
               if (kDebugMode)
                 IconButton(
-                  icon: const Icon(material.Icons.developer_mode),
-                  onPressed: () async => await webview.openDevTools(context),
+                  icon: const Icon(Icons.developer_mode),
+                  onPressed: () async => await webview.openDevTools(),
                 ),
               IconButton(
                 icon: const Icon(FluentIcons.chrome_close),
@@ -137,23 +151,64 @@ class MiyousheController extends ChangeNotifier {
               ),
             ],
           ),
-          content: MiyousheClient(this),
+          content: MysClientWin(this),
         ),
       );
     }
   }
 
-  /// close
+  @override
+  Future<void> callbackNull(String cb) async => await callback(cb, null);
+
+  @override
   Future<void> close() async => Navigator.pop(context);
 }
 
-class MiyousheClient extends ConsumerStatefulWidget {
-  /// webview controller
-  final MiyousheController controller;
+class MysWebviewWin implements MiyousheWebview {
+  MysWebviewWin._();
 
-  const MiyousheClient(this.controller, {super.key});
+  late WebviewController webview = WebviewController();
 
-  static Future<MiyousheController> create(
+  @override
+  Future<void> addListener(void Function(dynamic event) callback) async {
+    webview.webMessage.listen(callback);
+  }
+
+  @override
+  Future<void> initController(MiyousheController controller) async {
+    await webview.initialize();
+    webview.webMessage.listen(controller.handleMessage);
+    await controller.loadJSBridge();
+    await webview.setUserAgent(controller.userAgent);
+    await webview.loadUrl(controller.url);
+    await controller.loadJSBridge();
+    await webview.setBackgroundColor(Colors.transparent);
+    await webview.setPopupWindowPolicy(WebviewPopupWindowPolicy.deny);
+    SPLogTool.debug('[Miyoushe] Initialize webview: ${controller.url}');
+  }
+
+  @override
+  Future<void> reload() async {
+    await webview.reload();
+  }
+
+  @override
+  Future<void> openDevTools() async {
+    await webview.openDevTools();
+  }
+
+  @override
+  Future<void> dispose() async {
+    await webview.dispose();
+  }
+}
+
+class MysClientWin extends ConsumerStatefulWidget {
+  final MysControllerWin controller;
+
+  const MysClientWin(this.controller, {super.key});
+
+  static Future<MysControllerWin> create(
     BuildContext context,
     String url, {
     double? width,
@@ -161,30 +216,31 @@ class MiyousheClient extends ConsumerStatefulWidget {
     String? title,
     String? userAgent,
   }) async {
-    var controller = MiyousheController();
+    var controller = MysControllerWin();
     await controller.initialize(
       url,
-      title: title,
       width: width,
       height: height,
+      title: title,
       userAgent: userAgent,
     );
     return controller;
   }
 
-  /// 创建页面-战绩
-  static Future<MiyousheController> createGameRecords(
+  static Future<MysControllerWin> createRecords(
     BuildContext context, {
     double? width,
     double? height,
   }) async {
-    var link =
-        "https://webstatic.mihoyo.com/app/community-game-records/index.html?bbs_presentation_style=fullscreen";
-    return create(context, link, width: width, height: height);
+    return create(
+      context,
+      'https://webstatic.mihoyo.com/app/community-game-records/index.html?bbs_presentation_style=fullscreen',
+      width: width,
+      height: height,
+    );
   }
 
-  /// 创建页面-签到
-  static Future<MiyousheController> createSign(
+  static Future<MysControllerWin> createSign(
     BuildContext context, {
     double? width,
     double? height,
@@ -197,21 +253,18 @@ class MiyousheClient extends ConsumerStatefulWidget {
     return create(context, link, width: width, height: height);
   }
 
-  @override
-  ConsumerState<MiyousheClient> createState() => _MiyousheClientState();
-
   static Future<bool> check() async {
     if (defaultTargetPlatform == TargetPlatform.windows) {
       return await WebviewController.getWebViewVersion() != null;
     }
-    if (defaultTargetPlatform == TargetPlatform.macOS) {
-      return true;
-    }
     return false;
   }
+
+  @override
+  ConsumerState<MysClientWin> createState() => _MysClientWinState();
 }
 
-class _MiyousheClientState extends ConsumerState<MiyousheClient> {
+class _MysClientWinState extends ConsumerState<MysClientWin> {
   @override
   void initState() {
     widget.controller.ref = ref;
@@ -220,18 +273,10 @@ class _MiyousheClientState extends ConsumerState<MiyousheClient> {
 
   @override
   Widget build(BuildContext context) {
-    if (defaultTargetPlatform == TargetPlatform.windows) {
-      return Webview(
-        widget.controller.webview.webWin!,
-        width: widget.controller.width,
-        height: widget.controller.height,
-      );
-    }
-    if (defaultTargetPlatform == TargetPlatform.macOS) {
-      return WebViewWidget(
-        controller: widget.controller.webview.webMac!,
-      );
-    }
-    return const Text('Unsupported platform');
+    return Webview(
+      widget.controller.webview.webview,
+      width: widget.controller.width,
+      height: widget.controller.height,
+    );
   }
 }

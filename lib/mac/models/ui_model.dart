@@ -4,6 +4,19 @@ import 'package:flutter/material.dart';
 // Package imports:
 import 'package:macos_ui/macos_ui.dart';
 
+List<AccentColor> getAccentColors() {
+  return [
+    AccentColor.blue,
+    AccentColor.purple,
+    AccentColor.pink,
+    AccentColor.red,
+    AccentColor.orange,
+    AccentColor.yellow,
+    AccentColor.green,
+    AccentColor.graphite,
+  ];
+}
+
 extension MacosUiColorExtension on AccentColor {
   Color get color {
     switch (this) {

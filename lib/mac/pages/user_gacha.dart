@@ -334,7 +334,6 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage> {
             curUid = value;
             if (mounted) setState(() {});
           },
-          style: TextStyle(height: 1.5),
           hint: Text(curUid ?? '选择UID'),
         ),
         SizedBox(width: 10.w),

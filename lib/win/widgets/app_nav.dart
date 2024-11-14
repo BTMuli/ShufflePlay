@@ -15,7 +15,6 @@ import 'package:window_manager/window_manager.dart';
 import '../../models/database/user/user_bbs_model.dart';
 import '../../models/database/user/user_nap_model.dart';
 import '../../models/nap/token/nap_auth_ticket_model.dart';
-import '../../plugins/Miyoushe/miyoushe_client.dart';
 import '../../request/nap/nap_api_passport.dart';
 import '../../shared/store/user_bbs.dart';
 import '../../shared/tools/file_tool.dart';
@@ -24,6 +23,7 @@ import '../pages/app_config.dart';
 import '../pages/app_dev.dart';
 import '../pages/nap_anno.dart';
 import '../pages/user_gacha.dart';
+import '../plugins/miyoushe_webview.dart';
 import '../store/app_config.dart';
 import '../ui/sp_icon.dart';
 import '../ui/sp_infobar.dart';
@@ -46,13 +46,21 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget>
   /// 游戏目录
   String? get gameDir => ref.watch(appConfigStoreProvider).gameDir;
 
+  UserNapModel? get account => ref.watch(userBbsStoreProvider).account;
+
+  List<UserNapModel> get accounts => ref.watch(userBbsStoreProvider).accounts;
+
+  UserBBSModel? get user => ref.watch(userBbsStoreProvider).user;
+
+  SpAppThemeConfig get themeConfig => getThemeConfig(curThemeMode);
+
   /// flyout
   final FlyoutController flyoutTool = FlyoutController();
 
   final FlyoutController flyoutUser = FlyoutController();
 
   /// webview controller
-  late MiyousheController controller = MiyousheController();
+  late MysControllerWin controller = MysControllerWin();
 
   /// 文件工具
   final SPFileTool fileTool = SPFileTool();
@@ -61,8 +69,6 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget>
   @override
   bool get wantKeepAlive => false;
 
-  /// dispose
-  /// dispose
   @override
   void dispose() {
     flyoutTool.dispose();
@@ -143,8 +149,6 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget>
 
   /// 展示设置flyout
   Future<void> showOptionsFlyout() async {
-    var account = ref.read(userBbsStoreProvider).account;
-    var user = ref.read(userBbsStoreProvider).user;
     await flyoutTool.showFlyout(
       barrierDismissible: true,
       dismissOnPointerMoveAway: false,
@@ -157,14 +161,14 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget>
             MenuFlyoutItem(
               leading: SPIcon(FluentIcons.game),
               text: const Text('启动游戏'),
-              onPressed: () async => await tryLaunchGame(account, user),
+              onPressed: () async => await tryLaunchGame(account!, user!),
             ),
           if (account != null && user != null)
             MenuFlyoutItem(
               leading: SPIcon(FluentIcons.giftbox),
               text: const Text('签到'),
               onPressed: () async {
-                var check = await MiyousheClient.check();
+                var check = await MysClientWin.check();
                 if (!check) {
                   if (mounted) {
                     await SpInfobar.error(context, '未检测到webview2Runtime');
@@ -172,7 +176,7 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget>
                   return;
                 }
                 if (mounted) {
-                  controller = await MiyousheClient.createSign(context);
+                  controller = await MysClientWin.createSign(context);
                   if (mounted) await controller.show(context);
                 }
               },
@@ -194,19 +198,34 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget>
 
   /// 构建主题模式项
   PaneItemAction buildThemeModeItem() {
-    var config = getThemeConfig(curThemeMode);
     return PaneItemAction(
-      icon: Icon(config.icon),
-      title: Text(config.label),
+      icon: Icon(themeConfig.icon),
+      title: Text(themeConfig.label),
       onTap: () async {
-        await ref.read(appConfigStoreProvider).setThemeMode(config.next);
+        await ref.read(appConfigStoreProvider).setThemeMode(themeConfig.next);
+      },
+    );
+  }
+
+  MenuFlyoutItem buildAccountFlyout(UserNapModel act) {
+    return MenuFlyoutItem(
+      selected: act.uid == account?.uid,
+      text: Text('${act.nickname}-${act.gameUid} ${act.regionName}'),
+      trailing:
+          act.uid == account?.uid ? const Icon(FluentIcons.check_mark) : null,
+      onPressed: () async {
+        if (act.uid != account?.uid) {
+          ref.read(userBbsStoreProvider).setAccount(act);
+          if (mounted) await SpInfobar.success(context, '切换账户成功');
+          return;
+        }
+        if (mounted) await SpInfobar.warn(context, '已经是当前账户');
       },
     );
   }
 
   /// 构建用户项
   PaneItemAction buildUserPaneItem() {
-    var user = ref.watch(userBbsStoreProvider).user;
     if (user == null) {
       return PaneItemAction(
         icon: const Icon(FluentIcons.reminder_person),
@@ -219,11 +238,11 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget>
     return PaneItemAction(
       icon: FlyoutTarget(
         controller: flyoutUser,
-        child: user.brief?.avatar != null
+        child: user!.brief?.avatar != null
             ? ClipRRect(
                 borderRadius: BorderRadius.circular(50),
                 child: CachedNetworkImage(
-                  imageUrl: user.brief!.avatar,
+                  imageUrl: user!.brief!.avatar,
                   width: 18,
                   height: 18,
                   fit: BoxFit.cover,
@@ -231,36 +250,12 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget>
               )
             : const Icon(FluentIcons.user_sync),
       ),
-      title: Text(user.brief?.username ?? user.uid),
-      onTap: () {
-        var accounts = ref.read(userBbsStoreProvider).accounts;
-        var curAccount = ref.read(userBbsStoreProvider).account;
-        flyoutUser.showFlyout(
+      title: Text(user!.brief?.username ?? user!.uid),
+      onTap: () async {
+        await flyoutUser.showFlyout(
           placementMode: FlyoutPlacementMode.bottomLeft,
           builder: (context) => MenuFlyout(
-            items: [
-              for (var account in accounts)
-                MenuFlyoutItem(
-                  selected: account.uid == curAccount?.uid,
-                  text: Text('${account.nickname}-${account.gameUid} '
-                      '${account.regionName}'),
-                  trailing: account.uid == curAccount?.uid
-                      ? const Icon(FluentIcons.check_mark)
-                      : null,
-                  onPressed: () async {
-                    if (account.uid != curAccount?.uid) {
-                      ref.read(userBbsStoreProvider).setAccount(account);
-                      if (mounted) {
-                        await SpInfobar.success(context, '切换账户成功');
-                      }
-                      return;
-                    }
-                    if (mounted) {
-                      await SpInfobar.warn(context, '已经是当前账户');
-                    }
-                  },
-                ),
-            ],
+            items: accounts.map(buildAccountFlyout).toList(),
           ),
         );
       },
@@ -297,7 +292,7 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget>
         selected: curIndex,
         onChanged: (index) {
           curIndex = index;
-          setState(() {});
+          if (mounted) setState(() {});
         },
         displayMode: PaneDisplayMode.compact,
         items: getNavItems(context),

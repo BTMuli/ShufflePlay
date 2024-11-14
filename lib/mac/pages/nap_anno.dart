@@ -193,6 +193,7 @@ class _NapAnnoPageState extends State<NapAnnoPage> {
         title: buildTitle(context),
         titleWidth: 150.w,
         leading: buildTopLeading(context),
+        actions: [buildTopTrailing(context)],
       ),
       children: [
         ContentArea(

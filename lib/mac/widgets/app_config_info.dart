@@ -1,11 +1,11 @@
 // Flutter imports:
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 // Package imports:
-import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:macos_ui/macos_ui.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -15,8 +15,8 @@ import '../../../../models/database/app/app_config_model.dart';
 import '../../../../request/bbs/bbs_api_device.dart';
 import '../../../../shared/tools/log_tool.dart';
 import '../../../../shared/utils/get_app_theme.dart';
+import '../models/ui_model.dart';
 import '../store/app_config.dart';
-import '../ui/sp_icon.dart';
 import '../ui/sp_infobar.dart';
 
 class AppConfigInfoWidget extends ConsumerStatefulWidget {
@@ -92,8 +92,8 @@ class _AppConfigInfoWidgetState extends ConsumerState<AppConfigInfoWidget> {
           width: 24, height: 24),
       title: const Text('ShufflePlay'),
       subtitle: Text('版本: ${packageInfo!.version}+${packageInfo!.buildNumber}'),
-      trailing: IconButton(
-        icon: SPIcon(CupertinoIcons.link),
+      trailing: MacosIconButton(
+        icon: const MacosIcon(CupertinoIcons.link),
         onPressed: () async {
           await launchUrlString('https://github.com/BTMuli/ShufflePlay');
         },
@@ -104,28 +104,22 @@ class _AppConfigInfoWidgetState extends ConsumerState<AppConfigInfoWidget> {
   /// 构建设备信息
   Widget buildDeviceInfo() {
     return ListTile(
-      leading: const Icon(FluentIcons.fingerprint),
+      leading: const Icon(CupertinoIcons.device_laptop),
       title: Text('设备指纹 ${deviceLocal!.deviceFp}'),
       subtitle: Text('设备信息 ${deviceLocal!.deviceName}(${deviceLocal!.model})'),
-      trailing: IconButton(
-        icon: SPIcon(FluentIcons.refresh),
+      trailing: MacosIconButton(
+        icon: const MacosIcon(CupertinoIcons.arrow_clockwise),
         onPressed: refreshDevice,
       ),
     );
   }
 
   /// 构建主题项
-  MenuFlyoutItemBase buildThemeItem(SpAppThemeConfig theme) {
-    return MenuFlyoutItem(
-      text: Text(theme.label),
-      leading:
-          curThemeMode == theme.cur ? SPIcon(theme.icon) : Icon(theme.icon),
-      onPressed: () async => await ref
-          .read(appConfigStoreProvider.notifier)
-          .setThemeMode(theme.cur),
-      selected: curThemeMode == theme.cur,
-      trailing:
-          curThemeMode == theme.cur ? Icon(CupertinoIcons.check_mark) : null,
+  MacosPopupMenuItem<ThemeMode> buildThemeItem(SpAppThemeConfig theme) {
+    return MacosPopupMenuItem(
+      onTap: () async =>
+          await ref.read(appConfigStoreProvider).setThemeMode(theme.cur),
+      child: Text(theme.label),
     );
   }
 
@@ -137,9 +131,10 @@ class _AppConfigInfoWidgetState extends ConsumerState<AppConfigInfoWidget> {
       leading: Icon(curTheme.icon),
       title: const Text('应用主题'),
       subtitle: Text('当前：${curTheme.label}'),
-      trailing: DropDownButton(
-        title: Text(curTheme.label),
+      trailing: MacosPopupButton<ThemeMode>(
+        hint: Text(curTheme.label),
         items: themes.map(buildThemeItem).toList(),
+        onChanged: (val) {},
       ),
     );
   }
@@ -147,62 +142,45 @@ class _AppConfigInfoWidgetState extends ConsumerState<AppConfigInfoWidget> {
   /// 构建主题色信息
   Widget buildAccentColorInfo() {
     return ListTile(
-      leading: const Icon(FluentIcons.color),
+      leading: const Icon(CupertinoIcons.color_filter),
       title: const Text('主题色'),
       subtitle: Text(
-        curAccentColor.value.toRadixString(16),
-        style: TextStyle(color: Color(curAccentColor.value)),
+        curAccentColor.color.value.toRadixString(16),
+        style: TextStyle(color: Color(curAccentColor.color.value)),
       ),
-      trailing: SplitButton(
-        flyout: FlyoutContent(
-          constraints: BoxConstraints(maxWidth: 200.w),
-          child: buildAccentColorFlyout(),
-        ),
-        child: Container(
+      trailing: MacosPopupButton(
+        hint: Container(
           decoration: BoxDecoration(
-            color: Color(curAccentColor.value),
+            color: Color(curAccentColor.color.value),
             borderRadius: BorderRadius.circular(4),
           ),
-          width: 32.w,
-          height: 32.h,
+          width: 32,
+          height: 32,
         ),
+        items: getAccentColors().map(buildColorItem).toList(),
+        onChanged: (value) {},
       ),
     );
   }
 
   /// 构建主题色切换的Flyout
-  Widget buildAccentColorFlyout() {
-    if (curThemeMode == ThemeMode.system) return const Text('系统主题下无法设置主题色');
-    return Wrap(
-      runSpacing: 8.h,
-      spacing: 8.w,
-      children: [
-        for (var color in Colors.accentColors)
-          Button(
-            autofocus: curAccentColor == color,
-            style: ButtonStyle(
-              padding: WidgetStateProperty.all(EdgeInsets.zero),
-            ),
-            onPressed: () async {
-              await ref
-                  .read(appConfigStoreProvider.notifier)
-                  .setAccentColor(color);
-              if (mounted) Navigator.of(context).pop();
-            },
-            child: Container(color: color, width: 32.w, height: 32.h),
-          ),
-      ],
+  MacosPopupMenuItem buildColorItem(AccentColor color) {
+    return MacosPopupMenuItem(
+      onTap: () async {
+        await ref.read(appConfigStoreProvider.notifier).setAccentColor(color);
+      },
+      child: Container(color: color.color, width: 32, height: 32),
     );
   }
 
   /// 构建日志信息
   Widget buildLogInfo() {
     return ListTile(
-      leading: const Icon(FluentIcons.folder_search),
+      leading: const MacosIcon(CupertinoIcons.info),
       title: const Text('日志'),
       subtitle: Text(logTool.logDir),
       trailing: IconButton(
-        icon: SPIcon(FluentIcons.folder_open),
+        icon: const MacosIcon(CupertinoIcons.folder),
         onPressed: logTool.openLogDir,
       ),
     );
@@ -210,19 +188,17 @@ class _AppConfigInfoWidgetState extends ConsumerState<AppConfigInfoWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Expander(
+    return ExpansionTile(
       initiallyExpanded: true,
-      leading: const Icon(FluentIcons.app_icon_default),
-      header: const Text('应用信息'),
-      content: Column(
-        children: [
-          if (packageInfo != null) buildAppInfo(),
-          if (deviceLocal != null) buildDeviceInfo(),
-          buildThemeInfo(),
-          buildAccentColorInfo(),
-          if (defaultTargetPlatform == TargetPlatform.windows) buildLogInfo(),
-        ],
-      ),
+      leading: const Icon(CupertinoIcons.info),
+      title: const Text('应用信息'),
+      children: [
+        if (packageInfo != null) buildAppInfo(),
+        if (deviceLocal != null) buildDeviceInfo(),
+        buildThemeInfo(),
+        buildAccentColorInfo(),
+        if (defaultTargetPlatform == TargetPlatform.windows) buildLogInfo(),
+      ],
     );
   }
 }

@@ -4,8 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 // Project imports:
-import '../mac/widgets/app_nav.dart';
 import 'store/app_config.dart';
+import 'widgets/app_nav.dart';
 
 class SPApp extends ConsumerWidget {
   const SPApp({super.key});

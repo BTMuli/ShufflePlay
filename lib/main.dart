@@ -6,9 +6,14 @@ import 'mac/main.dart';
 import 'win/main.dart';
 
 Future<void> main() async {
-  if (kDebugMode) {
-    await mainMac();
-    return;
+  switch (defaultTargetPlatform) {
+    case TargetPlatform.windows:
+      await mainWin();
+      break;
+    case TargetPlatform.macOS:
+      await mainMac();
+      break;
+    default:
+      throw UnsupportedError('Unsupported platform');
   }
-  await mainWin();
 }

@@ -7,7 +7,7 @@ import '../../shared/database/app_config.dart';
 import '../../shared/store/user_bbs.dart';
 import '../../shared/tools/log_tool.dart';
 import '../../win/ui/sp_infobar.dart';
-import 'miyoushe_client.dart';
+import 'miyoushe_webview.dart';
 
 /// 处理JSBridge的消息
 Future<void> handleBridgeMessage(
@@ -46,7 +46,7 @@ Future<void> handleBridgeMessage(
       await handleGetStatusBarHeight(data, controller);
       break;
     case "hideLoading":
-      await controller.webview.loadJSBridge();
+      await controller.loadJSBridge();
       break;
     case 'pushPage':
       await handlePushPage(data, controller);
@@ -81,8 +81,8 @@ Future<void> handleClosePage(
   var canGoback = controller.routeStack.length > 1;
   if (canGoback) {
     controller.routeStack.removeLast();
-    await controller.webview.loadUrl(controller.routeStack.last);
-    await controller.webview.loadJSBridge();
+    await controller.loadUrl(controller.routeStack.last);
+    await controller.loadJSBridge();
   } else {
     await controller.close();
   }
@@ -94,7 +94,7 @@ Future<void> handleEventTrack(
   MiyousheController controller,
 ) async {
   SPLogTool.debug('[Miyoushe] Event track: ${arg.payload}');
-  await controller.webview.loadJSBridge();
+  await controller.loadJSBridge();
 }
 
 /// 处理消息-getActionTicket
@@ -152,7 +152,7 @@ Future<void> handleGetCookieToken(
   document.cookie = 'ltuid_v2=${user.cookie!.ltuid}; domain=' + domainCur + '; path=/; max-age=31536000';
   })();''';
   SPLogTool.debug('[Miyoushe] Get cookie token');
-  await controller.webview.executeScript(js);
+  await controller.executeScript(js);
   var data = {"cookie_token": user.cookie!.cookieToken};
   await controller.callback(arg.callback!, data);
 }
@@ -240,8 +240,8 @@ Future<void> handlePushPage(
   }
   SPLogTool.debug('[Miyoushe] Push page: ${data.page}');
   controller.routeStack.add(data.page);
-  await controller.webview.loadUrl(data.page);
-  await controller.webview.loadJSBridge();
+  await controller.loadUrl(data.page);
+  await controller.loadJSBridge();
 }
 
 /// 处理消息-setPresentationStyle
@@ -255,7 +255,7 @@ Future<void> handleSetPresentationStyle(
   SPLogTool.debug(
     '[Miyoushe] Set presentation style: ${data.payload?.toJson().toString()}',
   );
-  await controller.webview.loadJSBridge();
+  await controller.loadJSBridge();
 }
 
 /// 处理消息-share

@@ -27,3 +27,13 @@ Widget buildTopLeading(BuildContext context) {
     ),
   );
 }
+
+ToolBarIconButton buildTopTrailing(BuildContext context) {
+  return ToolBarIconButton(
+    label: '设置',
+    icon: MacosIcon(CupertinoIcons.settings),
+    onPressed: MacosWindowScope.of(context).toggleEndSidebar,
+    showLabel: false,
+    tooltipMessage: '隐藏/显示设置',
+  );
+}
