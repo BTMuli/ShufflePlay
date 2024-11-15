@@ -8,6 +8,7 @@ import 'package:flutter/material.dart' show Icons;
 // Package imports:
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import 'package:webview_windows/webview_windows.dart';
 
 // Project imports:
@@ -17,6 +18,7 @@ import '../../models/bbs/bridge/bbs_bridge_model.dart';
 import '../../plugins/Miyoushe/bridge_handler.dart';
 import '../../plugins/Miyoushe/miyoushe_webview.dart';
 import '../../shared/tools/log_tool.dart';
+import '../ui/sp_infobar.dart';
 
 class MysControllerWin extends ChangeNotifier implements MiyousheController {
   @override
@@ -53,6 +55,11 @@ class MysControllerWin extends ChangeNotifier implements MiyousheController {
     double? height,
     String? userAgent,
   }) async {
+    // 检测是否支持
+    if (await WebviewController.getWebViewVersion() == null) {
+      if (context.mounted) await SpInfobar.error(context, '未检测到 WebView2运行时');
+      return;
+    }
     this.url = url;
     this.width = width ?? 400;
     this.height = height ?? 600;
@@ -65,7 +72,7 @@ class MysControllerWin extends ChangeNotifier implements MiyousheController {
     await webview.setUserAgent(this.userAgent);
     await webview.loadUrl(url);
     await loadJSBridge();
-    await webview.setBackgroundColor(Colors.transparent);
+    await webview.setBackgroundColor(Colors.white);
     await webview.setPopupWindowPolicy(WebviewPopupWindowPolicy.deny);
     notifyListeners();
   }
@@ -114,11 +121,13 @@ class MysControllerWin extends ChangeNotifier implements MiyousheController {
   @override
   Future<void> loadUrl(String url) async {
     await webview.loadUrl(url);
+    await webview.setBackgroundColor(Colors.white);
   }
 
   Future<void> reload() async {
     await webview.reload();
     await loadJSBridge();
+    await webview.setBackgroundColor(Colors.white);
   }
 
   @override
@@ -141,6 +150,17 @@ class MysControllerWin extends ChangeNotifier implements MiyousheController {
                   icon: const Icon(Icons.developer_mode),
                   onPressed: webview.openDevTools,
                 ),
+              IconButton(
+                icon: const Icon(FluentIcons.edge_logo),
+                onPressed: () async {
+                  var urlCur = routeStack.last;
+                  if (await canLaunchUrlString(urlCur)) {
+                    await launchUrlString(urlCur);
+                    return;
+                  }
+                  if (context.mounted) await SpInfobar.error(context, '无法打开链接');
+                },
+              ),
               IconButton(
                 icon: const Icon(FluentIcons.chrome_close),
                 onPressed: () => Navigator.pop(context),
@@ -211,13 +231,6 @@ class MysClientWin extends ConsumerStatefulWidget {
         "mhy_presentation_style=fullscreen&utm_source=bbs&utm_medium=zzz&"
         "utm_campaign=icon";
     return create(context, link, width: width, height: height);
-  }
-
-  static Future<bool> check() async {
-    if (defaultTargetPlatform == TargetPlatform.windows) {
-      return await WebviewController.getWebViewVersion() != null;
-    }
-    return false;
   }
 
   @override
