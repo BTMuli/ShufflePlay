@@ -2,14 +2,24 @@
 Author: 目棃
 Description: 更新日志
 Date: 2024-08-08
-Update: 2024-11-09
+Update: 2024-11-15
 ---
 
 > 本文档 [`Frontmatter`](https://github.com/BTMuli/MuCli#Frontmatter) 由 [MuCli](https://github.com/BTMuli/Mucli) 自动生成于 `2024-08-08 18:24:38`
 >
-> 更新于 `2024-11-09 19:22:32`
+> 更新于 `2024-11-15 09:35:11`
 
 # 更新日志
+
+## [v0.3.0](https://github.com/BTMuli/ShufflePlay/releases/tag/v0.3.0) (2024-11-15)
+
+- ✨ 支持签到，windows端采用webview2Runtime，mac端采用内置webview
+- ✨ `win`:对公告内链接进行处理，支持的条件下采用webview2打开
+- ✨ `mac`:采用`macos_ui`进行全新界面设计
+- 💄 修复公告卡片标题渲染`<br>`
+- 💄 `win`:调整页面UI
+- 🐛 修复添加用户异常，新增用户与当前用户相同时更新当前用户信息
+- 🐛 `mac`:修复调频记录导入导出异常
 
 ## [v0.2.1](https://github.com/BTMuli/ShufflePlay/releases/tag/v0.2.1) (2024-11-09)
 

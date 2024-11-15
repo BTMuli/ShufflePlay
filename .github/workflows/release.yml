@@ -61,7 +61,6 @@ jobs:
         with:
           file: ShufflePlay.zip;ShufflePlay.msix;ShufflePlay_Store.msix
           tags: true
-          release_name: ${{ github.ref }}
   buildMac:
     needs: createRelease
     name: Build Mac
@@ -84,10 +83,10 @@ jobs:
       - name: 打包
         run: |
           flutter build macos
-          Compress-Archive -Path ./build/macos/Build/Products/Release/ShufflePlay.app -DestinationPath ShufflePlay.app.zip
+          cd build/macos/Build/Products/Release
+          zip -r -X ShufflePlay.app.zip ShufflePlay.app
       - name: 上传文件
         uses: xresloader/upload-to-github-release@v1
         with:
-          file: ShufflePlay.app.zip
+          file: build/macos/Build/Products/Release/ShufflePlay.app.zip
           tags: true
-          release_name: ${{ github.ref }}
