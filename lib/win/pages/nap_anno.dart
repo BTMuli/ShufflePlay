@@ -1,28 +1,33 @@
 // Package imports:
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 // Project imports:
+import '../../models/database/user/user_bbs_model.dart';
+import '../../models/database/user/user_nap_model.dart';
 import '../../models/nap/anno/nap_anno_content_model.dart';
 import '../../models/nap/anno/nap_anno_list_model.dart';
 import '../../request/nap/nap_api_anno.dart';
+import '../../shared/store/user_bbs.dart';
+import '../plugins/miyoushe_webview.dart';
 import '../ui/sp_icon.dart';
 import '../ui/sp_infobar.dart';
 import '../widgets/nap_anno_card.dart';
 
 /// 公告页面
-class NapAnnoPage extends StatefulWidget {
+class NapAnnoPage extends ConsumerStatefulWidget {
   /// 构造函数
   const NapAnnoPage({super.key});
 
   @override
-  State<NapAnnoPage> createState() => _NapAnnoPageState();
+  ConsumerState<NapAnnoPage> createState() => _NapAnnoPageState();
 }
 
 /// 公告页面状态
-class _NapAnnoPageState extends State<NapAnnoPage>
+class _NapAnnoPageState extends ConsumerState<NapAnnoPage>
     with AutomaticKeepAliveClientMixin {
   /// 公告列表
   List<NapAnnoListModel> annoList = [];
@@ -36,6 +41,12 @@ class _NapAnnoPageState extends State<NapAnnoPage>
   /// api
   final SprNapApiAnno api = SprNapApiAnno();
 
+  UserBBSModel? get user => ref.watch(userBbsStoreProvider).user;
+
+  UserNapModel? get account => ref.watch(userBbsStoreProvider).account;
+
+  MysControllerWin controller = MysControllerWin();
+
   /// tabIndex
   int currentIndex = 0;
 
@@ -46,6 +57,12 @@ class _NapAnnoPageState extends State<NapAnnoPage>
   void initState() {
     super.initState();
     Future.microtask(loadAnnoList);
+  }
+
+  @override
+  void dispose() {
+    controller.webview.dispose();
+    super.dispose();
   }
 
   /// 加载公告列表
@@ -96,7 +113,14 @@ class _NapAnnoPageState extends State<NapAnnoPage>
     if (match == null) return false;
     var target = match.group(2);
     if (target == null) return false;
-    if (await canLaunchUrlString(target)) await launchUrlString(target);
+    if (await canLaunchUrlString(target)) {
+      if (user != null && account != null && mounted) {
+        controller = await MysClientWin.create(context, target);
+        if (mounted) await controller.show(context);
+      } else {
+        await launchUrlString(target);
+      }
+    }
     return true;
   }
 

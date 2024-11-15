@@ -1,4 +1,8 @@
+// Flutter imports:
+import 'package:flutter/foundation.dart';
+
 // Project imports:
+import '../../mac/ui/sp_infobar.dart' as mac;
 import '../../models/bbs/bbs_constant_enum.dart';
 import '../../models/bbs/bridge/bbs_bridge_model.dart';
 import '../../request/bbs/bbs_api_token.dart';
@@ -6,6 +10,7 @@ import '../../request/core/gen_ds_header.dart';
 import '../../shared/database/app_config.dart';
 import '../../shared/store/user_bbs.dart';
 import '../../shared/tools/log_tool.dart';
+import '../../win/ui/sp_infobar.dart' as win;
 import 'miyoushe_webview.dart';
 
 /// 处理JSBridge的消息
@@ -227,8 +232,25 @@ Future<void> handlePushPage(
   var data = BbsBridgePayloadPushPage.fromJson(
     arg.payload as Map<String, dynamic>,
   );
+  // 有可能是 mihoyobbs:// 开头的链接
+  if (data.page.startsWith('mihoyobbs://')) {
+    SPLogTool.debug('[Miyoushe] Push page: ${data.page}');
+    var url = Uri.parse(data.page).queryParameters['url'];
+    if (url != null && url.isNotEmpty) url = Uri.decodeComponent(url);
+    controller.routeStack.add(url ?? data.page);
+    await controller.loadUrl(url ?? data.page);
+    await controller.loadJSBridge();
+    return;
+  }
   if (!data.page.startsWith('http')) {
     SPLogTool.warn('[Miyoushe] Invalid page: ${data.page}');
+    if (controller.context.mounted) {
+      if (defaultTargetPlatform == TargetPlatform.macOS) {
+        await mac.SpInfobar.warn(controller.context, '无效的页面: ${data.page}');
+      } else {
+        await win.SpInfobar.warn(controller.context, '无效的页面: ${data.page}');
+      }
+    }
     return;
   }
   SPLogTool.debug('[Miyoushe] Push page: ${data.page}');
