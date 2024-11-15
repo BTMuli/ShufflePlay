@@ -1,6 +1,7 @@
 // Package imports:
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:macos_ui/macos_ui.dart';
 import 'package:system_theme/system_theme.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -23,5 +24,6 @@ Future<void> mainMac() async {
   await windowManager.waitUntilReadyToShow(windowOptions, () async {
     await windowManager.show();
   });
+  await MacosWindowUtilsConfig().apply();
   runApp(const ProviderScope(child: SPApp()));
 }
