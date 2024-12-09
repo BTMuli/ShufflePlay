@@ -2,14 +2,19 @@
 Author: 目棃
 Description: 更新日志
 Date: 2024-08-08
-Update: 2024-11-15
+Update: 2024-12-09
 ---
 
 > 本文档 [`Frontmatter`](https://github.com/BTMuli/MuCli#Frontmatter) 由 [MuCli](https://github.com/BTMuli/Mucli) 自动生成于 `2024-08-08 18:24:38`
 >
-> 更新于 `2024-11-15 09:35:11`
+> 更新于 `2024-12-09 11:08:49`
 
 # 更新日志
+
+## [v0.3.1](https://github.com/BTMuli/ShufflePlay/releases/tag/v0.3.1) (2024-12-09)
+
+- 💄 `mac`:左侧栏添加`topOffset`
+- 🐛 修复祈愿页面切换UID异常
 
 ## [v0.3.0](https://github.com/BTMuli/ShufflePlay/releases/tag/v0.3.0) (2024-11-15)
 
