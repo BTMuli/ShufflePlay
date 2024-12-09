@@ -41,6 +41,21 @@ class _UserGachaListState extends State<UserGachaList> {
     });
   }
 
+  /// 检测uid是否发生变化
+  @override
+  void didUpdateWidget(UserGachaList oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.selectedUid != widget.selectedUid) {
+      Future.microtask(() async {
+        gachaList = await sqlite.readUser(
+          widget.selectedUid,
+          gachaType: widget.poolType,
+        );
+        if (mounted) setState(() {});
+      });
+    }
+  }
+
   Color getTextColor(String? rankType) {
     switch (rankType) {
       case '2':

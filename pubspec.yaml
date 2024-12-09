@@ -42,11 +42,11 @@ dependencies:
   flutter_acrylic: ^1.1.4
   flutter_riverpod: ^2.5.3
   flutter_screenutil: ^5.9.3
-  flutter_widget_from_html: ^0.15.2
-  jiffy: ^6.3.1
+  flutter_widget_from_html: ^0.15.3
+  jiffy: ^6.3.2
   json_annotation: ^4.9.0
   json_schema: ^5.2.0
-  logger: ^2.4.0
+  logger: ^2.5.0
   macos_ui: ^2.0.9
   msvcredist:
     git:
@@ -56,11 +56,11 @@ dependencies:
   path: ^1.9.0
   path_provider: ^2.1.5
   provider: ^6.1.2
-  sqflite_common_ffi: ^2.3.3
+  sqflite_common_ffi: ^2.3.4+4
   system_theme: ^3.1.2
   url_launcher: ^6.3.1
   uuid: ^4.4.2
-  webview_flutter: ^4.9.0
+  webview_flutter: ^4.10.0
   webview_windows: ^0.4.0
   window_manager: ^0.4.3
   windows_taskbar: ^1.1.2
@@ -70,7 +70,7 @@ dev_dependencies:
   flutter_lints: ^5.0.0
   husky: ^0.1.7
   import_sorter: ^4.6.0
-  json_serializable: ^6.8.0
+  json_serializable: ^6.9.0
   lint_staged: ^0.5.1
   msix:
     git:

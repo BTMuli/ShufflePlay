@@ -78,7 +78,9 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage>
   Future<void> refreshData() async {
     uidList = await sqliteUser.getAllUid(check: true);
     if (uidList.isNotEmpty) {
-      curUid = uidList.first;
+      if (curUid == null || !uidList.contains(curUid)) {
+        curUid = uidList.first;
+      }
     } else {
       curUid = null;
     }

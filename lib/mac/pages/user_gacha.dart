@@ -80,7 +80,13 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage> {
   /// 刷新用户数据
   Future<void> refreshData() async {
     uidList = await sqliteUser.getAllUid(check: true);
-    curUid = uidList.isNotEmpty ? uidList.first : null;
+    if (uidList.isNotEmpty) {
+      if (curUid == null || !uidList.contains(curUid)) {
+        curUid = uidList.first;
+      }
+    } else {
+      curUid = null;
+    }
     if (mounted) setState(() {});
   }
 
