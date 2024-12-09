@@ -208,7 +208,6 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget> {
       menus: defaultTargetPlatform == TargetPlatform.macOS ? buildMenus() : [],
       child: MacosWindow(
         sidebar: Sidebar(
-          topOffset: 0.0,
           top: buildSidebarTop(context),
           minWidth: 150.w,
           builder: buildSidebarLeft,
