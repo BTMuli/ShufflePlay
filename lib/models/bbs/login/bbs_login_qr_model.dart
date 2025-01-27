@@ -1,5 +1,7 @@
+// Package imports:
 import "package:json_annotation/json_annotation.dart";
 
+// Project imports:
 import '../bbs_base_model.dart';
 
 part 'bbs_login_qr_model.g.dart';

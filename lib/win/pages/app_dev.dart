@@ -5,10 +5,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 // Project imports:
-import '../ui/sp_infobar.dart';
 import '../../models/bbs/login/bbs_login_qr_model.dart';
 import '../../request/bbs/bbs_api_login_qr.dart';
 import '../plugins/miyoushe_webview.dart';
+import '../ui/sp_infobar.dart';
 
 /// 测试页面
 class AppDevPage extends ConsumerStatefulWidget {
