@@ -13,6 +13,7 @@ import '../../../../models/database/app/app_config_model.dart';
 import '../../../../request/bbs/bbs_api_device.dart';
 import '../../../../shared/tools/log_tool.dart';
 import '../../../../shared/utils/get_app_theme.dart';
+import '../../models/app/enum_extension.dart';
 import '../models/ui_model.dart';
 import '../store/app_config.dart';
 import '../ui/sp_dialog.dart';
@@ -138,8 +139,8 @@ class _AppConfigInfoWidgetState extends ConsumerState<AppConfigInfoWidget> {
       leading: const Icon(Icons.color_lens),
       title: const Text('主题色'),
       subtitle: Text(
-        curAccentColor.color.value.toRadixString(16),
-        style: TextStyle(color: Color(curAccentColor.color.value)),
+        curAccentColor.color.hex.toRadixString(16),
+        style: TextStyle(color: Color(curAccentColor.color.hex)),
       ),
     );
   }
@@ -182,7 +183,7 @@ class _AppConfigInfoWidgetState extends ConsumerState<AppConfigInfoWidget> {
         MacosPopupButton<AccentColor>(
           hint: Container(
             decoration: BoxDecoration(
-              color: Color(curAccentColor.color.value),
+              color: Color(curAccentColor.color.hex),
               borderRadius: BorderRadius.circular(4),
             ),
             width: 32,

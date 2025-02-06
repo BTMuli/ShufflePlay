@@ -2,6 +2,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 
 // Project imports:
+import '../../models/app/enum_extension.dart';
 import '../../shared/database/app_config.dart';
 import '../../shared/tools/log_tool.dart';
 
@@ -62,7 +63,7 @@ class SpsAppConfigWin extends SpsAppConfig {
 
   /// 写/更新主题色配置
   Future<void> writeAccentColor(AccentColor value) async {
-    await write('accentColor', value.value.toString());
+    await write('accentColor', value.hex.toString());
   }
 
   /// 读取游戏安装目录

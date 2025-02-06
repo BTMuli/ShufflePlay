@@ -217,7 +217,7 @@ class _NapAnnoPageState extends ConsumerState<NapAnnoPage>
         context,
       ),
       selectedBackgroundColor: FluentTheme.of(context).accentColor,
-      backgroundColor: FluentTheme.of(context).accentColor.withOpacity(0.2),
+      backgroundColor: FluentTheme.of(context).accentColor.withAlpha(50),
     );
   }
 

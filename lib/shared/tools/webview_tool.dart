@@ -2,10 +2,11 @@
 import 'package:flutter/services.dart';
 
 // Package imports:
+import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
 import 'package:webview_windows/webview_windows.dart';
 
 // Project imports:
-import 'file_tool.dart';
 import 'log_tool.dart';
 
 /// webview 工具
@@ -19,11 +20,10 @@ class SPWebviewTool {
 
   /// 初始化
   static Future<void> init() async {
-    var fileTool = SPFileTool();
-    var webviewDataDir = await fileTool.getAppDataPath('webview');
+    var webviewDataDir = await getTemporaryDirectory();
     try {
       await WebviewController.initializeEnvironment(
-        userDataPath: webviewDataDir,
+        userDataPath: path.join(webviewDataDir.path, 'ShufflePlay', 'Webview'),
       );
     } on PlatformException catch (e) {
       SPLogTool.warn('[Webview] Fail to initialize webview: ${e.message}');

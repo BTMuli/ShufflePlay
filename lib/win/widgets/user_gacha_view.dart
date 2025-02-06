@@ -30,7 +30,7 @@ class _UserGachaViewWidgetState extends State<UserGachaViewWidget> {
           ? const Icon(FluentIcons.giftbox_open)
           : const Icon(FluentIcons.giftbox),
       selectedBackgroundColor: FluentTheme.of(context).accentColor,
-      backgroundColor: FluentTheme.of(context).accentColor.withOpacity(0.2),
+      backgroundColor: FluentTheme.of(context).accentColor.withAlpha(50),
       semanticLabel: pool.label,
     );
   }

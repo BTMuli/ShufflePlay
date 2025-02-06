@@ -14,6 +14,7 @@ import '../../../../models/database/app/app_config_model.dart';
 import '../../../../request/bbs/bbs_api_device.dart';
 import '../../../../shared/tools/log_tool.dart';
 import '../../../../shared/utils/get_app_theme.dart';
+import '../../models/app/enum_extension.dart';
 import '../store/app_config.dart';
 import '../ui/sp_icon.dart';
 import '../ui/sp_infobar.dart';
@@ -148,8 +149,8 @@ class _AppConfigInfoWidgetState extends ConsumerState<AppConfigInfoWidget> {
       leading: const Icon(FluentIcons.color),
       title: const Text('主题色'),
       subtitle: Text(
-        curAccentColor.value.toRadixString(16),
-        style: TextStyle(color: Color(curAccentColor.value)),
+        curAccentColor.hex.toRadixString(16),
+        style: TextStyle(color: Color(curAccentColor.hex)),
       ),
       trailing: SplitButton(
         flyout: FlyoutContent(
@@ -158,7 +159,7 @@ class _AppConfigInfoWidgetState extends ConsumerState<AppConfigInfoWidget> {
         ),
         child: Container(
           decoration: BoxDecoration(
-            color: Color(curAccentColor.value),
+            color: Color(curAccentColor.hex),
             borderRadius: BorderRadius.circular(4),
           ),
           width: 32.w,

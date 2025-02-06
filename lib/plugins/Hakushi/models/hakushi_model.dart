@@ -6,7 +6,7 @@ import 'package:json_annotation/json_annotation.dart';
 /// 官网：https://zzz.hakush.in/
 part 'hakushi_model.g.dart';
 
-/// 角色返回数据是Map<String, HakushiModelCharacter>
+/// 角色返回数据是 Map\<String, HakushiModelCharacter>
 @JsonSerializable()
 class HakushiModelCharacter {
   /// code
@@ -81,7 +81,7 @@ class HakushiModelCharacter {
   Map<String, dynamic> toJson() => _$HakushiModelCharacterToJson(this);
 }
 
-/// 武器返回数据是Map<String, HakushiModelWeapon>
+/// 武器返回数据是 Map\<String, HakushiModelWeapon>
 @JsonSerializable()
 class HakushiModelWeapon {
   /// icon
@@ -136,7 +136,7 @@ class HakushiModelWeapon {
   Map<String, dynamic> toJson() => _$HakushiModelWeaponToJson(this);
 }
 
-/// 邦布返回数据是Map<String, HakushiModelBangboo>
+/// 邦布返回数据是Map\<String, HakushiModelBangboo>
 @JsonSerializable()
 class HakushiModelBangboo {
   /// icon
