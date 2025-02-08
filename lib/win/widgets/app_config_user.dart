@@ -1,5 +1,9 @@
+// Dart imports:
+import 'dart:async';
+
 // Flutter imports:
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart' show Icons;
 
 // Package imports:
 import 'package:cached_network_image/cached_network_image.dart';
@@ -21,7 +25,6 @@ import '../../../../shared/store/user_bbs.dart';
 import '../ui/sp_dialog.dart';
 import '../ui/sp_icon.dart';
 import '../ui/sp_infobar.dart';
-import '../ui/sp_progress.dart';
 
 class AppConfigUserWidget extends ConsumerStatefulWidget {
   const AppConfigUserWidget({super.key});
@@ -44,9 +47,6 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
   /// 所有用户
   List<UserBBSModel> get users => ref.watch(userBbsStoreProvider).users;
 
-  /// Progress
-  SpProgressController progress = SpProgressController();
-
   /// nap数据库
   final sqliteNap = SpsUserNap();
 
@@ -66,6 +66,7 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
       return null;
     }
     var data = resp.data as BbsInfoUserModelDataFull;
+    if (mounted) await SpInfobar.success(context, '获取用户信息成功');
     return UserBBSModelBrief(
       uid: data.userInfo.uid,
       username: data.userInfo.nickname,
@@ -105,6 +106,21 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
     await refreshGameAccounts(user);
   }
 
+  /// 添加用户-通过二维码
+  Future<void> addUserByQrCode() async {
+    var cookie = await SpDialog.loginByQr(context);
+    if (cookie == null) {
+      if (mounted) await SpInfobar.warn(context, '未获取到cookie');
+      return;
+    }
+    cookie = await refreshCookie(cookie);
+    debugPrint(cookie.toString());
+    UserBBSModelBrief? brief = await getUserBrief(cookie);
+    var user = UserBBSModel(uid: cookie.stuid, cookie: cookie, brief: brief);
+    await ref.read(userBbsStoreProvider).addUser(user);
+    await refreshGameAccounts(user);
+  }
+
   /// 刷新用户cookie
   Future<UserBBSModelCookie> refreshCookie(UserBBSModelCookie cookie) async {
     if (cookie.stoken.isEmpty || cookie.stuid.isEmpty || cookie.mid.isEmpty) {
@@ -136,6 +152,7 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
       var cookieTokenData = cookieTokenResp.data as BbsTokenModelCbSData;
       cookie.cookieToken = cookieTokenData.cookieToken;
     }
+    if (mounted) await SpInfobar.success(context, '获取Cookie成功');
     return cookie;
   }
 
@@ -165,6 +182,7 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
       );
       await sqliteNap.insertUser(userNap);
     }
+    if (mounted) await SpInfobar.success(context, '获取用户账户信息成功');
   }
 
   /// 刷新用户信息
@@ -175,13 +193,10 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
       return;
     }
     cookie = await refreshCookie(cookie);
-    if (mounted) await SpInfobar.success(context, '刷新cookie成功');
     UserBBSModelBrief? brief = await getUserBrief(cookie);
-    if (mounted) await SpInfobar.success(context, '刷新用户信息成功');
     var newUser = UserBBSModel(uid: user.uid, cookie: cookie, brief: brief);
     await ref.read(userBbsStoreProvider).updateUser(newUser);
     await refreshGameAccounts(newUser);
-    if (mounted) await SpInfobar.success(context, '刷新用户账户信息成功');
   }
 
   /// 构建用户尾部
@@ -215,6 +230,37 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
             await ref.read(userBbsStoreProvider).deleteUser(user.uid);
           },
         ),
+      ],
+    );
+  }
+
+  /// 构建登录尾部
+  Widget buildLoginTrailing() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Tooltip(
+          message: 'Cookie登录',
+          child: IconButton(
+            icon: const SPIcon(Icons.cookie),
+            onPressed: () async => await addUserByCookie(),
+          ),
+        ),
+        if (kDebugMode) ...[
+          SizedBox(width: 8.w),
+          Tooltip(
+            message: '短信验证码登录',
+            child: IconButton(
+              icon: const SPIcon(FluentIcons.comment_active),
+              onPressed: () async {
+                if (context.mounted) {
+                  await SpInfobar.warn(context, '暂未实现');
+                }
+              },
+            ),
+          ),
+        ],
       ],
     );
   }
@@ -262,23 +308,9 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
             ),
           ListTile(
             leading: const SPIcon(FluentIcons.add),
-            title: const Text('添加用户（通过cookie）'),
-            onPressed: () async {
-              await addUserByCookie();
-            },
-            trailing: kDebugMode
-                ? Tooltip(
-                    message: '短信验证码登录',
-                    child: IconButton(
-                      icon: const SPIcon(FluentIcons.comment_active),
-                      onPressed: () async {
-                        if (context.mounted) {
-                          await SpInfobar.warn(context, '暂未实现');
-                        }
-                      },
-                    ),
-                  )
-                : null,
+            title: const Text('添加用户'),
+            onPressed: () async => await addUserByQrCode(),
+            trailing: buildLoginTrailing(),
           )
         ],
       ),
