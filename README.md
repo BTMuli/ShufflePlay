@@ -2,12 +2,12 @@
 Author: 目棃
 Description: 说明文档
 Date: 2024-08-06
-Update: 2024-11-15
+Update: 2025-02-09
 ---
 
 > 本文档 [`Frontmatter`](https://github.com/BTMuli/MuCli#Frontmatter) 由 [MuCli](https://github.com/BTMuli/Mucli) 自动生成于 `2024-08-06 12:15:33`
 >
-> 更新于 `2024-11-15 09:49:22`
+> 更新于 `2025-02-09 19:00:04`
 
 ![](https://img.shields.io/github/last-commit/BTMuli/ShufflePlay?style=for-the-badge) ![](https://img.shields.io/github/commits-since/BTMuli/ShufflePlay/latest?include_prereleases&style=for-the-badge)
 
@@ -42,6 +42,7 @@ macOS版本可以通过 [Releases](https://github.com/BTMuli/ShufflePlay/release
 
 ## 功能
 
+- [x] 扫码登录
 - [x] 游戏内公告查看
 - [x] 多账号管理、同账号下不同游戏账号切换（目前仅支持通过ck输入的方式登录）
 - [x] 设备信息刷新
