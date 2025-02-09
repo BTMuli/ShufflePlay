@@ -171,6 +171,7 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget> {
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        Image.asset('assets/images/ShufflePlay.png'),
         const SizedBox(height: 16.0),
         Text(
           '© 2024 BTMuli',
@@ -229,16 +230,17 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget> {
                 )
               ]),
               AppConfigDeviceWidget(),
+              Divider(),
               AppConfigInfoWidget(),
+              Divider(),
               AppConfigUserWidget(),
             ],
           ),
-          minWidth: 150.w,
+          minWidth: 200.w,
           builder: buildSidebarEnd,
           isResizable: false,
           shownByDefault: false,
           topOffset: 10.0,
-          bottom: buildSidebarBottom(context),
         ),
         child: pages[curIndex],
       ),

@@ -103,6 +103,21 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
     await refreshGameAccounts(user);
   }
 
+  /// 添加用户-通过二维码
+  Future<void> addUserByQrCode() async {
+    var cookie = await SpDialog.loginByQr(context);
+    if (cookie == null) {
+      if (mounted) await SpInfobar.warn(context, '未获取到cookie');
+      return;
+    }
+    cookie = await refreshCookie(cookie);
+    debugPrint(cookie.toString());
+    UserBBSModelBrief? brief = await getUserBrief(cookie);
+    var user = UserBBSModel(uid: cookie.stuid, cookie: cookie, brief: brief);
+    await ref.read(userBbsStoreProvider).addUser(user);
+    await refreshGameAccounts(user);
+  }
+
   /// 刷新用户cookie
   Future<UserBBSModelCookie> refreshCookie(UserBBSModelCookie cookie) async {
     if (cookie.stoken.isEmpty || cookie.stuid.isEmpty || cookie.mid.isEmpty) {
@@ -217,6 +232,59 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
     );
   }
 
+  /// 构建单用户
+  Widget buildUser(UserBBSModel user, BuildContext context) {
+    return MacosListTile(
+      title: Row(
+        children: [
+          Text(user.brief?.username ?? user.uid),
+          MacosTooltip(
+            message: '刷新用户信息',
+            child: MacosIconButton(
+              icon: const MacosIcon(Icons.refresh),
+              onPressed: () async {
+                var check = await SpDialog.confirm(
+                  context,
+                  '刷新用户信息',
+                  '确认刷新用户信息？',
+                );
+                if (check == null || !check) return;
+                await refreshUser(user);
+              },
+            ),
+          ),
+          MacosTooltip(
+            message: '删除用户',
+            child: MacosIconButton(
+              icon: const MacosIcon(Icons.delete),
+              onPressed: () async {
+                var check = await SpDialog.confirm(
+                  context,
+                  '删除用户',
+                  '确认删除用户？',
+                );
+                if (check == null || !check) return;
+                await ref.read(userBbsStoreProvider).deleteUser(user.uid);
+              },
+            ),
+          ),
+        ],
+      ),
+      subtitle: Text(user.brief?.sign ?? '未设置签名'),
+      leading: user.brief?.avatar != null
+          ? Image.network(user.brief!.avatar, width: 24, height: 24)
+          : uid == user.uid
+              ? const MacosIcon(Icons.person)
+              : const MacosIcon(Icons.person_pin),
+      onClick: () async {
+        if (uid == user.uid) return;
+        await ref.read(userBbsStoreProvider).switchUser(user.uid);
+        if (context.mounted) setState(() {});
+        if (context.mounted) await SpInfobar.success(context, '切换用户成功');
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (uids.isEmpty) {
@@ -230,22 +298,30 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
       children: <Widget>[
         MacosListTile(
           leading: const MacosIcon(Icons.person_add),
-          title: Text('添加用户（通过cookie）'),
-          onClick: addUserByCookie,
-        ),
-        for (final String uid in uids)
-          MacosListTile(
-            title: Text(uid),
-            subtitle: Text(uid == this.uid ? '当前用户' : '点击切换用户'),
-            onClick: () async {
-              if (uid == this.uid) {
-                return;
-              }
-              await ref.read(userBbsStoreProvider).switchUser(uid);
-              if (context.mounted) setState(() {});
-              if (context.mounted) await SpInfobar.success(context, '切换用户成功');
-            },
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Text('添加用户'),
+              MacosTooltip(
+                message: '输入cookie添加用户',
+                child: MacosIconButton(
+                  icon: const MacosIcon(Icons.cookie),
+                  onPressed: addUserByCookie,
+                ),
+              ),
+              MacosTooltip(
+                message: '扫码添加用户',
+                child: MacosIconButton(
+                  icon: const MacosIcon(Icons.qr_code),
+                  onPressed: addUserByQrCode,
+                ),
+              ),
+            ],
           ),
+          subtitle: const Text('扫码或者手动输入cookie'),
+        ),
+        ...users.map((user) => buildUser(user, context)),
       ],
     );
   }

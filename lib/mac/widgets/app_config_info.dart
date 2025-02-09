@@ -1,5 +1,4 @@
 // Flutter imports:
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 // Package imports:
@@ -16,7 +15,6 @@ import '../../../../shared/utils/get_app_theme.dart';
 import '../../models/app/enum_extension.dart';
 import '../models/ui_model.dart';
 import '../store/app_config.dart';
-import '../ui/sp_dialog.dart';
 import '../ui/sp_infobar.dart';
 
 class AppConfigInfoWidget extends ConsumerStatefulWidget {
@@ -61,12 +59,6 @@ class _AppConfigInfoWidgetState extends ConsumerState<AppConfigInfoWidget> {
 
   /// 刷新设备信息
   Future<void> refreshDevice() async {
-    var check = await SpDialog.confirm(
-      context,
-      '是否刷新设备指纹？',
-      '当前设备指纹：${deviceLocal!.deviceFp}',
-    );
-    if (check == null || !check) return;
     var resp = await apiDevice.getDeviceFp();
     if (resp.retcode != 0) {
       if (mounted) await SpInfobar.bbs(context, resp);
@@ -96,8 +88,11 @@ class _AppConfigInfoWidgetState extends ConsumerState<AppConfigInfoWidget> {
   /// 构建应用信息
   Widget buildAppInfo() {
     return MacosListTile(
-      leading: Image.asset('assets/images/ShufflePlayMini.png',
-          width: 24, height: 24),
+      leading: Image.asset(
+        'assets/images/ShufflePlayMini.png',
+        width: 24,
+        height: 24,
+      ),
       title: const Text('ShufflePlay'),
       subtitle: Text('版本: ${packageInfo!.version}+${packageInfo!.buildNumber}'),
     );
@@ -107,9 +102,19 @@ class _AppConfigInfoWidgetState extends ConsumerState<AppConfigInfoWidget> {
   Widget buildDeviceInfo() {
     return MacosListTile(
       leading: const Icon(Icons.fingerprint),
-      title: Text('设备指纹'),
+      title: Row(
+        children: [
+          const Text('设备指纹'),
+          MacosTooltip(
+            message: '刷新设备指纹',
+            child: MacosIconButton(
+              icon: const Icon(Icons.refresh),
+              onPressed: refreshDevice,
+            ),
+          ),
+        ],
+      ),
       subtitle: Text(deviceLocal!.deviceFp),
-      onClick: refreshDevice,
     );
   }
 
@@ -128,7 +133,18 @@ class _AppConfigInfoWidgetState extends ConsumerState<AppConfigInfoWidget> {
     var curTheme = getThemeConfig(curThemeMode);
     return MacosListTile(
       leading: Icon(curTheme.icon),
-      title: const Text('应用主题'),
+      title: Row(
+        children: [
+          const Text('主题'),
+          const SizedBox(width: 8),
+          MacosPopupButton<ThemeMode>(
+            hint: Text(curTheme.label),
+            items: getThemeModeConfigList().map(buildThemeItem).toList(),
+            value: curThemeMode,
+            onChanged: (val) {},
+          ),
+        ],
+      ),
       subtitle: Text('当前：${curTheme.label}'),
     );
   }
@@ -137,7 +153,25 @@ class _AppConfigInfoWidgetState extends ConsumerState<AppConfigInfoWidget> {
   Widget buildAccentColorInfo() {
     return MacosListTile(
       leading: const Icon(Icons.color_lens),
-      title: const Text('主题色'),
+      title: Row(
+        children: [
+          const Text('主题色'),
+          const SizedBox(width: 8),
+          MacosPopupButton<AccentColor>(
+            hint: Container(
+              decoration: BoxDecoration(
+                color: Color(curAccentColor.color.hex),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              width: 32,
+              height: 32,
+            ),
+            items: getAccentColors().map(buildColorItem).toList(),
+            onChanged: (value) {},
+            value: curAccentColor,
+          ),
+        ],
+      ),
       subtitle: Text(
         curAccentColor.color.hex.toRadixString(16),
         style: TextStyle(color: Color(curAccentColor.color.hex)),
@@ -167,33 +201,15 @@ class _AppConfigInfoWidgetState extends ConsumerState<AppConfigInfoWidget> {
 
   @override
   Widget build(BuildContext context) {
-    var themes = getThemeModeConfigList();
     return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (packageInfo != null) buildAppInfo(),
         if (deviceLocal != null) buildDeviceInfo(),
         buildThemeInfo(),
-        MacosPopupButton<ThemeMode>(
-          hint: Text(curTheme.label),
-          items: themes.map(buildThemeItem).toList(),
-          value: curThemeMode,
-          onChanged: (val) {},
-        ),
         buildAccentColorInfo(),
-        MacosPopupButton<AccentColor>(
-          hint: Container(
-            decoration: BoxDecoration(
-              color: Color(curAccentColor.color.hex),
-              borderRadius: BorderRadius.circular(4),
-            ),
-            width: 32,
-            height: 32,
-          ),
-          items: getAccentColors().map(buildColorItem).toList(),
-          onChanged: (value) {},
-          value: curAccentColor,
-        ),
-        if (defaultTargetPlatform == TargetPlatform.macOS) buildLogInfo(),
+        buildLogInfo(),
       ],
     );
   }
