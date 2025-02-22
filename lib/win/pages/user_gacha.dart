@@ -131,7 +131,13 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage>
       onTaskbar: true,
     );
     var data = UigfModelFull.fromJson(fileJson);
-    await sqliteUser.importUigf(data);
+    try {
+      await sqliteUser.importUigf(data);
+    } on Exception catch (e) {
+      progress.end();
+      if (mounted) await SpInfobar.error(context, '导入失败: $e');
+      return;
+    }
     progress.end();
     await refreshData();
     if (mounted) {
