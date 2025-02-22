@@ -326,9 +326,12 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage>
             onPressed: delete,
           ),
         ),
-        IconButton(
-          icon: SPIcon(FluentIcons.database_refresh),
-          onPressed: refreshMetaData,
+        Tooltip(
+          message: '刷新元数据',
+          child: IconButton(
+            icon: SPIcon(FluentIcons.database_refresh),
+            onPressed: refreshMetaData,
+          ),
         ),
       ],
     );

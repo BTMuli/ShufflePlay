@@ -8,6 +8,7 @@ import '../../models/nap/gacha/nap_gacha_model.dart';
 import '../../plugins/UIGF/models/uigf_enum.dart';
 import '../../plugins/UIGF/models/uigf_model.dart';
 import '../utils/trans_time.dart';
+import 'app_config.dart';
 import 'sp_sqlite.dart';
 
 /// 用户祈愿数据表
@@ -20,7 +21,46 @@ class SpsUserGacha {
 
   final SPSqlite sqlite = SPSqlite();
 
+  final SpsAppConfig _appConfig = SpsAppConfig();
+
   final String _tableName = 'UserGacha';
+
+  /// 重新初始化数据库
+  Future<void> recreate() async {
+    // 创建临时数据库
+    await _instance.sqlite.db.execute('''
+    CREATE TABLE UserGachaTemp (
+      uid TEXT NOT NULL,
+      gacha_id TEXT,
+      gacha_type TEXT NOT NULL,
+      item_id TEXT NOT NULL,
+      count TEXT,
+      time TEXT NOT NULL,
+      name TEXT,
+      item_type TEXT,
+      rank_type TEXT,
+      id TEXT NOT NULL,
+      PRIMARY KEY (uid, id)
+    );
+    ''');
+    // 导入数据
+    var data = await _instance.sqlite.db.query(_instance._tableName);
+    var batch = _instance.sqlite.db.batch();
+    for (var item in data) {
+      batch.insert(
+        'UserGachaTemp',
+        UserGachaModel.fromSqlJson(item).toSqlJson(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
+    await batch.commit(noResult: true);
+    // 删除旧表
+    await _instance.sqlite.db.execute('DROP TABLE $_tableName;');
+    // 重命名新表
+    await _instance.sqlite.db
+        .execute('ALTER TABLE UserGachaTemp RENAME TO $_tableName;');
+    await _appConfig.write('TvUserGacha', '1');
+  }
 
   Future<void> preCheck() async {
     var check = await _instance.sqlite.isTableExist(_instance._tableName);
@@ -37,10 +77,12 @@ class SpsUserGacha {
         item_type TEXT,
         rank_type TEXT,
         id TEXT NOT NULL,
-        PRIMARY KEY (uid, gacha_type, item_id, time)
+        PRIMARY KEY (uid, id)
       );
       ''');
     }
+    var tvUserGacha = await _appConfig.read('TvUserGacha');
+    if (tvUserGacha == null) await recreate();
   }
 
   /// 获取所有不重复的uid
@@ -77,6 +119,7 @@ class SpsUserGacha {
       _instance._tableName,
       where: 'uid = ?',
       whereArgs: [uid],
+      orderBy: 'time DESC',
     );
     var gachaList = dbRes.map(UserGachaModel.fromSqlJson).toList();
     var napList = <UigfModelNapItem>[];
