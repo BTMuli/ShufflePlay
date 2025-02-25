@@ -46,10 +46,15 @@ class NapItemMapModel {
   /// from sql json
   factory NapItemMapModel.fromSqlJson(Map<String, dynamic> json) {
     var locale = jsonDecode(json['locale']);
+    var type = json['type'] == 'weapon'
+        ? NapItemMapType.weapon
+        : json['type'] == 'character'
+            ? NapItemMapType.character
+            : NapItemMapType.bangboo;
     return NapItemMapModel(
       itemId: json['item_id'],
       rank: json['rank'],
-      type: json['type'],
+      type: type,
       locale: NapItemMapLocale.fromJson(locale),
     );
   }

@@ -3,12 +3,14 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 // Project imports:
+import '../../models/database/nap/nap_item_map_enum.dart';
 import '../../models/database/user/user_gacha_model.dart';
 import '../../models/nap/gacha/nap_gacha_model.dart';
 import '../../plugins/UIGF/models/uigf_enum.dart';
 import '../../plugins/UIGF/models/uigf_model.dart';
 import '../utils/trans_time.dart';
 import 'app_config.dart';
+import 'nap_item_map.dart';
 import 'sp_sqlite.dart';
 
 /// 用户祈愿数据表
@@ -22,6 +24,8 @@ class SpsUserGacha {
   final SPSqlite sqlite = SPSqlite();
 
   final SpsAppConfig _appConfig = SpsAppConfig();
+
+  final SpsNapItemMap _napItemMap = SpsNapItemMap();
 
   final String _tableName = 'UserGacha';
 
@@ -174,20 +178,29 @@ class SpsUserGacha {
     var batch = _instance.sqlite.db.batch();
     for (var user in uigf.nap) {
       for (var item in user.list) {
+        var metaModel = await _napItemMap.read(item.itemId);
+        var model = UserGachaModel(
+          uid: user.uid.toString(),
+          gachaType: item.gachaType,
+          itemId: item.itemId,
+          time: toUtcTime(user.timezone, item.time),
+          id: item.id,
+          name: item.name,
+          count: item.count,
+          itemType: item.itemType,
+          rankType: item.rankType,
+          gachaId: item.gachaId,
+        );
+        if (metaModel != null) {
+          model.name = metaModel.locale.zh;
+          model.itemType = metaModel.type.zh;
+          if (model.rankType == null || model.rankType!.isEmpty) {
+            model.rankType = metaModel.rank;
+          }
+        }
         batch.insert(
           _instance._tableName,
-          UserGachaModel(
-            uid: user.uid.toString(),
-            gachaType: item.gachaType,
-            itemId: item.itemId,
-            time: toUtcTime(user.timezone, item.time),
-            id: item.id,
-            name: item.name,
-            count: item.count,
-            itemType: item.itemType,
-            rankType: item.rankType,
-            gachaId: item.gachaId,
-          ).toSqlJson(),
+          model.toSqlJson(),
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
       }
