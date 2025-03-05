@@ -2,7 +2,7 @@
 import 'package:json_annotation/json_annotation.dart';
 
 /// 米游社相关的一些常量
-const bbsVersion = '2.79.1';
+const bbsVersion = '2.83.1';
 const bbsUaPC =
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) miHoYoBBS/$bbsVersion';
 const bbsUaMobile =
@@ -36,9 +36,9 @@ extension BbsConstantSaltExtension on BbsConstantSalt {
   String get salt {
     switch (this) {
       case BbsConstantSalt.k2:
-        return 'eOzxpHXVGBVdFBtkbkTvwyCgRpqRFeBr';
+        return 'wpa5R56uuMIZBQ2i31fi0gfAQY7ehLiV';
       case BbsConstantSalt.lk2:
-        return 'AbuxbruiFDIgxLXksUNMAMvDyciznofM';
+        return 'dp8QUFKPYSOzIokdsW9mkxSLyA2FtF8y';
       case BbsConstantSalt.x4:
         return 'xV8v4Qu54lUKrEYFZkJhB8cuOh9Asafs';
       case BbsConstantSalt.x6:

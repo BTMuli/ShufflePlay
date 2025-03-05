@@ -32,11 +32,11 @@ dependencies:
   cached_network_image: ^3.4.1
   crypto: ^3.0.6
   cupertino_icons: ^1.0.6
-  device_info_plus: ^11.3.0
+  device_info_plus: ^11.3.3
   dio: ^5.8.0+1
   encrypt: ^5.0.3
   file_selector: ^1.0.3
-  fluent_ui: ^4.11.1
+  fluent_ui: ^4.11.2
   flutter:
     sdk: flutter
   flutter_acrylic: ^1.1.4
@@ -45,14 +45,14 @@ dependencies:
   flutter_widget_from_html: ^0.16.0
   jiffy: ^6.3.2
   json_annotation: ^4.9.0
-  json_schema: ^5.2.0
+  json_schema: ^5.2.1
   logger: ^2.5.0
-  macos_ui: ^2.1.9
+  macos_ui: ^2.1.10
   msvcredist:
     git:
       url: https://github.com/insertjokehere/flutter_msvcredist.git
       ref: main
-  package_info_plus: ^8.2.1
+  package_info_plus: ^8.3.0
   path: ^1.9.0
   path_provider: ^2.1.5
   provider: ^6.1.2
