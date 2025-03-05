@@ -1,5 +1,5 @@
-// Package imports:
-import 'package:fluent_ui/fluent_ui.dart';
+// Flutter imports:
+import 'package:flutter/material.dart';
 
 class SpAppIcon extends StatelessWidget {
   const SpAppIcon({super.key});
