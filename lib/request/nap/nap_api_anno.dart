@@ -13,7 +13,7 @@ const napAnnoRespParam = {
   "lang": "zh-cn",
   "bundle_id": "nap_cn",
   "channel_id": "1",
-  "level": "55",
+  "level": "59",
   "platform": "pc",
   "region": "prod_gf_cn",
   "uid": "10696024"

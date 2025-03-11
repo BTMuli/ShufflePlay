@@ -48,10 +48,6 @@ dependencies:
   json_schema: ^5.2.1
   logger: ^2.5.0
   macos_ui: ^2.1.10
-  msvcredist:
-    git:
-      url: https://github.com/insertjokehere/flutter_msvcredist.git
-      ref: main
   package_info_plus: ^8.3.0
   path: ^1.9.0
   path_provider: ^2.1.5
@@ -73,10 +69,7 @@ dev_dependencies:
   import_sorter: ^4.6.0
   json_serializable: ^6.9.4
   lint_staged: ^0.5.1
-  msix:
-    git:
-      url: https://github.com/insertjokehere/msix.git
-      ref: msvc_redist
+  msix: ^3.16.8
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
