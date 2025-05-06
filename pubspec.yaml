@@ -32,11 +32,11 @@ dependencies:
   cached_network_image: ^3.4.1
   crypto: ^3.0.6
   cupertino_icons: ^1.0.6
-  device_info_plus: ^11.3.3
+  device_info_plus: ^11.4.0
   dio: ^5.8.0+1
   encrypt: ^5.0.3
   file_selector: ^1.0.3
-  fluent_ui: ^4.11.2
+  fluent_ui: ^4.11.3
   flutter:
     sdk: flutter
   flutter_acrylic: ^1.1.4
@@ -51,13 +51,13 @@ dependencies:
   package_info_plus: ^8.3.0
   path: ^1.9.0
   path_provider: ^2.1.5
-  provider: ^6.1.2
+  provider: ^6.1.5
   qr_flutter: ^4.1.0
   sqflite_common_ffi: ^2.3.5
   system_theme: ^3.1.2
   url_launcher: ^6.3.1
   uuid: ^4.4.2
-  webview_flutter: ^4.10.0
+  webview_flutter: ^4.11.0
   webview_windows: ^0.4.0
   window_manager: ^0.4.3
   windows_taskbar: ^1.1.2
@@ -67,9 +67,9 @@ dev_dependencies:
   flutter_lints: ^5.0.0
   husky: ^0.1.7
   import_sorter: ^4.6.0
-  json_serializable: ^6.9.4
+  json_serializable: ^6.9.5
   lint_staged: ^0.5.1
-  msix: ^3.16.8
+  msix: ^3.16.9
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
