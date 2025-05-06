@@ -13,8 +13,16 @@ class NapAnnoCardWidget extends StatelessWidget {
   /// onPressed
   final VoidCallback? onPressed;
 
+  /// 是否是游戏公告
+  final bool isGame;
+
   /// 构造函数
-  const NapAnnoCardWidget({super.key, required this.anno, this.onPressed});
+  const NapAnnoCardWidget({
+    super.key,
+    required this.anno,
+    this.onPressed,
+    required this.isGame,
+  });
 
   /// 获取标题
   String getTitle(String title) {
@@ -28,7 +36,7 @@ class NapAnnoCardWidget extends StatelessWidget {
   /// 构建封面
   Widget buildCover() {
     return AspectRatio(
-      aspectRatio: 36 / 13,
+      aspectRatio: isGame ? 1016 / 222 : 36 / 13,
       child: ClipRRect(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(4.sp),

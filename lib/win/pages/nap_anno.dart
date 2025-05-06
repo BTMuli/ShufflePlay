@@ -185,12 +185,16 @@ class _NapAnnoPageState extends ConsumerState<NapAnnoPage>
   }
 
   /// 构建列表
-  Widget buildList(List<NapAnnoListModel> list, BuildContext context) {
+  Widget buildList(
+    List<NapAnnoListModel> list,
+    BuildContext context,
+    bool isGame,
+  ) {
     if (list.isEmpty) return const Center(child: ProgressRing());
     return GridView.builder(
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
-        childAspectRatio: 36 / 16,
+        childAspectRatio: isGame ? 10 / 3 : 36 / 16,
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
       ),
@@ -200,6 +204,7 @@ class _NapAnnoPageState extends ConsumerState<NapAnnoPage>
         return NapAnnoCardWidget(
           anno: list[index],
           onPressed: () async => await showAnno(context, list[index].annId),
+          isGame: isGame,
         );
       },
     );
@@ -215,6 +220,7 @@ class _NapAnnoPageState extends ConsumerState<NapAnnoPage>
       body: buildList(
         annoList.where((e) => e.type == (isGame ? 3 : 4)).toList(),
         context,
+        isGame,
       ),
       selectedBackgroundColor: FluentTheme.of(context).accentColor,
       backgroundColor: FluentTheme.of(context).accentColor.withAlpha(50),
