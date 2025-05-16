@@ -12,11 +12,19 @@ class NapAnnoCardWidget extends StatelessWidget {
   /// 卡片内容
   final NapAnnoListModel anno;
 
+  /// 是否是游戏内公告
+  final bool isGame;
+
   /// onPressed
   final VoidCallback? onPressed;
 
   /// 构造函数
-  const NapAnnoCardWidget({super.key, required this.anno, this.onPressed});
+  const NapAnnoCardWidget({
+    super.key,
+    required this.anno,
+    required this.isGame,
+    this.onPressed,
+  });
 
   /// 获取标题
   String getTitle(String title) {
@@ -30,7 +38,7 @@ class NapAnnoCardWidget extends StatelessWidget {
   /// 构建封面
   Widget buildCover() {
     return AspectRatio(
-      aspectRatio: 36 / 13,
+      aspectRatio: isGame ? 1016 / 222 : 36 / 13,
       child: ClipRRect(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(4.sp),
@@ -78,6 +86,9 @@ class NapAnnoCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(4.sp),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
