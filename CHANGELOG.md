@@ -2,14 +2,18 @@
 Author: 目棃
 Description: 更新日志
 Date: 2024-08-08
-Update: 2025-02-25
+Update: 2025-05-25
 ---
 
 > 本文档 [`Frontmatter`](https://github.com/BTMuli/MuCli#Frontmatter) 由 [MuCli](https://github.com/BTMuli/Mucli) 自动生成于 `2024-08-08 18:24:38`
 >
-> 更新于 `2025-02-25 16:58:17`
+> 更新于 `2025-05-25 20:10:57`
 
 # 更新日志
+
+## [v0.4.2](https://github.com/BTMuli/ShufflePlay/releases/tag/v0.4.2) (2025-05-25)
+
+- 💄 调整公告卡片布局
 
 ## [v0.4.1](https://github.com/BTMuli/ShufflePlay/releases/tag/v0.4.1) (2025-02-25)
 
