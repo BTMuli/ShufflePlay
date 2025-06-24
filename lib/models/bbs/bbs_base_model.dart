@@ -28,7 +28,8 @@ class BBSResp<T> {
   factory BBSResp.fromJson(
     Map<String, dynamic> json,
     T Function(dynamic json) fromJsonT,
-  ) => _$BBSRespFromJson(json, fromJsonT);
+  ) =>
+      _$BBSRespFromJson(json, fromJsonT);
 
   /// to json
   Map<String, dynamic> toJson(dynamic Function(T value) toJsonT) =>
@@ -42,7 +43,8 @@ class BBSResp<T> {
     required int retcode,
     required String message,
     T? data,
-  }) => BBSResp(retcode: retcode, message: message, data: data);
+  }) =>
+      BBSResp(retcode: retcode, message: message, data: data);
 
   /// success
   static BBSResp success({required dynamic data}) =>

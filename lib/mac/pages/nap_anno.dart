@@ -173,7 +173,7 @@ class _NapAnnoPageState extends State<NapAnnoPage> {
     BuildContext context, {
     bool isGame = false,
   }) {
-    if (list.isEmpty) return Center(child: const ProgressCircle());
+    if (list.isEmpty) return Center(child: const Text("NO DATA"));
     return GridView.builder(
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,

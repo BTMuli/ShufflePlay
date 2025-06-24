@@ -137,8 +137,7 @@ Future<void> handleGetCookieToken(
   if (controller.ref == null) return;
   var user = controller.ref!.read(userBbsStoreProvider).user;
   if (user == null || user.cookie == null) return;
-  var js =
-      '''javascript:(function(){
+  var js = '''javascript:(function(){
   let domainCur = window.location.hostname;
   if (domainCur.endsWith('.miyoushe.com')) domainCur = '.miyoushe.com';
   else domainCur = '.mihoyo.com';

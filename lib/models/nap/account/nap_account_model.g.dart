@@ -22,7 +22,8 @@ NapAccountModelData _$NapAccountModelDataFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$NapAccountModelDataToJson(
   NapAccountModelData instance,
-) => <String, dynamic>{'list': instance.list.map((e) => e.toJson()).toList()};
+) =>
+    <String, dynamic>{'list': instance.list.map((e) => e.toJson()).toList()};
 
 NapAccountModel _$NapAccountModelFromJson(Map<String, dynamic> json) =>
     NapAccountModel(

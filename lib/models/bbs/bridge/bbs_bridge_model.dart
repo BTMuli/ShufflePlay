@@ -30,7 +30,8 @@ class BbsBridgeModel<T> {
   factory BbsBridgeModel.fromJson(
     Map<String, dynamic> json,
     T Function(Object? json) fromJsonT,
-  ) => _$BbsBridgeModelFromJson(json, fromJsonT);
+  ) =>
+      _$BbsBridgeModelFromJson(json, fromJsonT);
 
   /// to json
   Map<String, dynamic> toJson(Object? Function(T value) toJsonT) =>
@@ -167,7 +168,8 @@ class BbsBridgePayloadSetPresentationStyle {
   /// from json
   factory BbsBridgePayloadSetPresentationStyle.fromJson(
     Map<String, dynamic> json,
-  ) => _$BbsBridgePayloadSetPresentationStyleFromJson(json);
+  ) =>
+      _$BbsBridgePayloadSetPresentationStyleFromJson(json);
 
   /// to json
   Map<String, dynamic> toJson() =>

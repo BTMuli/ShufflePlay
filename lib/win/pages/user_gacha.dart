@@ -190,8 +190,7 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage>
       return;
     }
     var title = isForce ? '全量刷新用户调频数据？' : '增量刷新用户调频数据？';
-    var text =
-        '${curAccount.nickname} '
+    var text = '${curAccount.nickname} '
         'UID: ${curAccount.gameUid} '
         '[${curAccount.regionName}]';
     var check = await SpDialog.confirm(context, title, text);

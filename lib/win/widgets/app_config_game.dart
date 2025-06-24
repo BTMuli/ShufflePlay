@@ -94,9 +94,12 @@ class _AppConfigGameWidgetState extends ConsumerState<AppConfigGameWidget> {
         return;
       }
       var ticketData = ticketResp.data as NapAuthTicketModelData;
-      await Process.run(gamePath, [
-        'login_auth_ticket=${ticketData.ticket}',
-      ], runInShell: true);
+      await Process.run(
+          gamePath,
+          [
+            'login_auth_ticket=${ticketData.ticket}',
+          ],
+          runInShell: true);
     }
   }
 

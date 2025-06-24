@@ -262,8 +262,8 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
       leading: user.brief?.avatar != null
           ? Image.network(user.brief!.avatar, width: 24, height: 24)
           : uid == user.uid
-          ? const MacosIcon(Icons.person)
-          : const MacosIcon(Icons.person_pin),
+              ? const MacosIcon(Icons.person)
+              : const MacosIcon(Icons.person_pin),
       onClick: () async {
         if (uid == user.uid) return;
         await ref.read(userBbsStoreProvider).switchUser(user.uid);

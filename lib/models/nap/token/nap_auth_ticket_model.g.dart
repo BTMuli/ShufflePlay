@@ -8,16 +8,20 @@ part of 'nap_auth_ticket_model.dart';
 
 NapAuthTicketModelResp _$NapAuthTicketModelRespFromJson(
   Map<String, dynamic> json,
-) => NapAuthTicketModelResp(
-  retcode: (json['retcode'] as num).toInt(),
-  message: json['message'] as String,
-  data: NapAuthTicketModelData.fromJson(json['data'] as Map<String, dynamic>),
-);
+) =>
+    NapAuthTicketModelResp(
+      retcode: (json['retcode'] as num).toInt(),
+      message: json['message'] as String,
+      data:
+          NapAuthTicketModelData.fromJson(json['data'] as Map<String, dynamic>),
+    );
 
 NapAuthTicketModelData _$NapAuthTicketModelDataFromJson(
   Map<String, dynamic> json,
-) => NapAuthTicketModelData(ticket: json['ticket'] as String);
+) =>
+    NapAuthTicketModelData(ticket: json['ticket'] as String);
 
 Map<String, dynamic> _$NapAuthTicketModelDataToJson(
   NapAuthTicketModelData instance,
-) => <String, dynamic>{'ticket': instance.ticket};
+) =>
+    <String, dynamic>{'ticket': instance.ticket};

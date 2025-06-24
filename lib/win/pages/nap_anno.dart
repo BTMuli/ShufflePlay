@@ -190,7 +190,7 @@ class _NapAnnoPageState extends ConsumerState<NapAnnoPage>
     BuildContext context,
     bool isGame,
   ) {
-    if (list.isEmpty) return const Center(child: ProgressRing());
+    if (list.isEmpty) return const Center(child: Text("NO DATA"));
     return GridView.builder(
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
@@ -213,9 +213,7 @@ class _NapAnnoPageState extends ConsumerState<NapAnnoPage>
   /// 构建tab
   Tab buildTab(BuildContext context, bool isGame) {
     return Tab(
-      icon: currentIndex == (isGame ? 0 : 1)
-          ? Icon(FluentIcons.game)
-          : Icon(FluentIcons.calendar),
+      icon: isGame ? Icon(FluentIcons.game) : Icon(FluentIcons.calendar),
       text: Text(isGame ? '游戏公告' : '活动公告'),
       body: buildList(
         annoList.where((e) => e.type == (isGame ? 3 : 4)).toList(),

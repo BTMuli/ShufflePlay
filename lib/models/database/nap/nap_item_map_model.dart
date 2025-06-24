@@ -49,8 +49,8 @@ class NapItemMapModel {
     var type = json['type'] == 'weapon'
         ? NapItemMapType.weapon
         : json['type'] == 'character'
-        ? NapItemMapType.character
-        : NapItemMapType.bangboo;
+            ? NapItemMapType.character
+            : NapItemMapType.bangboo;
     return NapItemMapModel(
       itemId: json['item_id'],
       rank: json['rank'],

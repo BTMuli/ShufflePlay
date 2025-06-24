@@ -121,9 +121,8 @@ class _AppConfigInfoWidgetState extends ConsumerState<AppConfigInfoWidget> {
   MenuFlyoutItemBase buildThemeItem(SpAppThemeConfig theme) {
     return MenuFlyoutItem(
       text: Text(theme.label),
-      leading: curThemeMode == theme.cur
-          ? SPIcon(theme.icon)
-          : Icon(theme.icon),
+      leading:
+          curThemeMode == theme.cur ? SPIcon(theme.icon) : Icon(theme.icon),
       onPressed: () async => await ref
           .read(appConfigStoreProvider.notifier)
           .setThemeMode(theme.cur),
