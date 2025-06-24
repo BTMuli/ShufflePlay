@@ -66,8 +66,7 @@ class _NapAnnoPageState extends State<NapAnnoPage> {
     var contentData = contentResp.data as NapAnnoContentModelData;
     annoContentList = contentData.list;
     if (mounted) setState(() {});
-    if (context.mounted && alert) await SpInfobar.success(
-        context, '公告加载成功');
+    if (context.mounted && alert) await SpInfobar.success(context, '公告加载成功');
   }
 
   /// 获取标题
@@ -158,10 +157,7 @@ class _NapAnnoPageState extends State<NapAnnoPage> {
 
   Widget buildTitle(BuildContext context) {
     return Row(children: [
-      Text('游戏公告', style: MacosTheme
-          .of(context)
-          .typography
-          .headline),
+      Text('游戏公告', style: MacosTheme.of(context).typography.headline),
       MacosIconButton(
         icon: MacosIcon(Icons.refresh),
         onPressed: () async => await loadAnnoList(ctx: context, alert: true),
@@ -170,10 +166,11 @@ class _NapAnnoPageState extends State<NapAnnoPage> {
   }
 
   /// 构建列表
-  Widget buildList(List<NapAnnoListModel> list,
-      BuildContext context, {
-        bool isGame = false,
-      }) {
+  Widget buildList(
+    List<NapAnnoListModel> list,
+    BuildContext context, {
+    bool isGame = false,
+  }) {
     if (list.isEmpty) return Center(child: const ProgressCircle());
     return GridView.builder(
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -205,24 +202,21 @@ class _NapAnnoPageState extends State<NapAnnoPage> {
       ),
       children: [
         ContentArea(
-          builder: (_, __) =>
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-                child: MacosTabView(
-                  controller: controller,
-                  tabs: [
-                    MacosTab(label: '游戏公告'),
-                    MacosTab(label: '活动公告'),
-                  ],
-                  children: [
-                    buildList(
-                        annoList.where((e) => e.type == 3).toList(), context,
-                        isGame: true),
-                    buildList(
-                        annoList.where((e) => e.type == 4).toList(), context),
-                  ],
-                ),
-              ),
+          builder: (_, __) => Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+            child: MacosTabView(
+              controller: controller,
+              tabs: [
+                MacosTab(label: '游戏公告'),
+                MacosTab(label: '活动公告'),
+              ],
+              children: [
+                buildList(annoList.where((e) => e.type == 3).toList(), context,
+                    isGame: true),
+                buildList(annoList.where((e) => e.type == 4).toList(), context),
+              ],
+            ),
+          ),
         )
       ],
     );
