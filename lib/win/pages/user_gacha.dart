@@ -190,7 +190,8 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage>
       return;
     }
     var title = isForce ? '全量刷新用户调频数据？' : '增量刷新用户调频数据？';
-    var text = '${curAccount.nickname} '
+    var text =
+        '${curAccount.nickname} '
         'UID: ${curAccount.gameUid} '
         '[${curAccount.regionName}]';
     var check = await SpDialog.confirm(context, title, text);
@@ -237,10 +238,7 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage>
       UserGachaRefreshModel lastData = UserGachaRefreshModel(poolType);
       if (!isForce) {
         progress.update(text: '正在获取${poolType.label}池最新数据...');
-        lastData = await sqliteUser.getLatestGacha(
-          account.gameUid,
-          poolType,
-        );
+        lastData = await sqliteUser.getLatestGacha(account.gameUid, poolType);
       }
       progress.update(text: '开始获取${poolType.label}池数据...');
       var page = 1;
@@ -318,10 +316,8 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage>
           message: '增量刷新（长按全量刷新）',
           child: IconButton(
             onPressed: () async => await tryRefreshUserGacha(context),
-            onLongPress: () async => await tryRefreshUserGacha(
-              context,
-              isForce: true,
-            ),
+            onLongPress: () async =>
+                await tryRefreshUserGacha(context, isForce: true),
             icon: SPIcon(FluentIcons.refresh),
           ),
         ),

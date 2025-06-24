@@ -15,10 +15,7 @@ class SprBBSApi {
   final SprClient client = SprClient();
 
   /// 获取短信验证码
-  Future<BBSResp> getPhoneCaptchaResp(
-    String phone, {
-    String aigis = '',
-  }) async {
+  Future<BBSResp> getPhoneCaptchaResp(String phone, {String aigis = ''}) async {
     try {
       var device = await sqlite.readDevice();
       if (device.deviceFp == "0" * 13) {

@@ -22,15 +22,16 @@ class _UserGachaViewWidgetState extends State<UserGachaViewWidget> {
   Tab buildTab(UigfNapPoolType pool) {
     return Tab(
       text: Text(pool.label),
-      body: UserGachaList(
-        selectedUid: widget.selectedUid,
-        poolType: pool,
-      ),
+      body: UserGachaList(selectedUid: widget.selectedUid, poolType: pool),
       icon: selectedTab == pool.index
           ? const Icon(FluentIcons.giftbox_open)
           : const Icon(FluentIcons.giftbox),
-      selectedBackgroundColor: FluentTheme.of(context).accentColor,
-      backgroundColor: FluentTheme.of(context).accentColor.withAlpha(50),
+      selectedBackgroundColor: WidgetStateProperty.resolveWith(
+        (_) => FluentTheme.of(context).accentColor,
+      ),
+      backgroundColor: WidgetStateProperty.resolveWith(
+        (_) => FluentTheme.of(context).accentColor.withAlpha(50),
+      ),
       semanticLabel: pool.label,
     );
   }

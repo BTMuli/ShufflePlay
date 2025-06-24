@@ -37,10 +37,7 @@ class _UserGachaListState extends State<UserGachaList> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.uid != widget.uid) {
       Future.microtask(() async {
-        gachaList = await sqlite.readUser(
-          widget.uid,
-          gachaType: widget.pool,
-        );
+        gachaList = await sqlite.readUser(widget.uid, gachaType: widget.pool);
         if (mounted) setState(() {});
       });
     }

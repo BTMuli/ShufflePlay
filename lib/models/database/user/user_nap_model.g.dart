@@ -7,16 +7,16 @@ part of 'user_nap_model.dart';
 // **************************************************************************
 
 UserNapModel _$UserNapModelFromJson(Map<String, dynamic> json) => UserNapModel(
-      uid: json['uid'] as String,
-      gameBiz: json['game_biz'] as String,
-      gameUid: json['game_uid'] as String,
-      isChosen: json['is_chosen'] as bool,
-      isOfficial: json['is_official'] as bool,
-      level: (json['level'] as num).toInt(),
-      nickname: json['nickname'] as String,
-      region: json['region'] as String,
-      regionName: json['region_name'] as String,
-    );
+  uid: json['uid'] as String,
+  gameBiz: json['game_biz'] as String,
+  gameUid: json['game_uid'] as String,
+  isChosen: json['is_chosen'] as bool,
+  isOfficial: json['is_official'] as bool,
+  level: (json['level'] as num).toInt(),
+  nickname: json['nickname'] as String,
+  region: json['region'] as String,
+  regionName: json['region_name'] as String,
+);
 
 Map<String, dynamic> _$UserNapModelToJson(UserNapModel instance) =>
     <String, dynamic>{

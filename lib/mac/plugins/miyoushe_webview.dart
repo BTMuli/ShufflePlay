@@ -43,10 +43,11 @@ class MysControllerMac extends ChangeNotifier implements MiyousheController {
   @override
   late double width;
 
-  late WebViewController webview =
-      WebViewController(onPermissionRequest: (request) {
-    SPLogTool.debug('[Miyoushe] Permission request: $request');
-  });
+  late WebViewController webview = WebViewController(
+    onPermissionRequest: (request) {
+      SPLogTool.debug('[Miyoushe] Permission request: $request');
+    },
+  );
 
   @override
   Future<void> initialize(
@@ -225,9 +226,7 @@ class _MysClientMacState extends ConsumerState<MysClientMac> {
   Widget build(BuildContext context) {
     return Flexible(
       fit: FlexFit.tight,
-      child: WebViewWidget(
-        controller: widget.controller.webview,
-      ),
+      child: WebViewWidget(controller: widget.controller.webview),
     );
   }
 }

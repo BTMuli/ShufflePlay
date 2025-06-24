@@ -137,7 +137,8 @@ Future<void> handleGetCookieToken(
   if (controller.ref == null) return;
   var user = controller.ref!.read(userBbsStoreProvider).user;
   if (user == null || user.cookie == null) return;
-  var js = '''javascript:(function(){
+  var js =
+      '''javascript:(function(){
   let domainCur = window.location.hostname;
   if (domainCur.endsWith('.miyoushe.com')) domainCur = '.miyoushe.com';
   else domainCur = '.mihoyo.com';
@@ -180,16 +181,14 @@ Future<void> handleGetDS2(
   BbsBridgeModel arg,
   MiyousheController controller,
 ) async {
-  BbsBridgeGetDS2 data = BbsBridgeGetDS2.fromJson(
-    arg.toJson((value) => value),
-  );
+  BbsBridgeGetDS2 data = BbsBridgeGetDS2.fromJson(arg.toJson((value) => value));
   var res = {
     "DS": getDsJsVersion(
       BbsConstantSalt.x4,
       false,
       data.payload?.query,
       data.payload?.body,
-    )
+    ),
   };
   SPLogTool.debug('[Miyoushe] Get DS2: $res');
   await controller.callback(arg.callback!, res);

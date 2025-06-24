@@ -107,11 +107,9 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget>
       return;
     }
     var ticketData = tickResp.data as NapAuthTicketModelData;
-    await Process.run(
-      gamePath,
-      ['login_auth_ticket=${ticketData.ticket}'],
-      runInShell: true,
-    );
+    await Process.run(gamePath, [
+      'login_auth_ticket=${ticketData.ticket}',
+    ], runInShell: true);
   }
 
   /// 重置窗口大小
@@ -217,8 +215,9 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget>
     return MenuFlyoutItem(
       selected: act.uid == account?.uid,
       text: Text('${act.nickname}-${act.gameUid} ${act.regionName}'),
-      trailing:
-          act.uid == account?.uid ? const Icon(FluentIcons.check_mark) : null,
+      trailing: act.uid == account?.uid
+          ? const Icon(FluentIcons.check_mark)
+          : null,
       onPressed: () async {
         if (act.uid != account?.uid) {
           ref.read(userBbsStoreProvider).setAccount(act);
@@ -260,9 +259,8 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget>
       onTap: () async {
         await flyoutUser.showFlyout(
           placementMode: FlyoutPlacementMode.bottomLeft,
-          builder: (context) => MenuFlyout(
-            items: accounts.map(buildAccountFlyout).toList(),
-          ),
+          builder: (context) =>
+              MenuFlyout(items: accounts.map(buildAccountFlyout).toList()),
         );
       },
     );

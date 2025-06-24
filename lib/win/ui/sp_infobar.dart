@@ -94,10 +94,7 @@ class SpInfobar {
   }
 
   /// bbs
-  static Future<void> bbs(
-    BuildContext context,
-    BBSResp resp,
-  ) async {
+  static Future<void> bbs(BuildContext context, BBSResp resp) async {
     var severity = InfoBarSeverity.success;
     if (resp.retcode != 0) severity = InfoBarSeverity.error;
     var str = '[${resp.retcode}] ${resp.message}';

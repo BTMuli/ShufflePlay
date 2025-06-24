@@ -75,7 +75,9 @@ class SpDialog {
               children: <Widget>[
                 Text('$content:'),
                 const SizedBox(width: 8),
-                Expanded(child: TextBox(placeholder: label, controller: input)),
+                Expanded(
+                  child: TextBox(placeholder: label, controller: input),
+                ),
                 const SizedBox(width: 8),
                 if (copy)
                   IconButton(
@@ -179,7 +181,7 @@ class SpDialog {
                 if (context.mounted) Navigator.of(context).pop(cookie);
               },
               child: const Text('确定'),
-            )
+            ),
           ],
         );
       },

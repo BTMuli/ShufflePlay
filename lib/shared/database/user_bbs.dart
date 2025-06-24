@@ -80,10 +80,7 @@ class SpsUserBbs {
     );
     user.updatedAt = Jiffy.now().second;
     if (result.isEmpty) {
-      await _instance.sqlite.db.insert(
-        _instance._tableName,
-        user.toSqlJson(),
-      );
+      await _instance.sqlite.db.insert(_instance._tableName, user.toSqlJson());
     } else {
       user.id = result.first['id'] as int?;
       await _instance.sqlite.db.update(

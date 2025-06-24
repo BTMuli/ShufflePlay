@@ -7,27 +7,26 @@ part of 'nap_avatar_list_model.dart';
 // **************************************************************************
 
 NapAvatarListModelResp _$NapAvatarListModelRespFromJson(
-        Map<String, dynamic> json) =>
-    NapAvatarListModelResp(
-      retcode: (json['retcode'] as num).toInt(),
-      message: json['message'] as String,
-      data:
-          NapAvatarListModelRes.fromJson(json['data'] as Map<String, dynamic>),
-    );
+  Map<String, dynamic> json,
+) => NapAvatarListModelResp(
+  retcode: (json['retcode'] as num).toInt(),
+  message: json['message'] as String,
+  data: NapAvatarListModelRes.fromJson(json['data'] as Map<String, dynamic>),
+);
 
 NapAvatarListModelRes _$NapAvatarListModelResFromJson(
-        Map<String, dynamic> json) =>
-    NapAvatarListModelRes(
-      avatarList: (json['avatar_list'] as List<dynamic>)
-          .map((e) => NapAvatarListModel.fromJson(e as Map<String, dynamic>))
-          .toList(),
-    );
+  Map<String, dynamic> json,
+) => NapAvatarListModelRes(
+  avatarList: (json['avatar_list'] as List<dynamic>)
+      .map((e) => NapAvatarListModel.fromJson(e as Map<String, dynamic>))
+      .toList(),
+);
 
 Map<String, dynamic> _$NapAvatarListModelResToJson(
-        NapAvatarListModelRes instance) =>
-    <String, dynamic>{
-      'avatar_list': instance.avatarList.map((e) => e.toJson()).toList(),
-    };
+  NapAvatarListModelRes instance,
+) => <String, dynamic>{
+  'avatar_list': instance.avatarList.map((e) => e.toJson()).toList(),
+};
 
 NapAvatarListModel _$NapAvatarListModelFromJson(Map<String, dynamic> json) =>
     NapAvatarListModel(

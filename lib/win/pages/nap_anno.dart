@@ -178,7 +178,7 @@ class _NapAnnoPageState extends ConsumerState<NapAnnoPage>
               onPressed: loadAnnoList,
               icon: SPIcon(FluentIcons.refresh),
             ),
-          )
+          ),
         ],
       ),
     );
@@ -222,8 +222,12 @@ class _NapAnnoPageState extends ConsumerState<NapAnnoPage>
         context,
         isGame,
       ),
-      selectedBackgroundColor: FluentTheme.of(context).accentColor,
-      backgroundColor: FluentTheme.of(context).accentColor.withAlpha(50),
+      selectedBackgroundColor: WidgetStateProperty.resolveWith(
+        (_) => FluentTheme.of(context).accentColor,
+      ),
+      backgroundColor: WidgetStateProperty.resolveWith(
+        (_) => FluentTheme.of(context).accentColor.withAlpha(50),
+      ),
     );
   }
 

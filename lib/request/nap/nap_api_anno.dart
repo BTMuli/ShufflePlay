@@ -16,7 +16,7 @@ const napAnnoRespParam = {
   "level": "60",
   "platform": "pc",
   "region": "prod_gf_cn",
-  "uid": "10696024"
+  "uid": "10696024",
 };
 
 class SprNapApiAnno {
@@ -63,10 +63,7 @@ class SprNapApiAnno {
     try {
       var resp = await client.dio.get(
         'common/nap_cn/announcement/api/getAnnContent',
-        queryParameters: {
-          ...napAnnoRespParam,
-          't': t,
-        },
+        queryParameters: {...napAnnoRespParam, 't': t},
       );
       if (resp.data['retcode'] == 0) {
         return NapAnnoContentModelResp.fromJson(resp.data);

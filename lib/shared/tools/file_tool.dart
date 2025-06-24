@@ -65,10 +65,7 @@ class SPFileTool {
     String label = 'json',
     String extension = 'json',
   }) async {
-    XTypeGroup fileType = XTypeGroup(
-      label: label,
-      extensions: [extension],
-    );
+    XTypeGroup fileType = XTypeGroup(label: label, extensions: [extension]);
     XFile? file = await openFile(
       acceptedTypeGroups: [fileType],
       initialDirectory: initialDirectory,

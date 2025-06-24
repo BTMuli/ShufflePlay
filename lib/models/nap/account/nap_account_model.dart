@@ -30,9 +30,7 @@ class NapAccountModelData {
   final List<NapAccountModel> list;
 
   /// constructor
-  NapAccountModelData({
-    required this.list,
-  });
+  NapAccountModelData({required this.list});
 
   /// from json
   factory NapAccountModelData.fromJson(Map<String, dynamic> json) =>

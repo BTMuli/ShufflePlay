@@ -7,87 +7,86 @@ part of 'nap_anno_list_model.dart';
 // **************************************************************************
 
 NapAnnoListModelResp _$NapAnnoListModelRespFromJson(
-        Map<String, dynamic> json) =>
-    NapAnnoListModelResp(
-      retcode: (json['retcode'] as num).toInt(),
-      message: json['message'] as String,
-      data: NapAnnoListModelData.fromJson(json['data'] as Map<String, dynamic>),
-    );
+  Map<String, dynamic> json,
+) => NapAnnoListModelResp(
+  retcode: (json['retcode'] as num).toInt(),
+  message: json['message'] as String,
+  data: NapAnnoListModelData.fromJson(json['data'] as Map<String, dynamic>),
+);
 
 NapAnnoListModelData _$NapAnnoListModelDataFromJson(
-        Map<String, dynamic> json) =>
-    NapAnnoListModelData(
-      alert: json['alert'] as bool,
-      alertId: (json['alert_id'] as num).toInt(),
-      list: (json['list'] as List<dynamic>)
-          .map((e) => NapAnnoListModelList.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      picAlert: json['pic_alert'] as bool,
-      picAlertId: (json['pic_alert_id'] as num).toInt(),
-      picList: json['pic_list'] as List<dynamic>,
-      picTotal: (json['pic_total'] as num).toInt(),
-      picTypeList: json['pic_type_list'] as List<dynamic>,
-      staticSign: json['static_sign'] as String,
-      t: json['t'] as String,
-      timezone: (json['timezone'] as num).toInt(),
-      total: (json['total'] as num).toInt(),
-      typeList: (json['type_list'] as List<dynamic>)
-          .map((e) =>
-              NapAnnoListModelTypeList.fromJson(e as Map<String, dynamic>))
-          .toList(),
-    );
+  Map<String, dynamic> json,
+) => NapAnnoListModelData(
+  alert: json['alert'] as bool,
+  alertId: (json['alert_id'] as num).toInt(),
+  list: (json['list'] as List<dynamic>)
+      .map((e) => NapAnnoListModelList.fromJson(e as Map<String, dynamic>))
+      .toList(),
+  picAlert: json['pic_alert'] as bool,
+  picAlertId: (json['pic_alert_id'] as num).toInt(),
+  picList: json['pic_list'] as List<dynamic>,
+  picTotal: (json['pic_total'] as num).toInt(),
+  picTypeList: json['pic_type_list'] as List<dynamic>,
+  staticSign: json['static_sign'] as String,
+  t: json['t'] as String,
+  timezone: (json['timezone'] as num).toInt(),
+  total: (json['total'] as num).toInt(),
+  typeList: (json['type_list'] as List<dynamic>)
+      .map((e) => NapAnnoListModelTypeList.fromJson(e as Map<String, dynamic>))
+      .toList(),
+);
 
 Map<String, dynamic> _$NapAnnoListModelDataToJson(
-        NapAnnoListModelData instance) =>
-    <String, dynamic>{
-      'alert': instance.alert,
-      'alert_id': instance.alertId,
-      'list': instance.list.map((e) => e.toJson()).toList(),
-      'pic_alert': instance.picAlert,
-      'pic_alert_id': instance.picAlertId,
-      'pic_list': instance.picList,
-      'pic_total': instance.picTotal,
-      'pic_type_list': instance.picTypeList,
-      'static_sign': instance.staticSign,
-      't': instance.t,
-      'timezone': instance.timezone,
-      'total': instance.total,
-      'type_list': instance.typeList.map((e) => e.toJson()).toList(),
-    };
+  NapAnnoListModelData instance,
+) => <String, dynamic>{
+  'alert': instance.alert,
+  'alert_id': instance.alertId,
+  'list': instance.list.map((e) => e.toJson()).toList(),
+  'pic_alert': instance.picAlert,
+  'pic_alert_id': instance.picAlertId,
+  'pic_list': instance.picList,
+  'pic_total': instance.picTotal,
+  'pic_type_list': instance.picTypeList,
+  'static_sign': instance.staticSign,
+  't': instance.t,
+  'timezone': instance.timezone,
+  'total': instance.total,
+  'type_list': instance.typeList.map((e) => e.toJson()).toList(),
+};
 
 NapAnnoListModelTypeList _$NapAnnoListModelTypeListFromJson(
-        Map<String, dynamic> json) =>
-    NapAnnoListModelTypeList(
-      id: (json['id'] as num).toInt(),
-      mi18nName: json['mi18n_name'] as String,
-      name: json['name'] as String,
-    );
+  Map<String, dynamic> json,
+) => NapAnnoListModelTypeList(
+  id: (json['id'] as num).toInt(),
+  mi18nName: json['mi18n_name'] as String,
+  name: json['name'] as String,
+);
 
 Map<String, dynamic> _$NapAnnoListModelTypeListToJson(
-        NapAnnoListModelTypeList instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'mi18n_name': instance.mi18nName,
-      'name': instance.name,
-    };
+  NapAnnoListModelTypeList instance,
+) => <String, dynamic>{
+  'id': instance.id,
+  'mi18n_name': instance.mi18nName,
+  'name': instance.name,
+};
 
 NapAnnoListModelList _$NapAnnoListModelListFromJson(
-        Map<String, dynamic> json) =>
-    NapAnnoListModelList(
-      typeId: (json['type_id'] as num).toInt(),
-      typeLabel: json['type_label'] as String,
-      list: (json['list'] as List<dynamic>)
-          .map((e) => NapAnnoListModel.fromJson(e as Map<String, dynamic>))
-          .toList(),
-    );
+  Map<String, dynamic> json,
+) => NapAnnoListModelList(
+  typeId: (json['type_id'] as num).toInt(),
+  typeLabel: json['type_label'] as String,
+  list: (json['list'] as List<dynamic>)
+      .map((e) => NapAnnoListModel.fromJson(e as Map<String, dynamic>))
+      .toList(),
+);
 
 Map<String, dynamic> _$NapAnnoListModelListToJson(
-        NapAnnoListModelList instance) =>
-    <String, dynamic>{
-      'type_id': instance.typeId,
-      'type_label': instance.typeLabel,
-      'list': instance.list.map((e) => e.toJson()).toList(),
-    };
+  NapAnnoListModelList instance,
+) => <String, dynamic>{
+  'type_id': instance.typeId,
+  'type_label': instance.typeLabel,
+  'list': instance.list.map((e) => e.toJson()).toList(),
+};
 
 NapAnnoListModel _$NapAnnoListModelFromJson(Map<String, dynamic> json) =>
     NapAnnoListModel(

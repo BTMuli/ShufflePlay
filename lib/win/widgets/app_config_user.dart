@@ -208,11 +208,7 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
         IconButton(
           icon: const SPIcon(FluentIcons.refresh),
           onPressed: () async {
-            var check = await SpDialog.confirm(
-              context,
-              '刷新用户信息',
-              '确认刷新用户信息？',
-            );
+            var check = await SpDialog.confirm(context, '刷新用户信息', '确认刷新用户信息？');
             if (check == null || !check) return;
             await refreshUser(user);
           },
@@ -221,11 +217,7 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
         IconButton(
           icon: const SPIcon(FluentIcons.delete),
           onPressed: () async {
-            var check = await SpDialog.confirm(
-              context,
-              '删除用户',
-              '确认删除用户？',
-            );
+            var check = await SpDialog.confirm(context, '删除用户', '确认删除用户？');
             if (check == null || !check) return;
             await ref.read(userBbsStoreProvider).deleteUser(user.uid);
           },
@@ -292,9 +284,11 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
                       ),
                     )
                   : const Icon(FluentIcons.user_sync),
-              title: Text(user.brief?.username.isNotEmpty ?? false
-                  ? '${user.brief?.username}（${user.uid}）'
-                  : user.uid),
+              title: Text(
+                user.brief?.username.isNotEmpty ?? false
+                    ? '${user.brief?.username}（${user.uid}）'
+                    : user.uid,
+              ),
               subtitle: Text(user.brief?.sign ?? '暂无签名'),
               trailing: buildUserTrailing(user),
               selected: user.uid == uid,
@@ -311,7 +305,7 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
             title: const Text('添加用户'),
             onPressed: () async => await addUserByQrCode(),
             trailing: buildLoginTrailing(),
-          )
+          ),
         ],
       ),
     );

@@ -21,9 +21,9 @@ BbsLoginCaptchaData _$BbsLoginCaptchaDataFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$BbsLoginCaptchaDataToJson(
-        BbsLoginCaptchaData instance) =>
-    <String, dynamic>{
-      'sent_new': instance.sentNew,
-      'countdown': instance.countdown,
-      'action_type': instance.actionType,
-    };
+  BbsLoginCaptchaData instance,
+) => <String, dynamic>{
+  'sent_new': instance.sentNew,
+  'countdown': instance.countdown,
+  'action_type': instance.actionType,
+};

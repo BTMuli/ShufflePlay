@@ -19,10 +19,7 @@ class UigfModelFull {
   List<UigfModelNap> nap;
 
   /// constructor
-  UigfModelFull({
-    required this.info,
-    required this.nap,
-  });
+  UigfModelFull({required this.info, required this.nap});
 
   /// from json
   factory UigfModelFull.fromJson(Map<String, dynamic> json) =>

@@ -83,9 +83,7 @@ class _AppConfigDeviceWidgetState extends State<AppConfigDeviceWidget> {
     return Expander(
       leading: Icon(FluentIcons.devices2),
       header: Text(deviceInfo!.productName),
-      content: Column(
-        children: [buildOSInfo(deviceInfo!), buildWebviewInfo()],
-      ),
+      content: Column(children: [buildOSInfo(deviceInfo!), buildWebviewInfo()]),
     );
   }
 }

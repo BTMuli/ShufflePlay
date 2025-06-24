@@ -22,18 +22,13 @@ class BBSResp<T> {
   T? data;
 
   /// constructor
-  BBSResp({
-    required this.retcode,
-    required this.message,
-    required this.data,
-  });
+  BBSResp({required this.retcode, required this.message, required this.data});
 
   /// from json
   factory BBSResp.fromJson(
     Map<String, dynamic> json,
     T Function(dynamic json) fromJsonT,
-  ) =>
-      _$BBSRespFromJson(json, fromJsonT);
+  ) => _$BBSRespFromJson(json, fromJsonT);
 
   /// to json
   Map<String, dynamic> toJson(dynamic Function(T value) toJsonT) =>
@@ -47,8 +42,7 @@ class BBSResp<T> {
     required int retcode,
     required String message,
     T? data,
-  }) =>
-      BBSResp(retcode: retcode, message: message, data: data);
+  }) => BBSResp(retcode: retcode, message: message, data: data);
 
   /// success
   static BBSResp success({required dynamic data}) =>

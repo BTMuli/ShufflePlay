@@ -206,11 +206,7 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
         MacosIconButton(
           icon: const MacosIcon(Icons.refresh),
           onPressed: () async {
-            var check = await SpDialog.confirm(
-              context,
-              '刷新用户信息',
-              '确认刷新用户信息？',
-            );
+            var check = await SpDialog.confirm(context, '刷新用户信息', '确认刷新用户信息？');
             if (check == null || !check) return;
             await refreshUser(user);
           },
@@ -219,11 +215,7 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
         MacosIconButton(
           icon: const MacosIcon(Icons.delete),
           onPressed: () async {
-            var check = await SpDialog.confirm(
-              context,
-              '删除用户',
-              '确认删除用户？',
-            );
+            var check = await SpDialog.confirm(context, '删除用户', '确认删除用户？');
             if (check == null || !check) return;
             await ref.read(userBbsStoreProvider).deleteUser(user.uid);
           },
@@ -258,11 +250,7 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
             child: MacosIconButton(
               icon: const MacosIcon(Icons.delete),
               onPressed: () async {
-                var check = await SpDialog.confirm(
-                  context,
-                  '删除用户',
-                  '确认删除用户？',
-                );
+                var check = await SpDialog.confirm(context, '删除用户', '确认删除用户？');
                 if (check == null || !check) return;
                 await ref.read(userBbsStoreProvider).deleteUser(user.uid);
               },
@@ -274,8 +262,8 @@ class _AppConfigUserWidgetState extends ConsumerState<AppConfigUserWidget> {
       leading: user.brief?.avatar != null
           ? Image.network(user.brief!.avatar, width: 24, height: 24)
           : uid == user.uid
-              ? const MacosIcon(Icons.person)
-              : const MacosIcon(Icons.person_pin),
+          ? const MacosIcon(Icons.person)
+          : const MacosIcon(Icons.person_pin),
       onClick: () async {
         if (uid == user.uid) return;
         await ref.read(userBbsStoreProvider).switchUser(user.uid);

@@ -88,21 +88,32 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget> {
 
   List<PlatformMenuItem> buildMenus() {
     return [
-      PlatformMenu(label: 'ShufflePlay', menus: [
-        PlatformProvidedMenuItem(type: PlatformProvidedMenuItemType.about),
-        PlatformProvidedMenuItem(type: PlatformProvidedMenuItemType.quit),
-      ]),
-      PlatformMenu(label: 'View', menus: [
-        PlatformProvidedMenuItem(
-          type: PlatformProvidedMenuItemType.toggleFullScreen,
-        )
-      ]),
-      PlatformMenu(label: 'Window', menus: [
-        PlatformProvidedMenuItem(
-          type: PlatformProvidedMenuItemType.minimizeWindow,
-        ),
-        PlatformProvidedMenuItem(type: PlatformProvidedMenuItemType.zoomWindow),
-      ]),
+      PlatformMenu(
+        label: 'ShufflePlay',
+        menus: [
+          PlatformProvidedMenuItem(type: PlatformProvidedMenuItemType.about),
+          PlatformProvidedMenuItem(type: PlatformProvidedMenuItemType.quit),
+        ],
+      ),
+      PlatformMenu(
+        label: 'View',
+        menus: [
+          PlatformProvidedMenuItem(
+            type: PlatformProvidedMenuItemType.toggleFullScreen,
+          ),
+        ],
+      ),
+      PlatformMenu(
+        label: 'Window',
+        menus: [
+          PlatformProvidedMenuItem(
+            type: PlatformProvidedMenuItemType.minimizeWindow,
+          ),
+          PlatformProvidedMenuItem(
+            type: PlatformProvidedMenuItemType.zoomWindow,
+          ),
+        ],
+      ),
     ];
   }
 
@@ -127,10 +138,7 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text(
-          'ShufflePlay',
-          style: MacosTheme.of(context).typography.headline,
-        ),
+        Text('ShufflePlay', style: MacosTheme.of(context).typography.headline),
         if (packageInfo != null)
           Text(
             'Version ${packageInfo!.version}',
@@ -173,10 +181,7 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget> {
       children: [
         Image.asset('assets/images/ShufflePlay.png'),
         const SizedBox(height: 16.0),
-        Text(
-          '© 2024 BTMuli',
-          style: MacosTheme.of(context).typography.body,
-        ),
+        Text('© 2024 BTMuli', style: MacosTheme.of(context).typography.body),
         const SizedBox(height: 16.0),
         buildSidebarBottomAction(context),
       ],
@@ -219,16 +224,23 @@ class _AppNavWidgetState extends ConsumerState<AppNavWidget> {
         endSidebar: Sidebar(
           top: Column(
             children: [
-              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Text('设置', style: MacosTheme.of(context).typography.largeTitle),
-                MacosIconButton(
-                  icon: const MacosIcon(Icons.explore),
-                  onPressed: () async {
-                    await launchUrlString(
-                        'https://github.com/BTMuli/ShufflePlay');
-                  },
-                )
-              ]),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '设置',
+                    style: MacosTheme.of(context).typography.largeTitle,
+                  ),
+                  MacosIconButton(
+                    icon: const MacosIcon(Icons.explore),
+                    onPressed: () async {
+                      await launchUrlString(
+                        'https://github.com/BTMuli/ShufflePlay',
+                      );
+                    },
+                  ),
+                ],
+              ),
               AppConfigDeviceWidget(),
               Divider(),
               AppConfigInfoWidget(),

@@ -44,13 +44,11 @@ class NapAnnoCardWidget extends StatelessWidget {
         ),
         child: CachedNetworkImage(
           imageUrl: anno.banner,
-          progressIndicatorBuilder: (context, url, progress) => Center(
-            child: ProgressRing(value: progress.progress),
-          ),
+          progressIndicatorBuilder: (context, url, progress) =>
+              Center(child: ProgressRing(value: progress.progress)),
           fit: BoxFit.contain,
-          errorWidget: (context, url, error) => const Center(
-            child: Icon(FluentIcons.error),
-          ),
+          errorWidget: (context, url, error) =>
+              const Center(child: Icon(FluentIcons.error)),
         ),
       ),
     );
@@ -68,10 +66,7 @@ class NapAnnoCardWidget extends StatelessWidget {
           Expanded(
             child: Text(
               ' ${getTitle(anno.subtitle)}',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18.sp,
-              ),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.sp),
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
             ),

@@ -91,9 +91,7 @@ class BbsTokenModelLbSData {
   String ltoken;
 
   /// constructor
-  BbsTokenModelLbSData({
-    required this.ltoken,
-  });
+  BbsTokenModelLbSData({required this.ltoken});
 
   /// from json
   factory BbsTokenModelLbSData.fromJson(Map<String, dynamic> json) =>
@@ -115,10 +113,7 @@ class BbsTokenModelCbSData {
   String uid;
 
   /// constructor
-  BbsTokenModelCbSData({
-    required this.cookieToken,
-    required this.uid,
-  });
+  BbsTokenModelCbSData({required this.cookieToken, required this.uid});
 
   /// from json
   factory BbsTokenModelCbSData.fromJson(Map<String, dynamic> json) =>

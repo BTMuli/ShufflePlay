@@ -50,9 +50,8 @@ class NapAnnoCardWidget extends StatelessWidget {
             child: CircularProgressIndicator(value: progress.progress),
           ),
           fit: BoxFit.contain,
-          errorWidget: (context, url, error) => Center(
-            child: Icon(Icons.error),
-          ),
+          errorWidget: (context, url, error) =>
+              Center(child: Icon(Icons.error)),
         ),
       ),
     );
@@ -70,10 +69,7 @@ class NapAnnoCardWidget extends StatelessWidget {
           Expanded(
             child: Text(
               ' ${getTitle(anno.subtitle)}',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18.sp,
-              ),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.sp),
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
             ),
@@ -86,9 +82,7 @@ class NapAnnoCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(4.sp),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.sp)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,

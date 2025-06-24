@@ -33,8 +33,9 @@ class _AppConfigDeviceWidgetState extends State<AppConfigDeviceWidget> {
     return MacosListTile(
       leading: const MacosIcon(Icons.desktop_mac),
       title: const Text('MacOS'),
-      subtitle:
-          Text('${dim.majorVersion}.${dim.minorVersion}.${dim.patchVersion}'),
+      subtitle: Text(
+        '${dim.majorVersion}.${dim.minorVersion}.${dim.patchVersion}',
+      ),
     );
   }
 

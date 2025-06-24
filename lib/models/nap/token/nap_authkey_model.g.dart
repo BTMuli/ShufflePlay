@@ -21,9 +21,9 @@ NapAuthkeyModelData _$NapAuthkeyModelDataFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$NapAuthkeyModelDataToJson(
-        NapAuthkeyModelData instance) =>
-    <String, dynamic>{
-      'sign_type': instance.signType,
-      'authkey_ver': instance.authkeyVer,
-      'authkey': instance.authkey,
-    };
+  NapAuthkeyModelData instance,
+) => <String, dynamic>{
+  'sign_type': instance.signType,
+  'authkey_ver': instance.authkeyVer,
+  'authkey': instance.authkey,
+};

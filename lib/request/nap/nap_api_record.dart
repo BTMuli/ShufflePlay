@@ -81,7 +81,7 @@ class SprNapApiRecord {
       'id_list[]': avatarId,
       'need_wiki': false,
       'server': account.region,
-      'role_id': account.gameUid
+      'role_id': account.gameUid,
     };
     var header = getDsReqHeader(
       cookie,

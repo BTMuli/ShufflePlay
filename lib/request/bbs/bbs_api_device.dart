@@ -67,7 +67,8 @@ class SprBbsApiDevice {
       'simState': "5",
       'ramRemain': "239814",
       'appUpdateTimeDiff': 1702604034882,
-      'deviceInfo': 'XiaoMi ${device.deviceName} '
+      'deviceInfo':
+          'XiaoMi ${device.deviceName} '
           'OP5913L1:13 SKQ1.221119.001 '
           'T.118e6c7-5aa23-73911:user release-keys',
       'vaid': "",

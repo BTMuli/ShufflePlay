@@ -61,7 +61,11 @@ String getDs(String method, String data, BbsConstantSalt salt, bool isSign) {
 
 /// 获取ds-js版本
 String getDsJsVersion(
-    BbsConstantSalt salt, bool isSign, dynamic body, dynamic query) {
+  BbsConstantSalt salt,
+  bool isSign,
+  dynamic body,
+  dynamic query,
+) {
   var saltStr = salt.salt;
   var time = (DateTime.now().millisecondsSinceEpoch / 1000).floor();
   var randomStr = genRandomStr(

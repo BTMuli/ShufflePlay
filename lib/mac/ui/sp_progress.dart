@@ -32,11 +32,7 @@ class SpProgressController extends ChangeNotifier {
   void Function()? close;
 
   /// 更新
-  void update({
-    String? title,
-    String? text,
-    double? progress,
-  }) {
+  void update({String? title, String? text, double? progress}) {
     if (title != null) this.title = title;
     if (text != null) this.text = text;
     this.progress = progress;

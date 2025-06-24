@@ -27,9 +27,7 @@ class NapAuthTicketModelData {
   final String ticket;
 
   /// constructor
-  NapAuthTicketModelData({
-    required this.ticket,
-  });
+  NapAuthTicketModelData({required this.ticket});
 
   /// fromJson
   factory NapAuthTicketModelData.fromJson(Map<String, dynamic> json) =>

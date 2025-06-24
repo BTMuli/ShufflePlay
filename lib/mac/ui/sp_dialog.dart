@@ -75,10 +75,7 @@ class SpDialog {
               Text('$content:'),
               const SizedBox(width: 8),
               Expanded(
-                child: MacosTextField(
-                  placeholder: label,
-                  controller: input,
-                ),
+                child: MacosTextField(placeholder: label, controller: input),
               ),
               const SizedBox(width: 8),
               if (copy)

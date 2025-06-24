@@ -54,10 +54,7 @@ class SpsAppConfig {
       whereArgs: [key],
     );
     if (result.isEmpty) {
-      await sqlite.db.insert(
-        tableName,
-        {'key': key, 'value': value},
-      );
+      await sqlite.db.insert(tableName, {'key': key, 'value': value});
       SPLogTool.info('Write config: $key = $value');
     } else {
       await sqlite.db.update(
@@ -73,11 +70,7 @@ class SpsAppConfig {
   /// 删除配置
   Future<void> delete(String key) async {
     await preCheck();
-    await sqlite.db.delete(
-      tableName,
-      where: 'key = ?',
-      whereArgs: [key],
-    );
+    await sqlite.db.delete(tableName, where: 'key = ?', whereArgs: [key]);
     SPLogTool.info('Delete config: $key');
   }
 

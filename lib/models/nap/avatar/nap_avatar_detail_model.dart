@@ -411,10 +411,7 @@ class NapAvatarDetailModelSkillItem {
   final String text;
 
   /// constructor
-  NapAvatarDetailModelSkillItem({
-    required this.title,
-    required this.text,
-  });
+  NapAvatarDetailModelSkillItem({required this.title, required this.text});
 
   /// from json
   factory NapAvatarDetailModelSkillItem.fromJson(Map<String, dynamic> json) =>

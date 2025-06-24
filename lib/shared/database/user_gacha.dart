@@ -61,8 +61,9 @@ class SpsUserGacha {
     // 删除旧表
     await _instance.sqlite.db.execute('DROP TABLE $_tableName;');
     // 重命名新表
-    await _instance.sqlite.db
-        .execute('ALTER TABLE UserGachaTemp RENAME TO $_tableName;');
+    await _instance.sqlite.db.execute(
+      'ALTER TABLE UserGachaTemp RENAME TO $_tableName;',
+    );
     await _appConfig.write('TvUserGacha', '1');
   }
 
@@ -232,10 +233,7 @@ class SpsUserGacha {
   /// 导出指定uid列表[uids]的祈愿记录-UIGF格式，如果没有指定uid则导出所有
   Future<UigfModelFull> exportUigf({List<String>? uids, int? timezone}) async {
     await _instance.preCheck();
-    var uigfData = UigfModelFull(
-      info: await getUigfInfo(),
-      nap: [],
-    );
+    var uigfData = UigfModelFull(info: await getUigfInfo(), nap: []);
     var uidList = uids ?? await getAllUid(check: true);
     var realTimezone = timezone ?? DateTime.now().timeZoneOffset.inHours;
     for (var uid in uidList) {

@@ -193,7 +193,8 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage> {
       return;
     }
     var title = isForce ? '全量刷新用户调频数据？' : '增量刷新用户调频数据？';
-    var text = '${curAccount.nickname} '
+    var text =
+        '${curAccount.nickname} '
         'UID: ${curAccount.gameUid} '
         '[${curAccount.regionName}]';
     var check = await SpDialog.confirm(context, title, text);
@@ -235,10 +236,7 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage> {
       UserGachaRefreshModel lastData = UserGachaRefreshModel(poolType);
       if (!isForce) {
         progress.update(text: '正在获取${poolType.label}池最新数据...');
-        lastData = await sqliteUser.getLatestGacha(
-          account.gameUid,
-          poolType,
-        );
+        lastData = await sqliteUser.getLatestGacha(account.gameUid, poolType);
       }
       progress.update(text: '开始获取${poolType.label}池数据...');
       var page = 1;
@@ -345,19 +343,24 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage> {
         Text(
           '当前时区: ${DateTime.now().timeZoneName}'
           '(UTC${DateTime.now().timeZoneOffset.inHours})',
-        )
+        ),
       ],
     );
   }
 
   Widget buildTitle(BuildContext context) {
-    return Row(children: [
-      SizedBox(
-        width: 60,
-        child: Text('调频记录', style: MacosTheme.of(context).typography.headline),
-      ),
-      buildUidSelector(context),
-    ]);
+    return Row(
+      children: [
+        SizedBox(
+          width: 60,
+          child: Text(
+            '调频记录',
+            style: MacosTheme.of(context).typography.headline,
+          ),
+        ),
+        buildUidSelector(context),
+      ],
+    );
   }
 
   Widget buildContent() {
@@ -395,7 +398,7 @@ class _UserGachaPageState extends ConsumerState<UserGachaPage> {
                 ? Text('暂无数据', style: TextStyle(color: Colors.white))
                 : buildContent(),
           ),
-        )
+        ),
       ],
     );
   }

@@ -37,13 +37,13 @@ Map<String, dynamic> _$UigfModelInfoToJson(UigfModelInfo instance) =>
     };
 
 UigfModelNap _$UigfModelNapFromJson(Map<String, dynamic> json) => UigfModelNap(
-      uid: json['uid'],
-      timezone: (json['timezone'] as num).toInt(),
-      lang: $enumDecodeNullable(_$UigfLanguageEnumMap, json['lang']),
-      list: (json['list'] as List<dynamic>)
-          .map((e) => UigfModelNapItem.fromJson(e as Map<String, dynamic>))
-          .toList(),
-    );
+  uid: json['uid'],
+  timezone: (json['timezone'] as num).toInt(),
+  lang: $enumDecodeNullable(_$UigfLanguageEnumMap, json['lang']),
+  list: (json['list'] as List<dynamic>)
+      .map((e) => UigfModelNapItem.fromJson(e as Map<String, dynamic>))
+      .toList(),
+);
 
 Map<String, dynamic> _$UigfModelNapToJson(UigfModelNap instance) =>
     <String, dynamic>{

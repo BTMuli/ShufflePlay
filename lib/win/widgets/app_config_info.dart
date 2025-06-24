@@ -88,8 +88,11 @@ class _AppConfigInfoWidgetState extends ConsumerState<AppConfigInfoWidget> {
   /// 构建应用信息
   Widget buildAppInfo() {
     return ListTile(
-      leading: Image.asset('assets/images/ShufflePlayMini.png',
-          width: 24, height: 24),
+      leading: Image.asset(
+        'assets/images/ShufflePlayMini.png',
+        width: 24,
+        height: 24,
+      ),
       title: const Text('ShufflePlay'),
       subtitle: Text('版本: ${packageInfo!.version}+${packageInfo!.buildNumber}'),
       trailing: IconButton(
@@ -118,8 +121,9 @@ class _AppConfigInfoWidgetState extends ConsumerState<AppConfigInfoWidget> {
   MenuFlyoutItemBase buildThemeItem(SpAppThemeConfig theme) {
     return MenuFlyoutItem(
       text: Text(theme.label),
-      leading:
-          curThemeMode == theme.cur ? SPIcon(theme.icon) : Icon(theme.icon),
+      leading: curThemeMode == theme.cur
+          ? SPIcon(theme.icon)
+          : Icon(theme.icon),
       onPressed: () async => await ref
           .read(appConfigStoreProvider.notifier)
           .setThemeMode(theme.cur),

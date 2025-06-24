@@ -156,13 +156,15 @@ class _NapAnnoPageState extends State<NapAnnoPage> {
   }
 
   Widget buildTitle(BuildContext context) {
-    return Row(children: [
-      Text('游戏公告', style: MacosTheme.of(context).typography.headline),
-      MacosIconButton(
-        icon: MacosIcon(Icons.refresh),
-        onPressed: () async => await loadAnnoList(ctx: context, alert: true),
-      ),
-    ]);
+    return Row(
+      children: [
+        Text('游戏公告', style: MacosTheme.of(context).typography.headline),
+        MacosIconButton(
+          icon: MacosIcon(Icons.refresh),
+          onPressed: () async => await loadAnnoList(ctx: context, alert: true),
+        ),
+      ],
+    );
   }
 
   /// 构建列表
@@ -211,13 +213,16 @@ class _NapAnnoPageState extends State<NapAnnoPage> {
                 MacosTab(label: '活动公告'),
               ],
               children: [
-                buildList(annoList.where((e) => e.type == 3).toList(), context,
-                    isGame: true),
+                buildList(
+                  annoList.where((e) => e.type == 3).toList(),
+                  context,
+                  isGame: true,
+                ),
                 buildList(annoList.where((e) => e.type == 4).toList(), context),
               ],
             ),
           ),
-        )
+        ),
       ],
     );
   }

@@ -7,17 +7,17 @@ part of 'user_bbs_model.dart';
 // **************************************************************************
 
 UserBBSModel _$UserBBSModelFromJson(Map<String, dynamic> json) => UserBBSModel(
-      id: (json['id'] as num?)?.toInt(),
-      uid: json['uid'] as String,
-      cookie: json['cookie'] == null
-          ? null
-          : UserBBSModelCookie.fromJson(json['cookie'] as Map<String, dynamic>),
-      phone: json['phone'] as String?,
-      brief: json['brief'] == null
-          ? null
-          : UserBBSModelBrief.fromJson(json['brief'] as Map<String, dynamic>),
-      updatedAt: (json['updatedAt'] as num?)?.toInt() ?? 0,
-    );
+  id: (json['id'] as num?)?.toInt(),
+  uid: json['uid'] as String,
+  cookie: json['cookie'] == null
+      ? null
+      : UserBBSModelCookie.fromJson(json['cookie'] as Map<String, dynamic>),
+  phone: json['phone'] as String?,
+  brief: json['brief'] == null
+      ? null
+      : UserBBSModelBrief.fromJson(json['brief'] as Map<String, dynamic>),
+  updatedAt: (json['updatedAt'] as num?)?.toInt() ?? 0,
+);
 
 Map<String, dynamic> _$UserBBSModelToJson(UserBBSModel instance) =>
     <String, dynamic>{
